@@ -1,3 +1,7 @@
+const connectToMongoDB = require("./db");
+connectToMongoDB();
+const Document = require("./models/doc");
+
 const express = require("express");
 const app = express();
 const PORT = 4000;
@@ -15,19 +19,48 @@ const socketIO = require("socket.io")(http, {
 
 socketIO.on("connection", (socket) => {
   console.log(`${socket.id} user just connected!`);
-  socket.on("change-text", (content) => {
-    socket.broadcast.emit("text-changed", content);
-  });
 
-  socket.on("disconnect", () => {
-    console.log("A user disconnected");
+  socket.on("get-doc", async (docId) => {
+    const doc = await getDoc(docId);
+
+    socket.join(docId);
+
+    socket.emit("load-doc", doc.data);
+
+    socket.on("change-text", (content) => {
+      socket.broadcast.to(docId).emit("text-changed", content);
+    });
+
+    socket.on("save-doc", async (data) => {
+      await Document.findOneAndUpdate({ docId }, { data });
+    });
+
+    socket.on("create-doc", async () => {
+      // todo
+    });
   });
 });
 
-app.get("/api", (req, res) => {
-  res.json({
-    message: "Hello world",
-  });
+async function getDoc(docId) {
+  if (docId === null) return;
+
+  const doc = await Document.findOne({ docId });
+
+  if (doc) return doc;
+  // return await Document.create({ docId: docId, data: "" });
+}
+async function createDoc(docId) {
+  if (docId === null) return;
+
+  const doc = await Document.findOne({ docId });
+
+  if (doc) return;
+  return await Document.create({ docId: docId, data: "" });
+}
+
+app.get("/getAllDocs", async (req, res) => {
+  const docs = await Document.find();
+  res.json({ data: docs });
 });
 
 http.listen(PORT, () => {
