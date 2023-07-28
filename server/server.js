@@ -10,10 +10,11 @@ const http = require("http").Server(app);
 const cors = require("cors");
 
 app.use(cors());
+app.use(express.json());
 
 const socketIO = require("socket.io")(http, {
   cors: {
-    origin: "http://127.0.0.1:5173",
+    origin: "http://localhost:5173",
   },
 });
 
@@ -69,7 +70,7 @@ app.get("/getAllDocs", async (req, res) => {
 app.post("/saveDocThumbnail", async (req, res) => {
   const { docId, thumbnail } = req.body;
 
-  const doc = await Document.findOneAndUpdate({ docId }, { thumbnail });
+  await Document.findOneAndUpdate({ docId }, { thumbnail });
 });
 
 http.listen(PORT, () => {

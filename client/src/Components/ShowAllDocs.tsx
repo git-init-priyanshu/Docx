@@ -10,7 +10,7 @@ export default function ShowAllDocs() {
     _id: string;
     docId: string;
     data: string | object;
-    thumbnail: string | null;
+    thumbnail?: string | null;
   }
   const [docs, setDocs] = useState<[docType] | null>(null);
 
@@ -67,7 +67,9 @@ export default function ShowAllDocs() {
                 key={doc.docId}
                 className="card"
                 to={`/documents/${doc.docId}`}
-                style={{ background: `url(${doc.thumbnail})` }}
+                style={{
+                  background: `url(${doc.thumbnail})`,
+                }}
               ></Link>
             );
           })}

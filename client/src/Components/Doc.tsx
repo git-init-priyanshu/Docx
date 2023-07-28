@@ -22,7 +22,10 @@ export default function TextEditor() {
   };
 
   const getDocThumbnail: () => void = async () => {
-    const page = document.getElementById("ql-editor");
+    // document.querySelector("ql-editor")?.setAttribute("id", "ql-editor");
+
+    // const page = document.getElementById("ql-editor");
+    const page = document.getElementById("container");
     const canvas = await html2canvas(page!);
 
     const thumbnail = canvas.toDataURL(`${docId}thumbnail/png`);
