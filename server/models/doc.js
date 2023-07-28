@@ -10,6 +10,9 @@ const Doc = new Schema({
   data: {
     type: Object,
   },
+  thumbnail: {
+    type: String,
+  },
 });
 
 module.exports = model("Doc", Doc);

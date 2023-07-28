@@ -35,8 +35,12 @@ socketIO.on("connection", (socket) => {
       await Document.findOneAndUpdate({ docId }, { data });
     });
 
-    socket.on("create-doc", async () => {
-      // todo
+    socket.on("create-doc", async (docId) => {
+      const doc = await createDoc(docId);
+
+      socket.join(docId);
+
+      socket.emit("laod-doc", doc.data);
     });
   });
 });
@@ -61,6 +65,11 @@ async function createDoc(docId) {
 app.get("/getAllDocs", async (req, res) => {
   const docs = await Document.find();
   res.json({ data: docs });
+});
+app.post("/saveDocThumbnail", async (req, res) => {
+  const { docId, thumbnail } = req.body;
+
+  const doc = await Document.findOneAndUpdate({ docId }, { thumbnail });
 });
 
 http.listen(PORT, () => {

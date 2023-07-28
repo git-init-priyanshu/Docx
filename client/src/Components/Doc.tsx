@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import Quill from "quill";
 import { DeltaOperation, Sources, Quill as typesQuill } from "quill/index";
 import { useParams } from "react-router-dom";
+import html2canvas from "html2canvas";
+import axios from "axios";
 
 import "quill/dist/quill.snow.css";
 import { socket } from "../socket";
@@ -19,6 +21,19 @@ export default function TextEditor() {
     setIsConnected((isConnected) => !isConnected);
   };
 
+  const getDocThumbnail: () => void = async () => {
+    const page = document.getElementById("ql-editor");
+    const canvas = await html2canvas(page!);
+
+    const thumbnail = canvas.toDataURL(`${docId}thumbnail/png`);
+
+    await axios.post("http://localhost:4000/saveDocThumbnail", {
+      docId,
+      thumbnail,
+    });
+  };
+
+  // Load Doc
   useEffect(() => {
     if (socket == null || quill == null) return;
 
@@ -30,11 +45,14 @@ export default function TextEditor() {
     socket.emit("get-doc", docId);
   }, [socket, quill, docId]);
 
+  // Save Doc
   useEffect(() => {
     if (socket == null || quill == null) return;
 
     const interval = setInterval(() => {
       socket.emit("save-doc", quill.getContents());
+
+      getDocThumbnail();
     }, SAVE_INTERVAL_MS);
 
     return () => {
