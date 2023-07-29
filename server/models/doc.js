@@ -5,7 +5,7 @@ const Doc = new Schema({
   docId: {
     type: String,
     required: true,
-    unique: true,
+    // unique: true,
   },
   data: {
     type: Object,

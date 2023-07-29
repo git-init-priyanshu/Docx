@@ -7,12 +7,12 @@ import {
 } from "react-router-dom";
 
 import TextEditor from "./Components/Doc";
-import ShowAllDocs from "./Components/ShowAllDocs";
+import Home from "./Components/Home";
 // Defining router
 const router = createBrowserRouter(
   createRoutesFromElements(
     <Route path="/" element={<Root />}>
-      <Route index element={<ShowAllDocs />} />
+      <Route index element={<Home />} />
       <Route path="/documents/:id" element={<TextEditor />} />
     </Route>
   )

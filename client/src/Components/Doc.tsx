@@ -22,11 +22,8 @@ export default function TextEditor() {
   };
 
   const getDocThumbnail: () => void = async () => {
-    // document.querySelector("ql-editor")?.setAttribute("id", "ql-editor");
-
-    // const page = document.getElementById("ql-editor");
     const page = document.getElementById("container");
-    const canvas = await html2canvas(page!);
+    const canvas = await html2canvas(page!, { scale: 0.5 });
 
     const thumbnail = canvas.toDataURL(`${docId}thumbnail/png`);
 
@@ -57,6 +54,13 @@ export default function TextEditor() {
 
       getDocThumbnail();
     }, SAVE_INTERVAL_MS);
+    // console.log("save");
+
+    // const interval = setTimeout(() => {
+    //   socket.emit("save-doc", quill.getContents());
+
+    //   getDocThumbnail();
+    // }, SAVE_INTERVAL_MS);
 
     return () => {
       clearInterval(interval);

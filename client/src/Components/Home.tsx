@@ -4,8 +4,9 @@ import { v4 as uuidv4 } from "uuid";
 import axios from "axios";
 import { socket } from "../socket";
 
-export default function ShowAllDocs() {
+export default function Home() {
   const navigate = useNavigate();
+
   interface docType {
     _id: string;
     docId: string;
@@ -19,7 +20,9 @@ export default function ShowAllDocs() {
 
     socket.emit("create-doc", newDocId);
 
-    navigate(`/documents/${newDocId}`);
+    setTimeout(() => {
+      navigate(`/documents/${newDocId}`);
+    }, 500);
   };
 
   useEffect(() => {
@@ -60,20 +63,24 @@ export default function ShowAllDocs() {
       </div>
 
       <div className="body" id="docs">
-        {docs &&
-          docs.map((doc) => {
-            return (
-              <Link
-                key={doc.docId}
-                className="card"
-                to={`/documents/${doc.docId}`}
-                style={{
-                  background: `url(${doc.thumbnail})`,
-                }}
-              ></Link>
-            );
-          })}
+        {docs
+          ? docs.map((doc) => {
+              return (
+                <Link
+                  key={doc.docId}
+                  className="card"
+                  to={`/documents/${doc.docId}`}
+                  style={{
+                    background: `url(${doc.thumbnail})`,
+                    backgroundSize: "cover",
+                    backgroundPosition: "center",
+                  }}
+                ></Link>
+              );
+            })
+          : "Loading Docs..."}
       </div>
     </>
   );
 }
+// Fixed bug: Proper positioning and scale of thumbnails

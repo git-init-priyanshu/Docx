@@ -1,6 +1,6 @@
 const connectToMongoDB = require("./db");
 connectToMongoDB();
-const Document = require("./models/doc");
+const Doc = require("./models/doc");
 
 const express = require("express");
 const app = express();
@@ -22,6 +22,7 @@ socketIO.on("connection", (socket) => {
   console.log(`${socket.id} user just connected!`);
 
   socket.on("get-doc", async (docId) => {
+    console.log("get-doc");
     const doc = await getDoc(docId);
 
     socket.join(docId);
@@ -33,15 +34,15 @@ socketIO.on("connection", (socket) => {
     });
 
     socket.on("save-doc", async (data) => {
-      await Document.findOneAndUpdate({ docId }, { data });
+      await Doc.findOneAndUpdate({ docId }, { data });
     });
-
     socket.on("create-doc", async (docId) => {
-      const doc = await createDoc(docId);
-
-      socket.join(docId);
-
-      socket.emit("laod-doc", doc.data);
+      console.log("create-doc");
+      try {
+        await createDoc(docId);
+      } catch (error) {
+        console.log(error);
+      }
     });
   });
 });
@@ -49,28 +50,26 @@ socketIO.on("connection", (socket) => {
 async function getDoc(docId) {
   if (docId === null) return;
 
-  const doc = await Document.findOne({ docId });
+  const doc = await Doc.findOne({ docId });
 
   if (doc) return doc;
-  // return await Document.create({ docId: docId, data: "" });
+  return null;
 }
+
 async function createDoc(docId) {
   if (docId === null) return;
-
-  const doc = await Document.findOne({ docId });
-
-  if (doc) return;
-  return await Document.create({ docId: docId, data: "" });
+  return await Doc.create({ docId: docId, data: {}, thumbnail: "" });
 }
 
+// Available Routes
 app.get("/getAllDocs", async (req, res) => {
-  const docs = await Document.find();
+  const docs = await Doc.find();
   res.json({ data: docs });
 });
 app.post("/saveDocThumbnail", async (req, res) => {
   const { docId, thumbnail } = req.body;
 
-  await Document.findOneAndUpdate({ docId }, { thumbnail });
+  await Doc.findOneAndUpdate({ docId }, { thumbnail });
 });
 
 http.listen(PORT, () => {
