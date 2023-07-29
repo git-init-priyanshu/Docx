@@ -63,8 +63,9 @@ export default function Home() {
       </div>
 
       <div className="body" id="docs">
-        {docs
-          ? docs.map((doc) => {
+        {docs ? (
+          docs.length > 0 ? (
+            docs.map((doc) => {
               return (
                 <Link
                   key={doc.docId}
@@ -78,7 +79,15 @@ export default function Home() {
                 ></Link>
               );
             })
-          : "Loading Docs..."}
+          ) : (
+            <p>
+              Welcome! Start by creating a new document to get going. Click the
+              button in top right corner to begin crafting your content.
+            </p>
+          )
+        ) : (
+          <p>Loading Docs...</p>
+        )}
       </div>
     </>
   );

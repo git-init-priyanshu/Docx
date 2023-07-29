@@ -21,30 +21,54 @@ const socketIO = require("socket.io")(http, {
 socketIO.on("connection", (socket) => {
   console.log(`${socket.id} user just connected!`);
 
-  socket.on("get-doc", async (docId) => {
-    console.log("get-doc");
-    const doc = await getDoc(docId);
+  socket.on("create-doc", async (newDocId) => {
+    try {
+      Doc.create({ docId: newDocId, data: { data: "" }, thumbnail: "" });
+    } catch (error) {
+      console.log(error);
+    }
+  });
 
+  socket.on("get-doc", async (docId) => {
     socket.join(docId);
 
-    socket.emit("load-doc", doc.data);
+    const doc = await getDoc(docId);
 
-    socket.on("change-text", (content) => {
-      socket.broadcast.to(docId).emit("text-changed", content);
-    });
+    socket.emit("load-doc", doc.data);
 
     socket.on("save-doc", async (data) => {
       await Doc.findOneAndUpdate({ docId }, { data });
     });
-    socket.on("create-doc", async (docId) => {
-      console.log("create-doc");
-      try {
-        await createDoc(docId);
-      } catch (error) {
-        console.log(error);
-      }
+
+    socket.on("change-text", (content) => {
+      socket.broadcast.to(docId).emit("text-changed", content);
     });
   });
+
+  // socket.on("get-doc", async (docId) => {
+  //   console.log("get-doc");
+  //   const doc = await getDoc(docId);
+
+  //   socket.join(docId);
+
+  //   socket.emit("load-doc", doc.data);
+
+  //   socket.on("change-text", (content) => {
+  //     socket.broadcast.to(docId).emit("text-changed", content);
+  //   });
+
+  //   socket.on("save-doc", async (data) => {
+  //     await Doc.findOneAndUpdate({ docId }, { data });
+  //   });
+  //   socket.on("create-doc", async (docId) => {
+  //     console.log("create-doc");
+  //     try {
+  //       await createDoc(docId);
+  //     } catch (error) {
+  //       console.log(error);
+  //     }
+  //   });
+  // });
 });
 
 async function getDoc(docId) {

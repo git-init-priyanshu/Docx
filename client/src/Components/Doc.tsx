@@ -11,7 +11,7 @@ import { TOOLBAR_OPTIONS } from "./utils/ToolbarOptions";
 
 const SAVE_INTERVAL_MS = 2000;
 
-export default function TextEditor() {
+export default function Doc() {
   const { id: docId } = useParams();
 
   const [isConnected, setIsConnected] = useState<boolean>(false);
@@ -37,12 +37,12 @@ export default function TextEditor() {
   useEffect(() => {
     if (socket == null || quill == null) return;
 
+    socket.emit("get-doc", docId);
+
     socket.once("load-doc", (doc) => {
       quill.setContents(doc);
       quill.enable();
     });
-
-    socket.emit("get-doc", docId);
   }, [socket, quill, docId]);
 
   // Save Doc
@@ -54,7 +54,6 @@ export default function TextEditor() {
 
       getDocThumbnail();
     }, SAVE_INTERVAL_MS);
-    // console.log("save");
 
     // const interval = setTimeout(() => {
     //   socket.emit("save-doc", quill.getContents());
