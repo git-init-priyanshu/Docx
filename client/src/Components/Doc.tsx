@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import Quill from "quill";
 import { DeltaOperation, Sources, Quill as typesQuill } from "quill/index";
 import { useParams } from "react-router-dom";
@@ -9,12 +9,11 @@ import "quill/dist/quill.snow.css";
 import { socket } from "../socket";
 import { TOOLBAR_OPTIONS } from "./utils/ToolbarOptions";
 
-const SAVE_INTERVAL_MS = 2000;
-
 export default function Doc() {
   const { id: docId } = useParams();
 
   const [isConnected, setIsConnected] = useState<boolean>(false);
+  const [contents, setContents] = useState<DeltaOperation | null>(null);
   const [quill, setQuill] = useState<any>(null);
 
   const toggleConnected: () => void = () => {
@@ -49,23 +48,18 @@ export default function Doc() {
   useEffect(() => {
     if (socket == null || quill == null) return;
 
-    const interval = setInterval(() => {
+    const timeout = setTimeout(() => {
       socket.emit("save-doc", quill.getContents());
 
       getDocThumbnail();
-    }, SAVE_INTERVAL_MS);
-
-    // const interval = setTimeout(() => {
-    //   socket.emit("save-doc", quill.getContents());
-
-    //   getDocThumbnail();
-    // }, SAVE_INTERVAL_MS);
+    }, 2000);
 
     return () => {
-      clearInterval(interval);
+      clearTimeout(timeout);
     };
-  }, [socket, quill, docId]);
+  }, [contents]);
 
+  // Socket and Quill
   useEffect(() => {
     socket.connect();
     toggleConnected();
@@ -103,10 +97,13 @@ export default function Doc() {
         } else if (source == "user") {
           const content: DeltaOperation = quill.getContents();
 
-          isConnected && socket.emit("change-text", content);
+          isConnected && socket.emit("text-change", content);
+
+          setContents(content);
         }
       }
     );
+
     socket.on("text-changed", (content: DeltaOperation) => {
       quill.setContents(content);
     });

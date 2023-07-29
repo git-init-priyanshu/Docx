@@ -37,10 +37,11 @@ socketIO.on("connection", (socket) => {
     socket.emit("load-doc", doc.data);
 
     socket.on("save-doc", async (data) => {
+      console.log("save doc");
       await Doc.findOneAndUpdate({ docId }, { data });
     });
 
-    socket.on("change-text", (content) => {
+    socket.on("text-change", (content) => {
       socket.broadcast.to(docId).emit("text-changed", content);
     });
   });
