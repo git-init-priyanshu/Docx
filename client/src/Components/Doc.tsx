@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState } from "react";
 import Quill from "quill";
 import { DeltaOperation, Sources, Quill as typesQuill } from "quill/index";
 import { useParams } from "react-router-dom";
@@ -42,7 +42,7 @@ export default function Doc() {
       quill.setContents(doc);
       quill.enable();
     });
-  }, [socket, quill, docId]);
+  }, [quill, docId]);
 
   // Save Doc
   const saveDoc = () => {
@@ -50,7 +50,7 @@ export default function Doc() {
     console.log("save");
     getDocThumbnail();
   };
-  const debounce_saveDoc = _.debounce(saveDoc, 2000);
+  const debounce_saveDoc = _.debounce(saveDoc, 1000);
 
   // Socket and Quill
   useEffect(() => {
@@ -90,7 +90,7 @@ export default function Doc() {
           const content: DeltaOperation = quill.getContents();
 
           isConnected && socket.emit("text-change", content);
-
+          console.log("debounce");
           debounce_saveDoc();
         }
       }
