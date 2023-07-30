@@ -4,6 +4,8 @@ import { v4 as uuidv4 } from "uuid";
 import axios from "axios";
 import { socket } from "../socket";
 
+import Logo from "../assets/Google_Docs.max-2800x2800-1 (1).svg";
+
 export default function Home() {
   const navigate = useNavigate();
 
@@ -39,6 +41,7 @@ export default function Home() {
       <div className="nav">
         <input type="checkbox" id="nav-check" />
         <div className="nav-header">
+          <img src={Logo} alt="" />
           <div className="nav-title">Docs</div>
         </div>
         {/* Search*/}

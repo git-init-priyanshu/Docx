@@ -70,14 +70,19 @@ body {
 }
 
 .nav > .nav-header {
-  display: inline;
+  display: flex;
+  align-items: center;
+  gap: 1px;
+  & > img {
+    max-width: 8%;
+  }
 }
 
 .nav > .nav-header > .nav-title {
   display: inline-block;
   font-size: 22px;
   color: #000000;
-  padding: 10px 10px 10px 10px;
+  /* padding: 10px 10px 10px 10px; */
 }
 
 .nav > .search-bar {

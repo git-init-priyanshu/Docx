@@ -4,6 +4,7 @@ import { DeltaOperation, Sources, Quill as typesQuill } from "quill/index";
 import { useParams } from "react-router-dom";
 import html2canvas from "html2canvas";
 import axios from "axios";
+import _ from "lodash";
 
 import "quill/dist/quill.snow.css";
 import { socket } from "../socket";
@@ -13,7 +14,6 @@ export default function Doc() {
   const { id: docId } = useParams();
 
   const [isConnected, setIsConnected] = useState<boolean>(false);
-  const [contents, setContents] = useState<DeltaOperation | null>(null);
   const [quill, setQuill] = useState<any>(null);
 
   const toggleConnected: () => void = () => {
@@ -45,19 +45,12 @@ export default function Doc() {
   }, [socket, quill, docId]);
 
   // Save Doc
-  useEffect(() => {
-    if (socket == null || quill == null) return;
-
-    const timeout = setTimeout(() => {
-      socket.emit("save-doc", quill.getContents());
-
-      getDocThumbnail();
-    }, 2000);
-
-    return () => {
-      clearTimeout(timeout);
-    };
-  }, [contents]);
+  const saveDoc = () => {
+    socket.emit("save-doc", quill.getContents());
+    console.log("save");
+    getDocThumbnail();
+  };
+  const debounce_saveDoc = _.debounce(saveDoc, 2000);
 
   // Socket and Quill
   useEffect(() => {
@@ -92,14 +85,13 @@ export default function Doc() {
         oldDelta: DeltaOperation,
         source: Sources
       ) {
-        if (source == "api") {
-          console.log("An API call triggered this change.");
-        } else if (source == "user") {
+        if (source == "api") return;
+        if (source == "user") {
           const content: DeltaOperation = quill.getContents();
 
           isConnected && socket.emit("text-change", content);
 
-          setContents(content);
+          debounce_saveDoc();
         }
       }
     );

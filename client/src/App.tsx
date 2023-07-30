@@ -8,7 +8,7 @@ import {
 
 import Doc from "./Components/Doc";
 import Home from "./Components/Home";
-import Navbar from "./Components/Navbar";
+
 // Defining router
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -18,7 +18,6 @@ const router = createBrowserRouter(
         path="/documents/:id"
         element={
           <>
-            <Navbar />
             <Doc />
           </>
         }
