@@ -21,14 +21,6 @@ const socketIO = require("socket.io")(http, {
 socketIO.on("connection", (socket) => {
   console.log(`${socket.id} user just connected!`);
 
-  socket.on("create-doc", async (newDocId) => {
-    try {
-      Doc.create({ docId: newDocId, data: { data: "" }, thumbnail: "" });
-    } catch (error) {
-      console.log(error);
-    }
-  });
-
   socket.on("get-doc", async (docId) => {
     socket.join(docId);
 

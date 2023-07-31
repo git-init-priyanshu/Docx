@@ -12,26 +12,39 @@ export default function Home() {
   interface docType {
     _id: string;
     docId: string;
+    email: string;
     data: string | object;
     thumbnail?: string | null;
   }
   const [docs, setDocs] = useState<[docType] | null>(null);
 
-  const createDoc = () => {
+  const createDoc = async () => {
     const newDocId = uuidv4();
+    const email = localStorage.getItem("email");
 
-    socket.emit("create-doc", newDocId);
+    const response = await axios.post(
+      "http://localhost:4000/api/doc/create-doc",
+      { newDocId, email }
+    );
 
-    setTimeout(() => {
-      navigate(`/documents/${newDocId}`);
-    }, 500);
+    if (!response.data.success) return console.log("Internal Server Error");
+    navigate(`/documents/${newDocId}`);
   };
 
   useEffect(() => {
     const getAllDocs = async () => {
-      const docs = await axios.get("http://localhost:4000/api/doc/getAllDocs");
-      console.log(docs.data.data);
-      setDocs(docs.data.data);
+      const email = localStorage.getItem("email");
+      const authToken = localStorage.getItem("auth-token");
+
+      const response = await axios.post(
+        "http://localhost:4000/api/doc/get-all-docs",
+        { email, authToken }
+      );
+
+      const docs = response.data.docs;
+      if (!docs) return;
+
+      setDocs(docs);
     };
     getAllDocs();
   }, []);
@@ -71,7 +84,7 @@ export default function Home() {
             docs.map((doc) => {
               return (
                 <Link
-                  key={doc.docId}
+                  key={doc._id}
                   className="card"
                   to={`/documents/${doc.docId}`}
                   style={{
@@ -95,4 +108,3 @@ export default function Home() {
     </>
   );
 }
-// Fixed bug: Proper positioning and scale of thumbnails

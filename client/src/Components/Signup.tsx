@@ -39,6 +39,7 @@ export default function Signup() {
       return window.alert(data.error);
     }
 
+    localStorage.setItem("email", userState.email);
     localStorage.setItem("auth-token", data.authToken);
     navigate("/home");
   };
