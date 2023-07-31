@@ -45,31 +45,6 @@ socketIO.on("connection", (socket) => {
       socket.broadcast.to(docId).emit("text-changed", content);
     });
   });
-
-  // socket.on("get-doc", async (docId) => {
-  //   console.log("get-doc");
-  //   const doc = await getDoc(docId);
-
-  //   socket.join(docId);
-
-  //   socket.emit("load-doc", doc.data);
-
-  //   socket.on("change-text", (content) => {
-  //     socket.broadcast.to(docId).emit("text-changed", content);
-  //   });
-
-  //   socket.on("save-doc", async (data) => {
-  //     await Doc.findOneAndUpdate({ docId }, { data });
-  //   });
-  //   socket.on("create-doc", async (docId) => {
-  //     console.log("create-doc");
-  //     try {
-  //       await createDoc(docId);
-  //     } catch (error) {
-  //       console.log(error);
-  //     }
-  //   });
-  // });
 });
 
 async function getDoc(docId) {
@@ -81,21 +56,9 @@ async function getDoc(docId) {
   return null;
 }
 
-async function createDoc(docId) {
-  if (docId === null) return;
-  return await Doc.create({ docId: docId, data: {}, thumbnail: "" });
-}
-
 // Available Routes
-app.get("/getAllDocs", async (req, res) => {
-  const docs = await Doc.find();
-  res.json({ data: docs });
-});
-app.post("/saveDocThumbnail", async (req, res) => {
-  const { docId, thumbnail } = req.body;
-
-  await Doc.findOneAndUpdate({ docId }, { thumbnail });
-});
+app.use("/api/doc", require("./routes/docRoutes"));
+app.use("/api/auth", require("./routes/authRoutes"));
 
 http.listen(PORT, () => {
   console.log(`Server listening on ${PORT}`);

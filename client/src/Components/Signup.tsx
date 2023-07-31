@@ -1,12 +1,15 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import axios from "axios";
 
 export default function Signup() {
+  const navigate = useNavigate();
   interface userState {
     email: string;
     password: string;
     confirm_password: string;
   }
+
   const [userState, setUserState] = useState<userState>({
     email: "",
     password: "",
@@ -14,12 +17,30 @@ export default function Signup() {
   });
 
   const handleOnChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setUserState({ ...userState, [e.target.name]: [e.target.value] });
+    setUserState({ ...userState, [e.target.name]: e.target.value });
   };
 
-  const handleOnSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleOnSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log(userState);
+
+    // Todo: password === confirm_password
+
+    const response = await axios.post(
+      "http://localhost:4000/api/auth/save-user-details",
+      {
+        email: userState.email,
+        password: userState.password,
+      }
+    );
+    const data = response.data;
+
+    if (!data.success) {
+      navigate("/");
+      return window.alert(data.error);
+    }
+
+    localStorage.setItem("auth-token", data.authToken);
+    navigate("/home");
   };
 
   return (

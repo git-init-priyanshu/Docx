@@ -29,7 +29,7 @@ export default function Home() {
 
   useEffect(() => {
     const getAllDocs = async () => {
-      const docs = await axios.get("http://localhost:4000/getAllDocs");
+      const docs = await axios.get("http://localhost:4000/api/doc/getAllDocs");
       console.log(docs.data.data);
       setDocs(docs.data.data);
     };

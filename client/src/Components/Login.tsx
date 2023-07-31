@@ -1,7 +1,9 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import axios from "axios";
 
 export default function Login() {
+  const navigate = useNavigate();
   interface userState {
     email: string;
     password: string;
@@ -12,12 +14,23 @@ export default function Login() {
   });
 
   const handleOnChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setUserState({ ...userState, [e.target.name]: [e.target.value] });
+    setUserState({ ...userState, [e.target.name]: e.target.value });
   };
 
-  const handleOnSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleOnSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     console.log(userState);
+
+    const response = await axios.post("http://localhost:4000/api/auth/login", {
+      email: userState.email,
+      password: userState.password,
+    });
+    const data = response.data;
+
+    if (!data.success) return window.alert(data.error);
+
+    localStorage.setItem("auth-token", data.authToken);
+    navigate("/home");
   };
 
   return (
