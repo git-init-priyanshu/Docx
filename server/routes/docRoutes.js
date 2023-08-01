@@ -39,6 +39,28 @@ router.post("/create-doc", async (req, res) => {
   }
 });
 
+// Add doc
+router.post("/add-doc", async (req, res) => {
+  const { docId, email } = req.body;
+  const doc = await Doc.findOne({ docId });
+
+  // Updating doc
+  try {
+    const emailArray = doc.email;
+    emailArray.push(email);
+
+    await Doc.findOneAndUpdate({ docId }, { email: emailArray });
+
+    res.json({ success: true });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({
+      success: false,
+      error: "Internal Server Error",
+    });
+  }
+});
+
 // Save doc thumbnail
 router.post("/saveDocThumbnail", async (req, res) => {
   try {

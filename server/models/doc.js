@@ -8,7 +8,7 @@ const Doc = new Schema({
     unique: true,
   },
   email: {
-    type: String,
+    type: [String],
     required: true,
   },
   data: {

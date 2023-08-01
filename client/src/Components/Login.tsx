@@ -19,7 +19,6 @@ export default function Login() {
 
   const handleOnSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log(userState);
 
     const response = await axios.post("http://localhost:4000/api/auth/login", {
       email: userState.email,
