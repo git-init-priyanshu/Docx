@@ -96,9 +96,14 @@ export default function Home() {
                 onChange={(e) => setInputValue(e.target.value)}
                 placeholder="Paste your Doc Id here"
               />
-              <button onClick={addDoc}>Submit</button>
-              <p>Or</p>
-              <button onClick={createNewDoc}>Create New Doc</button>
+              <div>
+                <button onClick={addDoc} className="submit">
+                  Submit
+                </button>
+                <button onClick={createNewDoc} className="create">
+                  Create New Doc
+                </button>
+              </div>
             </div>
           </div>
         </div>
