@@ -85,12 +85,12 @@ export default function Doc() {
         oldDelta: DeltaOperation,
         source: Sources
       ) {
-        if (source == "api") return;
+        if (source == "api") return console.log(delta,oldDelta);
         if (source == "user") {
           const content: DeltaOperation = quill.getContents();
 
           isConnected && socket.emit("text-change", content);
-          console.log("debounce");
+          
           debounce_saveDoc();
         }
       }

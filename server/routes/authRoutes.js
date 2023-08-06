@@ -10,7 +10,6 @@ const router = express.Router();
 // Signup
 router.post("/save-user-details", async (req, res) => {
   const { email, password } = req.body;
-
   try {
     const user = await User.findOne({ email });
 
@@ -42,6 +41,7 @@ router.post("/save-user-details", async (req, res) => {
 
     res.json({ success: true, authToken });
   } catch (error) {
+    console.log(error);
     return res.status(500).json({
       success: false,
       error: "Internal Server Error",

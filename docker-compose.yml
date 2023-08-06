@@ -1,0 +1,44 @@
+version: '3'
+services:
+  frontend:
+    build: 
+      context: "./client"
+      dockerfile: Dockerfile
+    ports:
+      - 5173:5173
+    container_name: client-container
+    networks:
+      - google-docs-network
+    volumes:
+      - ./client:/app
+    depends_on:
+      - backend
+  
+  backend:
+    build: 
+      context: "./server"
+      dockerfile: Dockerfile
+    ports:
+      - 4000:4000
+    container_name: server-container
+    networks:
+      - google-docs-network
+    volumes:
+      - ./server:/app
+    env_file:
+      - ./server/.env
+    # depends_on:
+      # - mongoDB
+
+  # mongoDB:
+  #   image: mongo
+  #   ports:
+  #     - 27017:27017
+  #   container_name: mongo-container
+  #   networks:
+  #     - mern-stack-network
+  #   volumes:
+  #     - mongoData:/
+
+networks:
+ google-docs-network:
