@@ -13,8 +13,8 @@ RUN yarn
 # Hack to fix bcrypt error
 RUN yarn remove bcrypt
 RUN yarn add bcrypt
-RUN yarn remove nodemon
-RUN yarn add nodemon
+# RUN yarn remove nodemon
+# RUN yarn add nodemon
 
 # Copy the rest of the application code to the container
 COPY . .

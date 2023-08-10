@@ -1,7 +1,7 @@
-version: '3'
+version: "3"
 services:
   frontend:
-    build: 
+    build:
       context: "./client"
       dockerfile: Dockerfile
     ports:
@@ -14,9 +14,9 @@ services:
       - ./client:/app
     depends_on:
       - backend
-  
+
   backend:
-    build: 
+    build:
       context: "./server"
       dockerfile: Dockerfile
     ports:
@@ -31,7 +31,7 @@ services:
     depends_on:
       - mongoDB
 
-  mongoDB: 
+  mongoDB:
     image: mongo
     ports:
       - 27017:27017
@@ -44,6 +44,6 @@ services:
       - ./.env
 
 networks:
- google-docs-network:
+  google-docs-network:
 volumes:
   mongoData:
