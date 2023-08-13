@@ -28,22 +28,20 @@ services:
       - ./server:/app
     env_file:
       - ./server/.env
-    depends_on:
-      - mongoDB
+    # depends_on:
+    #   - mongoDB
 
-  mongoDB:
-    image: mongo
-    ports:
-      - 27017:27017
-    container_name: mongo-container
-    networks:
-      - google-docs-network
-    volumes:
-      - mongoData:/data/db
-    env_file:
-      - ./.env
+  # mongoDB:
+  #   image: mongo
+  #   ports:
+  #     - 27017:27017
+  #   container_name: mongo-container
+  #   networks:
+  #     - google-docs-network
+  #   volumes:
+  #     - mongoData:/data/db
+  #   env_file:
+  #     - ./.env
 
 networks:
   google-docs-network:
-volumes:
-  mongoData:

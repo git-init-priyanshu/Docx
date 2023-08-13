@@ -13,8 +13,8 @@ COPY vite.config.ts ./
 
 # Install project dependencies
 RUN yarn
-RUN yarn remove esbuild
-RUN yarn add esbuild
+# RUN yarn remove esbuild
+# RUN yarn add esbuild
 
 # Copy the rest of the application code to the container
 COPY . .
