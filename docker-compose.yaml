@@ -4,6 +4,7 @@ services:
     build:
       context: "./client"
       dockerfile: Dockerfile
+    image: ${860675267363.dkr.ecr.us-east-1.amazonaws.com/googledocsrepository}/frontend:latest
     ports:
       - 5173:5173
     stdin_open: true
@@ -19,6 +20,7 @@ services:
     build:
       context: "./server"
       dockerfile: Dockerfile
+    image: ${860675267363.dkr.ecr.us-east-1.amazonaws.com/googledocsrepository}/backend:latest
     ports:
       - 4000:4000
     container_name: server-container
