@@ -20,7 +20,7 @@ RUN yarn
 COPY . .
 
 # Expose the port your application will run on
-EXPOSE 5173
+EXPOSE 4173
 
 # Command to run your application
-CMD ["yarn","run", "dev"]
+CMD ["yarn","run", "build"]
