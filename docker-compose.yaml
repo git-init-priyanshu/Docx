@@ -1,12 +1,19 @@
 version: "3"
 services:
+
+  nginx:
+    build:
+      context: "./nginx" 
+      dockerfile: Dockerfile
+    ports:
+      - 80:80
+
   frontend:
     build:
       context: "./client"
       dockerfile: Dockerfile
-    # image: ${860675267363.dkr.ecr.us-east-1.amazonaws.com/googledocsrepository}/frontend:latest
-    ports:
-      - 4173:4173
+    # ports:
+    #   - 4173:4173
     stdin_open: true
     container_name: client-container
     networks:
@@ -20,30 +27,15 @@ services:
     build:
       context: "./server"
       dockerfile: Dockerfile
-    # image: ${860675267363.dkr.ecr.us-east-1.amazonaws.com/googledocsrepository}/backend:latest
-    ports:
-      - 4000:4000
+    # ports:
+    #   - 4000:4000
     container_name: server-container
     networks:
       - google-docs-network
     volumes:
       - ./server:/app
-    env_file:
+    env_file: 
       - ./server/.env
-    # depends_on:
-    #   - mongoDB
-
-  # mongoDB:
-  #   image: mongo
-  #   ports:
-  #     - 27017:27017
-  #   container_name: mongo-container
-  #   networks:
-  #     - google-docs-network
-  #   volumes:
-  #     - mongoData:/data/db
-  #   env_file:
-  #     - ./.env
 
 networks:
   google-docs-network:

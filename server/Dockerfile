@@ -11,8 +11,8 @@ COPY yarn.lock ./
 # Install project dependencies
 RUN yarn
 # Hack to fix bcrypt error
-RUN yarn remove bcrypt
-RUN yarn add bcrypt
+# RUN yarn remove bcrypt
+# RUN yarn add bcrypt
 # RUN yarn remove nodemon
 # RUN yarn add nodemon
 
@@ -28,4 +28,4 @@ ENV JWT_SECRET=value
 EXPOSE 4000
 
 # Command to run your application
-CMD ["npm","run", "dev"]
+CMD ["npm","run", "start"]
