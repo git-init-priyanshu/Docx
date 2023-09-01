@@ -20,7 +20,7 @@ export default function Login() {
   const handleOnSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    const response = await axios.post("http://localhost:4000/api/auth/login", {
+    const response = await axios.post("http://localhost:80/api/auth/login", {
       email: userState.email,
       password: userState.password,
     });

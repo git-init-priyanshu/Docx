@@ -15,6 +15,7 @@ RUN yarn
 # Copy the rest of the application code to the container
 COPY . .
 
+# Building react container
 RUN npm run build
 
 # 2nd Part

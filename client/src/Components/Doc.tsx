@@ -26,7 +26,7 @@ export default function Doc() {
 
     const thumbnail = canvas.toDataURL(`${docId}thumbnail/png`);
 
-    await axios.post("http://localhost:4000/api/doc/saveDocThumbnail", {
+    await axios.post("http://localhost:80/api/doc/saveDocThumbnail", {
       docId,
       thumbnail,
     });

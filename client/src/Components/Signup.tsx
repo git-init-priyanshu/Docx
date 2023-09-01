@@ -26,7 +26,7 @@ export default function Signup() {
     // Todo: password === confirm_password
 
     const response = await axios.post(
-      "http://localhost:4000/api/auth/save-user-details",
+      "http://localhost:80/api/auth/save-user-details",
       {
         email: userState.email,
         password: userState.password,

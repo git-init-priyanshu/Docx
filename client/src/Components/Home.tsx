@@ -38,7 +38,7 @@ export default function Home() {
     const docId = inputValue;
     const email = localStorage.getItem("email");
 
-    const response = await axios.post("http://localhost:4000/api/doc/add-doc", {
+    const response = await axios.post("http://localhost:80/api/doc/add-doc", {
       docId,
       email,
     });
@@ -52,7 +52,7 @@ export default function Home() {
     const email = localStorage.getItem("email");
 
     const response = await axios.post(
-      "http://localhost:4000/api/doc/create-doc",
+      "http://localhost:80/api/doc/create-doc",
       { newDocId, email }
     );
 
@@ -66,7 +66,7 @@ export default function Home() {
       const authToken = localStorage.getItem("auth-token");
 
       const response = await axios.post(
-        "http://localhost:4000/api/doc/get-all-docs",
+        "http://localhost:80/api/doc/get-all-docs",
         { email, authToken }
       );
 
