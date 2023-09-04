@@ -7,6 +7,7 @@ services:
       dockerfile: Dockerfile
     ports:
       - 80:80
+    container_name: nginx-container
     depends_on:
       - client
       - api
@@ -42,6 +43,17 @@ services:
       - ./server:/app
     env_file: 
       - ./server/.env
-
+    depends_on:
+      - db
+  
+  db:
+    image: mongo
+    # ports:
+    #   - 27017:27017
+    container_name: mongodb-container
+    volumes:
+      - ./db/data:/data/db
+    env_file:
+      - ./db/.env
 # networks:
 #   google-docs-network:
