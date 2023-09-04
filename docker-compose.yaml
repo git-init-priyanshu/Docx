@@ -34,6 +34,7 @@ services:
     build:
       context: "./server"
       dockerfile: Dockerfile
+    restart: always
     # ports:
     #   - 4000:4000
     container_name: server-container
@@ -47,13 +48,15 @@ services:
       - db
   
   db:
-    image: mongo
+    image: mongo:latest
+    restart: always
     # ports:
     #   - 27017:27017
     container_name: mongodb-container
     volumes:
-      - ./db/data:/data/db
+      - dbData:/data/db
     env_file:
       - ./db/.env
-# networks:
-#   google-docs-network:
+      
+volumes:
+  dbData: {}

@@ -11,7 +11,7 @@ COPY package-lock.json ./
 # Hack to fix bcrypt error
 RUN npm i -g node-pre-gyp
 # Install project dependencies
-RUN npm i
+RUN npm ci
 
 # Copy the rest of the application code to the container
 COPY . .
