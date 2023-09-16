@@ -36,7 +36,7 @@ export default function Doc() {
     });
   };
 
-  // Load Doc
+  // // Load Doc
   useEffect(() => {
     if (socket == null || quill == null) return;
 
@@ -48,7 +48,7 @@ export default function Doc() {
     });
   }, [quill, docId]);
 
-  // Save Doc
+  // // Save Doc
   const saveDoc = () => {
     socket.emit("save-doc", quill.getContents());
     console.log("save");
@@ -56,7 +56,7 @@ export default function Doc() {
   };
   const debounce_saveDoc = _.debounce(saveDoc, 1000);
 
-  // Socket and Quill
+  // // Socket and Quill
   useEffect(() => {
     socket.connect();
     toggleConnected();
@@ -71,10 +71,16 @@ export default function Doc() {
     setQuill(quill);
 
     return () => {
+      // Need to remove the Toolbar while unmounting
+      
       const rootElement = document.getElementById("root");
-      if (rootElement) {
-        rootElement.innerHTML = "<div id='container'></div>";
-      }
+      /**
+       * Modified the code because it was causing some issues.
+       * The problem was that the previous code was altering the innerHTML of the root element.
+       * This was resulting in a blank page appearing when navigating back to the home page.
+       * The new solution now only removes the necessary element and does not completely change the entire root element.
+       */
+      rootElement?.children[0].children[0].remove();
 
       socket.disconnect();
       toggleConnected();
@@ -105,5 +111,5 @@ export default function Doc() {
     });
   }
 
-  return <div id="container"></div>;
+  return <div id="container">Hello</div>;
 }
