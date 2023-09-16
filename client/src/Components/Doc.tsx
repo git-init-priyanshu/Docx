@@ -11,6 +11,10 @@ import { socket } from "../socket";
 import { TOOLBAR_OPTIONS } from "./utils/ToolbarOptions";
 
 export default function Doc() {
+  const URL = import.meta.env.DEV
+    ? import.meta.env.VITE_DEV_URL
+    : import.meta.env.VITE_PROD_URL;
+
   const { id: docId } = useParams();
 
   const [isConnected, setIsConnected] = useState<boolean>(false);
@@ -26,7 +30,7 @@ export default function Doc() {
 
     const thumbnail = canvas.toDataURL(`${docId}thumbnail/png`);
 
-    await axios.post("http://localhost:80/api/doc/saveDocThumbnail", {
+    await axios.post(`http://${URL}/api/doc/saveDocThumbnail`, {
       docId,
       thumbnail,
     });
@@ -85,12 +89,12 @@ export default function Doc() {
         oldDelta: DeltaOperation,
         source: Sources
       ) {
-        if (source == "api") return console.log(delta,oldDelta);
+        if (source == "api") return console.log(delta, oldDelta);
         if (source == "user") {
           const content: DeltaOperation = quill.getContents();
 
           isConnected && socket.emit("text-change", content);
-          
+
           debounce_saveDoc();
         }
       }

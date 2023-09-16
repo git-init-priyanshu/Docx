@@ -4,6 +4,10 @@ import axios from "axios";
 
 export default function Signup() {
   const navigate = useNavigate();
+
+  const URL = import.meta.env.DEV
+    ? import.meta.env.VITE_DEV_URL
+    : import.meta.env.VITE_PROD_URL;
   interface userState {
     email: string;
     password: string;
@@ -26,7 +30,7 @@ export default function Signup() {
     // Todo: password === confirm_password
 
     const response = await axios.post(
-      "http://localhost:80/api/auth/save-user-details",
+      `http://${URL}/api/auth/save-user-details`,
       {
         email: userState.email,
         password: userState.password,
