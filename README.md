@@ -1,5 +1,3 @@
-Running on : http://54.90.4.134:4173/
-
 # Google-docs-clone
 A platform that replicates the collaborative and customizable features of Google Docs. Multiple users can work together in real time on documents. It offers font customization and color adjustments for a unique look. You can log in with your account, create docs, edit docs, and share the docs with different users for collaboration.
 
@@ -7,8 +5,11 @@ Tech Stack:
 * MERN stack
 * Socket.io
 * TypeScript
+* Docker
+* Nginx
 
 ## Website link
+Not deployed yet
 
 ## How it works:
 
@@ -32,3 +33,15 @@ Tech Stack:
 * Secure: Passwords are encrypted in the database.
 * Real-time Editing: Collaborate with others in real time on the same document.
 * Sharing: Share documents with others for seamless collaboration.
+
+## Installation:
+* You need to install Docker.
+* Fork this repo.
+* Open git bash and paste these commands:
+  * `Git clone https://github.com/<YourGithubProfileName>/Google-docs-clone.git`
+  * `cd Google-docs-clone`
+  * `code .`
+* Open integrated terminal window and paste this command:
+  * `docker compose up -d`
+* Wait for the docker containers to properly start.
+* Then go to `localhost:80` and start contributing.       
