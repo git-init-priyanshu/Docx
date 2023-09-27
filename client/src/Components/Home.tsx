@@ -9,6 +9,10 @@ export default function Home() {
   const navigate = useNavigate();
   const modalRef = useRef(null);
 
+  const URL = import.meta.env.DEV
+  ? import.meta.env.VITE_DEV_URL
+  : import.meta.env.VITE_PROD_URL;
+
   window.onclick = (event) => {
     const modal: any = modalRef.current;
     if (event.target == modal) {
@@ -38,7 +42,7 @@ export default function Home() {
     const docId = inputValue;
     const email = localStorage.getItem("email");
 
-    const response = await axios.post("http://localhost:4000/api/doc/add-doc", {
+    const response = await axios.post(`http://${URL}/api/doc/add-doc`, {
       docId,
       email,
     });
@@ -52,7 +56,7 @@ export default function Home() {
     const email = localStorage.getItem("email");
 
     const response = await axios.post(
-      "http://localhost:4000/api/doc/create-doc",
+      `http://${URL}/api/doc/create-doc`,
       { newDocId, email }
     );
 
@@ -66,7 +70,7 @@ export default function Home() {
       const authToken = localStorage.getItem("auth-token");
 
       const response = await axios.post(
-        "http://localhost:4000/api/doc/get-all-docs",
+        `http://${URL}/api/doc/get-all-docs`,
         { email, authToken }
       );
 

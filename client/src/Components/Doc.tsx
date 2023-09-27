@@ -11,6 +11,10 @@ import { socket } from "../socket";
 import { TOOLBAR_OPTIONS } from "./utils/ToolbarOptions";
 
 export default function Doc() {
+  const URL = import.meta.env.DEV
+    ? import.meta.env.VITE_DEV_URL
+    : import.meta.env.VITE_PROD_URL;
+
   const { id: docId } = useParams();
 
   const [isConnected, setIsConnected] = useState<boolean>(false);
@@ -26,13 +30,13 @@ export default function Doc() {
 
     const thumbnail = canvas.toDataURL(`${docId}thumbnail/png`);
 
-    await axios.post("http://localhost:4000/api/doc/saveDocThumbnail", {
+    await axios.post(`http://${URL}/api/doc/saveDocThumbnail`, {
       docId,
       thumbnail,
     });
   };
 
-  // Load Doc
+  // // Load Doc
   useEffect(() => {
     if (socket == null || quill == null) return;
 
@@ -44,7 +48,7 @@ export default function Doc() {
     });
   }, [quill, docId]);
 
-  // Save Doc
+  // // Save Doc
   const saveDoc = () => {
     socket.emit("save-doc", quill.getContents());
     console.log("save");
@@ -52,7 +56,7 @@ export default function Doc() {
   };
   const debounce_saveDoc = _.debounce(saveDoc, 1000);
 
-  // Socket and Quill
+  // // Socket and Quill
   useEffect(() => {
     socket.connect();
     toggleConnected();
@@ -67,10 +71,16 @@ export default function Doc() {
     setQuill(quill);
 
     return () => {
+      // Need to remove the Toolbar while unmounting
+      
       const rootElement = document.getElementById("root");
-      if (rootElement) {
-        rootElement.innerHTML = "<div id='container'></div>";
-      }
+      /**
+       * Modified the code because it was causing some issues.
+       * The problem was that the previous code was altering the innerHTML of the root element.
+       * This was resulting in a blank page appearing when navigating back to the home page.
+       * The new solution now only removes the necessary element and does not completely change the entire root element.
+       */
+      rootElement?.children[0].children[0].remove();
 
       socket.disconnect();
       toggleConnected();
@@ -85,12 +95,12 @@ export default function Doc() {
         oldDelta: DeltaOperation,
         source: Sources
       ) {
-        if (source == "api") return console.log(delta,oldDelta);
+        if (source == "api") return console.log(delta, oldDelta);
         if (source == "user") {
           const content: DeltaOperation = quill.getContents();
 
           isConnected && socket.emit("text-change", content);
-          
+
           debounce_saveDoc();
         }
       }
@@ -101,5 +111,5 @@ export default function Doc() {
     });
   }
 
-  return <div id="container"></div>;
+  return <div id="container">Hello</div>;
 }

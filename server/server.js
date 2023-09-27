@@ -14,7 +14,11 @@ app.use(express.json());
 
 const socketIO = require("socket.io")(http, {
   cors: {
-    origin: "http://localhost:5173",
+    origin: [
+      "http://localhost:80",
+      "http://localhost:4173",
+      "http://localhost:5173",
+    ],
   },
 });
 

@@ -4,6 +4,11 @@ import axios from "axios";
 
 export default function Login() {
   const navigate = useNavigate();
+
+  const URL = import.meta.env.DEV
+    ? import.meta.env.VITE_DEV_URL
+    : import.meta.env.VITE_PROD_URL;
+    
   interface userState {
     email: string;
     password: string;
@@ -20,7 +25,7 @@ export default function Login() {
   const handleOnSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    const response = await axios.post("http://localhost:4000/api/auth/login", {
+    const response = await axios.post(`http://${URL}/api/auth/login`, {
       email: userState.email,
       password: userState.password,
     });
