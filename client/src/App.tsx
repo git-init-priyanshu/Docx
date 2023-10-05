@@ -4,8 +4,10 @@ import {
   createRoutesFromElements,
   Route,
   Outlet,
+  Navigate,
 } from "react-router-dom";
 
+import PrivateRoute from "./Components/PrivateRoute";
 import Login from "./Components/Login";
 import Signup from "./Components/Signup";
 import Home from "./Components/Home";
@@ -17,8 +19,22 @@ const router = createBrowserRouter(
     <Route path="/" element={<Root />}>
       <Route index element={<Login />} />
       <Route path="/signup" element={<Signup />} />
-      <Route path="/home" element={<Home />} />
-      <Route path="/documents/:id" element={<Doc />} />
+      <Route
+        path="/home"
+        element={
+          <PrivateRoute>
+            <Home />
+          </PrivateRoute>
+        }
+      />
+      <Route
+        path="/documents/:id"
+        element={
+          <PrivateRoute>
+            <Doc />
+          </PrivateRoute>
+        }
+      />
     </Route>
   )
 );
@@ -32,11 +48,7 @@ function App() {
 }
 
 function Root() {
-  return (
-    <div>
-      <Outlet />
-    </div>
-  );
+  return <Outlet />;
 }
 
 export default App;

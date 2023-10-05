@@ -34,7 +34,7 @@ export default function Login() {
     if (!data.success) return window.alert(data.error);
 
     localStorage.setItem("email", userState.email);
-    localStorage.setItem("auth-token", data.authToken);
+    localStorage.setItem("token", data.authToken);
 
     navigate("/home");
   };

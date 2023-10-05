@@ -10,8 +10,8 @@ export default function Home() {
   const modalRef = useRef(null);
 
   const URL = import.meta.env.DEV
-  ? import.meta.env.VITE_DEV_URL
-  : import.meta.env.VITE_PROD_URL;
+    ? import.meta.env.VITE_DEV_URL
+    : import.meta.env.VITE_PROD_URL;
 
   window.onclick = (event) => {
     const modal: any = modalRef.current;
@@ -30,10 +30,17 @@ export default function Home() {
   const [docs, setDocs] = useState<[docType] | null>(null);
   const [inputValue, setInputValue] = useState<string>("");
 
+  const handleLogout = () => {
+    localStorage.removeItem("email");
+    localStorage.removeItem("token");
+
+    navigate("/");
+  };
+
   const toggleModal = () => {
     const modal: any = modalRef.current;
 
-    let displayProperty = modal.style.display;
+    const displayProperty = modal.style.display;
     if (displayProperty === "block") return (modal.style.display = "none");
     modal.style.display = "block";
   };
@@ -55,10 +62,10 @@ export default function Home() {
     const newDocId = uuidv4();
     const email = localStorage.getItem("email");
 
-    const response = await axios.post(
-      `http://${URL}/api/doc/create-doc`,
-      { newDocId, email }
-    );
+    const response = await axios.post(`http://${URL}/api/doc/create-doc`, {
+      newDocId,
+      email,
+    });
 
     if (!response.data.success) return console.log("Internal Server Error");
     navigate(`/documents/${newDocId}`);
@@ -69,10 +76,10 @@ export default function Home() {
       const email = localStorage.getItem("email");
       const authToken = localStorage.getItem("auth-token");
 
-      const response = await axios.post(
-        `http://${URL}/api/doc/get-all-docs`,
-        { email, authToken }
-      );
+      const response = await axios.post(`http://${URL}/api/doc/get-all-docs`, {
+        email,
+        authToken,
+      });
 
       const docs = response.data.docs;
       if (!docs) return;
@@ -137,6 +144,9 @@ export default function Home() {
         </div>
 
         <div className="nav-links">
+          {/* Logout */}
+          <button onClick={handleLogout}>Logout</button>
+          {/* Create Doc */}
           <button onClick={toggleModal}>
             <span className="material-symbols-outlined">note_add</span>
           </button>
