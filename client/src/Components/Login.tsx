@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 
@@ -8,7 +8,7 @@ export default function Login() {
   const URL = import.meta.env.DEV
     ? import.meta.env.VITE_DEV_URL
     : import.meta.env.VITE_PROD_URL;
-    
+
   interface userState {
     email: string;
     password: string;
@@ -16,6 +16,25 @@ export default function Login() {
   const [userState, setUserState] = useState<userState>({
     email: "",
     password: "",
+  });
+
+  // If user already has token, redirect to "/home"
+  useEffect(() => {
+    const isUserAuthenticated = async () => {
+      const token = localStorage.getItem("token");
+
+      // Check if token is valid or not
+      if (!token) return;
+      const response = await axios.post(
+        "http://localhost:4000/api/auth/find-user",
+        { token }
+      );
+      const isValidToken = response.data.success;
+
+      if (isValidToken) return navigate("/home");
+      return;
+    };
+    isUserAuthenticated();
   });
 
   const handleOnChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -36,7 +55,10 @@ export default function Login() {
     localStorage.setItem("email", userState.email);
     localStorage.setItem("token", data.authToken);
 
-    navigate("/home");
+    // To avoid bugs
+    setTimeout(() => {
+      navigate("/home");
+    }, 100);
   };
 
   return (

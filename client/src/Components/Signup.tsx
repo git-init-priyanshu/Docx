@@ -44,8 +44,12 @@ export default function Signup() {
     }
 
     localStorage.setItem("email", userState.email);
-    localStorage.setItem("auth-token", data.authToken);
-    navigate("/home");
+    localStorage.setItem("token", data.authToken);
+
+    // To avoid bugs
+    setTimeout(() => {
+      navigate("/home");
+    }, 100);
   };
 
   return (
