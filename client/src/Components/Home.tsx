@@ -4,16 +4,14 @@ import { v4 as uuidv4 } from "uuid";
 import axios from "axios";
 
 import Logo from "../assets/Google_Docs.max-2800x2800-1 (1).svg";
+import { URL } from "../App";
 
 export default function Home() {
   const navigate = useNavigate();
   const modalRef = useRef(null);
 
-  const URL = import.meta.env.DEV
-    ? import.meta.env.VITE_DEV_URL
-    : import.meta.env.VITE_PROD_URL;
-
   window.onclick = (event) => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const modal: any = modalRef.current;
     if (event.target == modal) {
       modal.style.display = "none";
@@ -49,7 +47,7 @@ export default function Home() {
     const docId = inputValue;
     const email = localStorage.getItem("email");
 
-    const response = await axios.post(`http://${URL}/api/doc/add-doc`, {
+    const response = await axios.post(`${URL}/api/doc/add-doc`, {
       docId,
       email,
     });
@@ -62,7 +60,7 @@ export default function Home() {
     const newDocId = uuidv4();
     const email = localStorage.getItem("email");
 
-    const response = await axios.post(`http://${URL}/api/doc/create-doc`, {
+    const response = await axios.post(`${URL}/api/doc/create-doc`, {
       newDocId,
       email,
     });
@@ -76,7 +74,7 @@ export default function Home() {
       const email = localStorage.getItem("email");
       const authToken = localStorage.getItem("auth-token");
 
-      const response = await axios.post(`http://${URL}/api/doc/get-all-docs`, {
+      const response = await axios.post(`${URL}/api/doc/get-all-docs`, {
         email,
         authToken,
       });

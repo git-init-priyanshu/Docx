@@ -9,12 +9,9 @@ import _ from "lodash";
 import "quill/dist/quill.snow.css";
 import { socket } from "../socket";
 import { TOOLBAR_OPTIONS } from "./utils/ToolbarOptions";
+import { URL } from "../App";
 
 export default function Doc() {
-  const URL = import.meta.env.DEV
-    ? import.meta.env.VITE_DEV_URL
-    : import.meta.env.VITE_PROD_URL;
-
   const { id: docId } = useParams();
 
   const [isConnected, setIsConnected] = useState<boolean>(false);
@@ -30,7 +27,7 @@ export default function Doc() {
 
     const thumbnail = canvas.toDataURL(`${docId}thumbnail/png`);
 
-    await axios.post(`http://${URL}/api/doc/saveDocThumbnail`, {
+    await axios.post(`${URL}/api/doc/saveDocThumbnail`, {
       docId,
       thumbnail,
     });

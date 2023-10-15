@@ -2,12 +2,10 @@ import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 
+import { URL } from "../App";
+
 export default function Login() {
   const navigate = useNavigate();
-
-  const URL = import.meta.env.DEV
-    ? import.meta.env.VITE_DEV_URL
-    : import.meta.env.VITE_PROD_URL;
 
   interface userState {
     email: string;
@@ -26,7 +24,7 @@ export default function Login() {
       // Check if token is valid or not
       if (!token) return;
       const response = await axios.post(
-        "http://localhost:4000/api/auth/find-user",
+        `${URL}api/auth/find-user`,
         { token }
       );
       const isValidToken = response.data.success;
@@ -44,7 +42,7 @@ export default function Login() {
   const handleOnSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    const response = await axios.post(`http://${URL}/api/auth/login`, {
+    const response = await axios.post(`${URL}/api/auth/login`, {
       email: userState.email,
       password: userState.password,
     });

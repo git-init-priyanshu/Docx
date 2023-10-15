@@ -2,12 +2,11 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 
+import { URL } from "../App";
+
 export default function Signup() {
   const navigate = useNavigate();
 
-  const URL = import.meta.env.DEV
-    ? import.meta.env.VITE_DEV_URL
-    : import.meta.env.VITE_PROD_URL;
   interface userState {
     email: string;
     password: string;
@@ -29,13 +28,10 @@ export default function Signup() {
 
     // Todo: password === confirm_password
 
-    const response = await axios.post(
-      `http://${URL}/api/auth/save-user-details`,
-      {
-        email: userState.email,
-        password: userState.password,
-      }
-    );
+    const response = await axios.post(`${URL}/api/auth/save-user-details`, {
+      email: userState.email,
+      password: userState.password,
+    });
     const data = response.data;
 
     if (!data.success) {

@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import { Navigate } from "react-router-dom";
 import axios from "axios";
 
+import { URL } from "../App";
+
 export default function PrivateRoute({
   children,
 }: {
@@ -20,10 +22,7 @@ export default function PrivateRoute({
 
       // Check if token is valid or not
       if (!token) return setToken(null);
-      const response = await axios.post(
-        "http://localhost:4000/api/auth/find-user",
-        { token }
-      );
+      const response = await axios.post(`${URL}/api/auth/find-user`, { token });
       const isValidToken = response.data.success;
 
       if (isValidToken) return setToken(token);
