@@ -24,7 +24,7 @@ export default function Login() {
       // Check if token is valid or not
       if (!token) return;
       const response = await axios.post(
-        `${URL}api/auth/find-user`,
+        `${URL}/api/auth/find-user`,
         { token }
       );
       const isValidToken = response.data.success;
