@@ -8,7 +8,7 @@ export default function PrivateRoute({
   children: React.JSX.Element;
 }) {
   const [token, setToken] = useState<string | null>(null);
-  const [previousPath, setPreviousePath] = useState<string | null>(null);
+  // const [previousPath, setPreviousePath] = useState<string | null>(null);
 
   useEffect(() => {
     // Need some logic to get previous path
@@ -32,7 +32,8 @@ export default function PrivateRoute({
     getToken();
   }, []);
 
-  const currentPath = previousPath ? previousPath : "/";
+  // const currentPath = previousPath ? previousPath : "/";
+  const currentPath = "/";
 
   const visitingPath = window.location.pathname;
 
