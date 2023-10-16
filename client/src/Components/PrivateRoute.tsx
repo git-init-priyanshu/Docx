@@ -10,12 +10,13 @@ export default function PrivateRoute({
   children: React.JSX.Element;
 }) {
   const [token, setToken] = useState<string | null>(null);
-  // const [previousPath, setPreviousePath] = useState<string | null>(null);
+  const [previousPath, setPreviousePath] = useState<string | null>(null);
 
   useEffect(() => {
     // Need some logic to get previous path
     // const previousPath:any = navigate(-1);
     // setPreviousePath(previousPath);
+    setPreviousePath(null);
 
     const getToken = async () => {
       const token = localStorage.getItem("token");
@@ -31,8 +32,7 @@ export default function PrivateRoute({
     getToken();
   }, []);
 
-  // const currentPath = previousPath ? previousPath : "/";
-  const currentPath = "/";
+  const currentPath = previousPath ? previousPath : "/";
 
   const visitingPath = window.location.pathname;
 
@@ -42,6 +42,5 @@ export default function PrivateRoute({
   if (visitingPath === "/" || visitingPath === "/signup") {
     return children;
   }
-  console.log(token);
   return token ? children : <Navigate to="/" />;
 }
