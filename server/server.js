@@ -12,11 +12,12 @@ const cors = require("cors");
 app.use(cors());
 app.use(express.json());
 
-const prodURL = process.env.VERCLE_URL;
+require("dotenv").config();
+
 const socketIO = require("socket.io")(http, {
   cors: {
     origin: [
-      prodURL,
+      process.env.VERCEL_URL,
       "http://localhost:80",
       "http://localhost:4173",
       "http://localhost:5173",
