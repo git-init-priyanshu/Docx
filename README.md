@@ -27,6 +27,16 @@ Tech Stack:
 
 ## Screenshots
 
+  <div style="display: flex;">
+    <img alt="image" width="480" src="https://github.com/git-init-priyanshu/Google-docs-clone/assets/110045644/1040623e-cf15-4b02-a607-26986e77eb2c">
+    <img alt="image" width="480" src="https://github.com/git-init-priyanshu/Google-docs-clone/assets/110045644/77f38f4a-ab5c-4965-bc9e-2c3f0b30d1a9">
+  </div>
+  <img width="960" alt="image" src="https://github.com/git-init-priyanshu/Google-docs-clone/assets/110045644/96261936-e4c4-4a52-9865-1716aa877084">
+<img width="960" alt="Screenshot 2023-10-16 160720" src="https://github.com/git-init-priyanshu/Google-docs-clone/assets/110045644/67b7a8c0-5cda-4892-b0fc-af0dfab35e2a">
+<img width="960" alt="Screenshot 2023-10-16 160833" src="https://github.com/git-init-priyanshu/Google-docs-clone/assets/110045644/79eca15f-cac8-476b-9051-7a4c140ade7c">
+<img width="960" alt="Screenshot 2023-10-16 160847" src="https://github.com/git-init-priyanshu/Google-docs-clone/assets/110045644/3931951b-1117-478b-b16e-599f11161c6a">
+
+
 
 ## Features:
 * User Registration: User can Sign up using their email and password for secure access.
