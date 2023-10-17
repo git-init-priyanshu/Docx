@@ -78,7 +78,7 @@ export default function Home() {
         email,
         authToken,
       });
-
+      console.log(response);
       const docs = response.data.docs;
       if (!docs) return;
 
@@ -167,6 +167,7 @@ export default function Home() {
                       backgroundSize: "cover",
                       backgroundPosition: "center",
                       cursor: "pointer",
+                      backgroundPositionY: "0"
                     }}
                     onClick={() => {
                       navigate(`/documents/${doc.docId}`);

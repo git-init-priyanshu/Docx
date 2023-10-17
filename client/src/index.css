@@ -241,6 +241,46 @@ input:focus ~ .highlight {
   box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
   background-color: white;
 }
+@media (max-width: 750px) {
+  #container .ql-editor {
+    padding: 5.5rem;
+  }
+}
+@media (max-width: 700px) {
+  #container .ql-editor {
+    padding: 5rem;
+  }
+}
+@media (max-width: 650px) {
+  #container .ql-editor {
+    padding: 4.5rem;
+  }
+}
+@media (max-width: 600px) {
+  #container .ql-editor {
+    padding: 4rem;
+  }
+}
+@media (max-width: 550px) {
+  #container .ql-editor {
+    padding: 3.5rem;
+  }
+}
+@media (max-width: 500px) {
+  #container .ql-editor {
+    padding: 3rem;
+  }
+}
+@media (max-width: 450px) {
+  #container .ql-editor {
+    padding: 2.5rem;
+  }
+}
+@media (max-width: 400px) {
+  #container .ql-editor {
+    padding: 2rem;
+  }
+}
 
 .ql-container.ql-snow {
   border: none;
@@ -488,15 +528,17 @@ input:focus ~ .highlight {
 
 .body {
   display: grid;
-  grid-template-columns: auto auto auto auto auto;
+  grid-template-columns: auto auto auto auto;
+  place-items: center;
   margin-inline: 12rem;
   margin-top: 3rem;
   gap: 1rem;
+  row-gap: 3rem;
 }
 
 .card {
   position: relative;
-  width: 100%;
+  width: 180px;
   height: 200px;
   border: 1px solid rgba(165, 165, 165, 0.735);
   border-bottom: 0px;
@@ -506,6 +548,10 @@ input:focus ~ .highlight {
   & > .card-body {
     width: 100%;
     height: 100%;
+    /* padding-top: 58.33%; */
+    position: relative;
+    /* aspect-ratio: 7/12; */
+    background-position-y: 0px;
   }
   & > .card-metadata {
     position: absolute;
@@ -527,28 +573,30 @@ input:focus ~ .highlight {
   }
 }
 
-@media (max-width: 990px) {
+@media (max-width: 1150px) {
   .body {
     margin-inline: 4rem;
   }
 }
 
-@media (max-width: 770px) {
+@media (max-width: 870px) {
   .nav > .search-bar {
     display: none;
   }
   .body {
-    grid-template-columns: auto auto auto auto;
-  }
-}
-@media (max-width: 600px) {
-  .body {
-    margin-inline: 1rem;
     grid-template-columns: auto auto auto;
   }
 }
-@media (max-width: 450px) {
+@media (max-width: 700px) {
+  .body {
+    margin-inline: 1rem;
+  }
+}
+@media (max-width: 615px) {
   .body {
     grid-template-columns: auto auto;
   }
+}
+/* Responsiveness for grid template */
+@media (max-width: 890px) {
 }

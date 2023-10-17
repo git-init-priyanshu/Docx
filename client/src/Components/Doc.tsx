@@ -91,7 +91,7 @@ export default function Doc() {
         oldDelta: DeltaOperation,
         source: Sources
       ) {
-        if (source == "api") return console.log(delta, oldDelta);
+        if (source == "api") return;
         if (source == "user") {
           const content: DeltaOperation = quill.getContents();
 
