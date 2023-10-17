@@ -232,9 +232,11 @@ input:focus ~ .highlight {
 
 /* Doc */
 #container .ql-editor {
-  width: 8.5in;
-  min-height: 11in;
-  padding: 1in;
+  /* max-width: 8.5in; */
+  width: 51rem;
+  min-height: 66rem;
+  /* aspect-ratio: 7/12; */
+  padding: 6rem;
   margin: 1rem;
   box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
   background-color: white;
@@ -248,6 +250,7 @@ input:focus ~ .highlight {
 
 .ql-toolbar.ql-snow {
   display: flex;
+  flex-wrap: wrap;
   justify-content: center;
   position: sticky;
   top: 0;
