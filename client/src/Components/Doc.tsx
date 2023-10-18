@@ -87,8 +87,8 @@ export default function Doc() {
     quill.on(
       "text-change",
       function (
-        delta: DeltaOperation,
-        oldDelta: DeltaOperation,
+        _delta: DeltaOperation,
+        _oldDelta: DeltaOperation,
         source: Sources
       ) {
         if (source == "api") return;

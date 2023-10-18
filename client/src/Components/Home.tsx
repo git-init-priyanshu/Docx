@@ -125,7 +125,7 @@ export default function Home() {
           <div>
             <img src={Logo} alt="" />
           </div>
-          <div className="nav-title">Docs</div>
+          <div className="nav-title">Docx</div>
         </div>
         {/* Search*/}
         <div className="search-bar">
