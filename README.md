@@ -48,7 +48,7 @@ Tech Stack:
 * You need to install Docker.
 * Fork this repo.
 * Open git bash and paste these commands:
-  * `Git clone https://github.com/<YourGithubProfileName>/Google-docs-clone.git`
+  * `Git clone https://github.com/<YourGithubProfileName>/Dox.git`
   * `cd Google-docs-clone`
   * `code .`
 * Open integrated terminal window and paste this command:
