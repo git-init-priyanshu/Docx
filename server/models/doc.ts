@@ -1,7 +1,7 @@
-const mongoose = require("mongoose");
+import mongoose from "mongoose";
 const { Schema, model } = mongoose;
 
-const Doc = new Schema({
+const DocSchema = new Schema({
   docId: {
     type: String,
     required: true,
@@ -19,4 +19,4 @@ const Doc = new Schema({
   },
 });
 
-module.exports = model("Doc", Doc);
+export const Doc = model("Doc", DocSchema);

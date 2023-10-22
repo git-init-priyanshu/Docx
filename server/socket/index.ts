@@ -1,6 +1,6 @@
-const socket = require("./socket");
+import { socket } from "./socket";
 
-module.exports = (io, app) => {
+export const socketIO = (io, app) => {
   app.use((req, res, next) => {
     req.socket.io = socket(io);
     next();
