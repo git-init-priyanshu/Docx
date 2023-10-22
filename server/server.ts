@@ -4,8 +4,12 @@ import { createServer } from "http";
 import { Server } from "socket.io";
 import cors from "cors";
 import dotenv from "dotenv";
+import { ApolloServer } from "@apollo/server";
+import { startStandaloneServer } from "@apollo/server/standalone";
 
 import { socketIO } from "./socket/index";
+import { typeDefs } from "./typeDefs";
+import { resolvers } from "./resolvers";
 
 connectToMongoDB();
 dotenv.config();
@@ -29,12 +33,21 @@ const io = new Server(httpServer, {
 });
 socketIO(io, app);
 
-// Available Routes
-// app.use("/api/doc", require("./routes/docRoutes"));
-// app.use("/api/auth", require("./routes/authRoutes"));
-
-const PORT = 4000;
-httpServer.listen(PORT, () => {
-  console.log(process.env.VERCEL_URL);
-  console.log(`Server listening on ${PORT}`);
+const server = new ApolloServer({
+  typeDefs,
+  resolvers,
 });
+
+const startServer = async () => {
+  const { url } = await startStandaloneServer(server, {
+    listen: { port: 4000 },
+  });
+
+  console.log(`🚀  Server ready at: ${url}`);
+};
+startServer();
+// const PORT = 4000;
+// httpServer.listen(PORT, () => {
+//   console.log(process.env.VERCEL_URL);
+//   console.log(`Server listening on ${PORT}`);
+// });
