@@ -9,7 +9,7 @@ Tech Stack:
 * Nginx
 
 ## Website link
-[Visit Website](https://google-docs-clone-mocha.vercel.app/)
+[Visit Website](https://docx-git-init-priyanshu.vercel.app/)
 
 ## How it works:
 
@@ -48,7 +48,7 @@ Tech Stack:
 * You need to install Docker.
 * Fork this repo.
 * Open git bash and paste these commands:
-  * `Git clone https://github.com/<YourGithubProfileName>/Dox.git`
+  * `Git clone https://github.com/<YourGithubProfileName>/Docx.git`
   * `cd Google-docs-clone`
   * `code .`
 * Open integrated terminal window and paste this command:
