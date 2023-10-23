@@ -4,7 +4,7 @@ import { createServer } from "http";
 import { Server } from "socket.io";
 import cors from "cors";
 import dotenv from "dotenv";
-import { ApolloServer } from "@apollo/server";
+import { ApolloServer } from "apollo-server-express";
 import { startStandaloneServer } from "@apollo/server/standalone";
 
 import { socketIO } from "./socket/index";
@@ -39,15 +39,14 @@ const server = new ApolloServer({
 });
 
 const startServer = async () => {
-  const { url } = await startStandaloneServer(server, {
-    listen: { port: 4000 },
+  await server.start();
+  server.applyMiddleware({ app });
+  
+  const PORT = 4000;
+  httpServer.listen(PORT, () => {
+    console.log(`🚀 Server listening on: http://localhost:${PORT}/graphql`);
   });
-
-  console.log(`🚀  Server ready at: ${url}`);
 };
 startServer();
-// const PORT = 4000;
-// httpServer.listen(PORT, () => {
-//   console.log(process.env.VERCEL_URL);
-//   console.log(`Server listening on ${PORT}`);
-// });
+
+process.on('warning', e => console.warn(e.stack));
