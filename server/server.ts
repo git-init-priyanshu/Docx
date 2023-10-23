@@ -5,7 +5,6 @@ import { Server } from "socket.io";
 import cors from "cors";
 import dotenv from "dotenv";
 import { ApolloServer } from "apollo-server-express";
-import { startStandaloneServer } from "@apollo/server/standalone";
 
 import { socketIO } from "./socket/index";
 import { typeDefs } from "./typeDefs";

@@ -1,0 +1,51 @@
+scalar Email
+
+scalar Date
+
+scalar Url
+
+type User {
+  _id: ID!
+  email: Email!
+  isVerified: Boolean!
+  isAdmin: Boolean!
+  verifyToken: String!
+  verifyTokenExpiry: Date!
+  forgotPasswordToken: String!
+  forgotPasswordTokenExpiry: Date!
+}
+
+type Data{
+}
+
+type Doc {
+  _id: ID!
+  docID: String!
+  email: [User]
+  data: Data!
+  thumbnail: Url!
+}
+
+type Query{
+    getAllDocs(emailId: Email!, token: String): [Doc!]
+    findUser(token: String): Boolean!
+}
+
+input docInput{
+    docID: String!
+    emailId: Email!
+}
+
+input userInput{
+    emailId: Email!
+    password: String!
+}
+
+type Mutation{
+    createDoc(data: docInput): Boolean!
+    addDoc(data: docInput): Boolean!
+    saveThumbnail(docID: String!, thumbnail: String!): Boolean!
+
+    login(data: userInput!): Boolean!
+    signup(data: userInput!): Boolean!
+}
