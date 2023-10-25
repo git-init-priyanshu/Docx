@@ -2,24 +2,25 @@ import { gql } from "apollo-server-express";
 
 export const types = gql`
   type User {
-    _id: ID!
-    email: Email!
+    _id: ObjectId!
+    email: String!
     isVerified: Boolean!
     isAdmin: Boolean!
-    verifyToken: String!
-    verifyTokenExpiry: Date!
-    forgotPasswordToken: String!
-    forgotPasswordTokenExpiry: Date!
+    verifyToken: String
+    verifyTokenExpiry: Date
+    forgotPasswordToken: String
+    forgotPasswordTokenExpiry: Date
   }
 
   type Data{
+    data: String
   }
 
   type Doc {
     _id: ID!
-    docID: String!
-    email: [User]
-    data: Data!
-    thumbnail: Url!
+    docId: String!
+    email: [String!]
+    data: JSON
+    thumbnail: String!
   }
 `;

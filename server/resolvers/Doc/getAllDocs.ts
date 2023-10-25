@@ -1,13 +1,26 @@
-export const getAllDocs = async()=>{
-      const { email, authToken } = req.body;
+import jwt from "jsonwebtoken";
+
+import { QueryResolvers } from "../../generatedGraphqlTypes/resolvers-types";
+import { Doc } from "../../models/doc";
+import { JwtPayload } from "../index";
+
+export const getAllDocs: QueryResolvers["getAllDocs"] = async (
+  _parent,
+  args,
+  _contextValue,
+  _info
+) => {
+  const { token } = args;
 
   try {
-    const docs = await Doc.find({ email });
-    res.json({ docs });
+    // Getting userEmail of user from token
+    const decoded = jwt.verify(token, process.env.JWT_SECRET) as JwtPayload;
+    const userEmail = decoded.user.emailId;
+
+    const docs = await Doc.find({ email: userEmail }).select("-__v");
+
+    return docs;
   } catch (error) {
-    return res.status(500).json({
-      success: false,
-      error: "Internal Server Error",
-    });
+    throw new Error("Internal server error");
   }
-}
+};

@@ -1,7 +1,15 @@
-import mongoose from "mongoose";
+import mongoose, { Types } from "mongoose";
+
 const { Schema, model } = mongoose;
 
-const DocSchema = new Schema({
+export interface InterfaceDoc {
+  docId: string;
+  email: [string];
+  data: object;
+  thumbnail: string;
+}
+
+const DocSchema = new Schema<InterfaceDoc>({
   docId: {
     type: String,
     required: true,
@@ -19,4 +27,4 @@ const DocSchema = new Schema({
   },
 });
 
-export const Doc = model("Doc", DocSchema);
+export const Doc = model<InterfaceDoc>("Doc", DocSchema);

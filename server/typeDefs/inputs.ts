@@ -2,12 +2,12 @@ import { gql } from "apollo-server-express";
 
 export const inputs = gql`
   input docInput {
-    docID: String!
-    emailId: Email!
+    docId: String!
+    emailId: String!
   }
 
   input userInput {
-    emailId: Email!
+    emailId: String!
     password: String!
   }
 `;

@@ -5,8 +5,10 @@
   "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "tsc && node ./dist/server.js",
-    "dev": "tsc && node ./dist/server.js"
+    "generate": "graphql-codegen --config codegen.yml",
+    "compile": "npm run generate && tsc",
+    "build": "npm run compile && node ./dist/server.js",
+    "dev": "tsx watch ./server.ts && graphql-codegen --watch"
   },
   "keywords": [],
   "author": "",
@@ -25,8 +27,13 @@
     "socket.io": "^4.7.1"
   },
   "devDependencies": {
+    "@graphql-codegen/cli": "^5.0.0",
+    "@graphql-codegen/typescript": "^4.0.1",
+    "@graphql-codegen/typescript-resolvers": "^4.0.1",
+    "@types/jsonwebtoken": "^9.0.4",
     "@types/node": "^20.8.7",
     "nodemon": "^3.0.1",
+    "tsx": "^3.14.0",
     "typescript": "^5.2.2"
   }
 }

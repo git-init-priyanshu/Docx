@@ -1,12 +1,12 @@
-scalar Email
+scalar ObjectId
 
 scalar Date
 
-scalar Url
+scalar JSON
 
 type User {
-  _id: ID!
-  email: Email!
+  _id: ObjectId!
+  email: String!
   isVerified: Boolean!
   isAdmin: Boolean!
   verifyToken: String!
@@ -16,35 +16,36 @@ type User {
 }
 
 type Data{
+  data: String
 }
 
 type Doc {
-  _id: ID!
-  docID: String!
-  email: [User]
-  data: Data!
-  thumbnail: Url!
+  _id: ObjectId!
+  docId: String!
+  email: [String!]
+  data: JSON
+  thumbnail: String!
 }
 
 type Query{
-    getAllDocs(emailId: Email!, token: String): [Doc!]
+    getAllDocs(token: String): [Doc!]
     findUser(token: String): Boolean!
 }
 
 input docInput{
-    docID: String!
-    emailId: Email!
+    docId: String!
+    emailId: String!
 }
 
 input userInput{
-    emailId: Email!
+    emailId: String!
     password: String!
 }
 
 type Mutation{
     createDoc(data: docInput): Boolean!
     addDoc(data: docInput): Boolean!
-    saveThumbnail(docID: String!, thumbnail: String!): Boolean!
+    saveThumbnail(docId: String!, thumbnail: String!): Boolean!
 
     login(data: userInput!): Boolean!
     signup(data: userInput!): Boolean!

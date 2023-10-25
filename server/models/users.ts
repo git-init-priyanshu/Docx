@@ -1,9 +1,21 @@
-const mongoose = require("mongoose");
+import mongoose, { Types } from "mongoose";
+
 const { Schema, model } = mongoose;
 
-const UserSchema = new Schema({
+export interface InterfaceUser {
+  email: string;
+  password: string;
+  isVerified: boolean;
+  isAdmin: boolean;
+  verifyToken: String | null;
+  verifyTokenExpiry: Date | null;
+  forgotPasswordToken: String | null;
+  forgotPasswordTokenExpiry: Date | null;
+}
+
+const UserSchema = new Schema<InterfaceUser>({
   email: {
-    type: Object,
+    type: String,
     required: [true, "Please provide an email"],
     unique: true,
   },
@@ -12,7 +24,7 @@ const UserSchema = new Schema({
     required: [true, "Please provide a password"],
   },
   isVerified: {
-    type: String,
+    type: Boolean,
     default: false,
   },
   isAdmin: {
@@ -25,4 +37,4 @@ const UserSchema = new Schema({
   forgotPasswordTokenExpiry: Date,
 });
 
-export const User = model("User", UserSchema);
+export const User = model<InterfaceUser>("User", UserSchema);

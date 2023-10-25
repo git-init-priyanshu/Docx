@@ -4,7 +4,7 @@ export const mutations = gql`
   type Mutation {
     createDoc(data: docInput): Boolean!
     addDoc(data: docInput): Boolean!
-    saveThumbnail(docID: String!, thumbnail: String!): Boolean!
+    saveThumbnail(docId: String!, thumbnail: String!): Boolean!
 
     login(data: userInput!): Boolean!
     signup(data: userInput!): Boolean!

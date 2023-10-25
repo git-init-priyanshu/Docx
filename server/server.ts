@@ -30,22 +30,20 @@ const io = new Server(httpServer, {
     ],
   },
 });
-socketIO(io, app);
+// socketIO(io, app);
 
+// @Todo: Set the context value of token
 const server = new ApolloServer({
   typeDefs,
   resolvers,
 });
 
-const startServer = async () => {
+(async () => {
   await server.start();
   server.applyMiddleware({ app });
-  
+
   const PORT = 4000;
   httpServer.listen(PORT, () => {
     console.log(`🚀 Server listening on: http://localhost:${PORT}/graphql`);
   });
-};
-startServer();
-
-process.on('warning', e => console.warn(e.stack));
+})();
