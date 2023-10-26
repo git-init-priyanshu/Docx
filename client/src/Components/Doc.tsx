@@ -2,20 +2,24 @@ import { useEffect, useState } from "react";
 import Quill from "quill";
 import { DeltaOperation, Sources, Quill as typesQuill } from "quill/index";
 import { useParams } from "react-router-dom";
+import { useMutation } from "@apollo/client";
 import html2canvas from "html2canvas";
-import axios from "axios";
 import _ from "lodash";
 
 import "quill/dist/quill.snow.css";
 import { socket } from "../socket";
 import { TOOLBAR_OPTIONS } from "./utils/ToolbarOptions";
-import { URL } from "../App";
+import { SAVE_THUMBNAIL_MUTATION } from "../Graphql/mutations";
 
 export default function Doc() {
   const { id: docId } = useParams();
 
   const [isConnected, setIsConnected] = useState<boolean>(false);
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [quill, setQuill] = useState<any>(null);
+
+  const [saveThumbnail] = useMutation(SAVE_THUMBNAIL_MUTATION);
 
   const toggleConnected: () => void = () => {
     setIsConnected((isConnected) => !isConnected);
@@ -23,13 +27,17 @@ export default function Doc() {
 
   const getDocThumbnail: () => void = async () => {
     const page = document.getElementById("container");
-    const canvas = await html2canvas(page!, { scale: 0.5 });
+
+    if (!page) return;
+    const canvas = await html2canvas(page, { scale: 0.5 });
 
     const thumbnail = canvas.toDataURL(`${docId}thumbnail/png`);
 
-    await axios.post(`${URL}/api/doc/saveDocThumbnail`, {
-      docId,
-      thumbnail,
+    saveThumbnail({
+      variables: {
+        docId,
+        thumbnail,
+      },
     });
   };
 
@@ -69,7 +77,7 @@ export default function Doc() {
 
     return () => {
       // Need to remove the Toolbar while unmounting
-      
+
       const rootElement = document.getElementById("root");
       /**
        * Modified the code because it was causing some issues.

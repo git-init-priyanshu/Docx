@@ -1215,6 +1215,11 @@
   dependencies:
     "@types/node" "*"
 
+"@types/bcryptjs@^2.4.5":
+  "integrity" "sha512-tOF6TivOIvq+TWQm78335CMdyVJhpBG3NUdWQDAp95ax4E2rSKbws/ELHLk5EBoucwx/tHt3/hhLOHwWJgVrSw=="
+  "resolved" "https://registry.npmjs.org/@types/bcryptjs/-/bcryptjs-2.4.5.tgz"
+  "version" "2.4.5"
+
 "@types/body-parser@*", "@types/body-parser@1.19.2":
   "integrity" "sha512-ALYone6pm6QmwZoAgeyNksccT9Q4AWZQ6PvfwR37GT6r6FWUPguq6sUmNGSMV2Wr761oQoBxwGGa6DR5o1DC9g=="
   "resolved" "https://registry.npmjs.org/@types/body-parser/-/body-parser-1.19.2.tgz"

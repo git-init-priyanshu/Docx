@@ -8,7 +8,6 @@
     "concurrently": "^8.2.0"
   },
   "devDependencies": {
-    "@types/bcryptjs": "^2.4.5",
     "esbuild": "^0.19.0"
   }
 }

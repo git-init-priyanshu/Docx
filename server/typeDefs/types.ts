@@ -12,15 +12,16 @@ export const types = gql`
     forgotPasswordTokenExpiry: Date
   }
 
-  type Data{
-    data: String
-  }
-
   type Doc {
     _id: ID!
     docId: String!
     email: [String!]
     data: JSON
     thumbnail: String!
+  }
+
+  type userOutput {
+    success: Boolean!
+    token: String!
   }
 `;

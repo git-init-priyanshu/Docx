@@ -48,7 +48,12 @@ export const signup: MutationResolvers["signup"] = async (
     });
     await newUser.save();
 
-    return true;
+    const outputData = {
+      success: true,
+      token: authToken
+    }
+    
+    return outputData;
   } catch (error) {
     throw "Internal Server Error";
   }

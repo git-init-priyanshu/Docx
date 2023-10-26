@@ -13,7 +13,7 @@ export const createDoc: MutationResolvers["createDoc"] = async (
 
     const doc = new Doc<InterfaceDoc>({
       docId,
-      email: emailId,
+      email: [emailId],
       data: { data: "" },
       thumbnail: "",
     });

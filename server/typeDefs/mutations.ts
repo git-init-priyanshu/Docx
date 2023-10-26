@@ -6,7 +6,7 @@ export const mutations = gql`
     addDoc(data: docInput): Boolean!
     saveThumbnail(docId: String!, thumbnail: String!): Boolean!
 
-    login(data: userInput!): Boolean!
-    signup(data: userInput!): Boolean!
+    login(data: userInput!): userOutput!
+    signup(data: userInput!): userOutput!
   }
 `;

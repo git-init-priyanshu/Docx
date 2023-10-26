@@ -29,9 +29,13 @@ export const login: MutationResolvers["login"] = async (
       },
     };
     const authToken = jwt.sign(data, process.env.JWT_SECRET);
-    console.log(authToken);
-    // return authToken
-    return true;
+
+    const outputData = {
+      success: true,
+      token: authToken
+    }
+    
+    return outputData;
   } catch (error) {
     throw new Error("Internal Server Error");
   }

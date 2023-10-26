@@ -37,9 +37,9 @@ export type Mutation = {
   __typename?: 'Mutation';
   addDoc: Scalars['Boolean']['output'];
   createDoc: Scalars['Boolean']['output'];
-  login: Scalars['Boolean']['output'];
+  login: UserOutput;
   saveThumbnail: Scalars['Boolean']['output'];
-  signup: Scalars['Boolean']['output'];
+  signup: UserOutput;
 };
 
 
@@ -104,6 +104,12 @@ export type DocInput = {
 export type UserInput = {
   emailId: Scalars['String']['input'];
   password: Scalars['String']['input'];
+};
+
+export type UserOutput = {
+  __typename?: 'userOutput';
+  success: Scalars['Boolean']['output'];
+  token: Scalars['String']['output'];
 };
 
 export type WithIndex<TObject> = TObject & Record<string, any>;
@@ -190,6 +196,7 @@ export type ResolversTypes = ResolversObject<{
   User: ResolverTypeWrapper<User>;
   docInput: DocInput;
   userInput: UserInput;
+  userOutput: ResolverTypeWrapper<UserOutput>;
 }>;
 
 /** Mapping between all available schema types and the resolvers parents */
@@ -206,6 +213,7 @@ export type ResolversParentTypes = ResolversObject<{
   User: User;
   docInput: DocInput;
   userInput: UserInput;
+  userOutput: UserOutput;
 }>;
 
 export type DataResolvers<ContextType = any, ParentType extends ResolversParentTypes['Data'] = ResolversParentTypes['Data']> = ResolversObject<{
@@ -233,9 +241,9 @@ export interface JsonScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes
 export type MutationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = ResolversObject<{
   addDoc?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, Partial<MutationAddDocArgs>>;
   createDoc?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, Partial<MutationCreateDocArgs>>;
-  login?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationLoginArgs, 'data'>>;
+  login?: Resolver<ResolversTypes['userOutput'], ParentType, ContextType, RequireFields<MutationLoginArgs, 'data'>>;
   saveThumbnail?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationSaveThumbnailArgs, 'docId' | 'thumbnail'>>;
-  signup?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationSignupArgs, 'data'>>;
+  signup?: Resolver<ResolversTypes['userOutput'], ParentType, ContextType, RequireFields<MutationSignupArgs, 'data'>>;
 }>;
 
 export interface ObjectIdScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['ObjectId'], any> {
@@ -259,6 +267,12 @@ export type UserResolvers<ContextType = any, ParentType extends ResolversParentT
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
+export type UserOutputResolvers<ContextType = any, ParentType extends ResolversParentTypes['userOutput'] = ResolversParentTypes['userOutput']> = ResolversObject<{
+  success?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  token?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
 export type Resolvers<ContextType = any> = ResolversObject<{
   Data?: DataResolvers<ContextType>;
   Date?: GraphQLScalarType;
@@ -268,5 +282,6 @@ export type Resolvers<ContextType = any> = ResolversObject<{
   ObjectId?: GraphQLScalarType;
   Query?: QueryResolvers<ContextType>;
   User?: UserResolvers<ContextType>;
+  userOutput?: UserOutputResolvers<ContextType>;
 }>;
 

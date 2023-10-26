@@ -27,6 +27,11 @@ type Doc {
   thumbnail: String!
 }
 
+type userOutput{
+  success: Boolean!
+  token: String!
+}
+
 type Query{
     getAllDocs(token: String): [Doc!]
     findUser(token: String): Boolean!
@@ -47,6 +52,6 @@ type Mutation{
     addDoc(data: docInput): Boolean!
     saveThumbnail(docId: String!, thumbnail: String!): Boolean!
 
-    login(data: userInput!): Boolean!
-    signup(data: userInput!): Boolean!
+    login(data: userInput!): userOutput!
+    signup(data: userInput!): userOutput!
 }

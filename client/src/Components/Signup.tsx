@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import axios from "axios";
+import { useMutation } from "@apollo/client";
 
-import { URL } from "../App";
+import { SIGNUP_MUTATION } from "../Graphql/mutations";
 
 export default function Signup() {
   const navigate = useNavigate();
@@ -19,6 +19,9 @@ export default function Signup() {
     confirm_password: "",
   });
 
+  const [signup, { data: signupData, error: signupError }] =
+    useMutation(SIGNUP_MUTATION);
+
   const handleOnChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setUserState({ ...userState, [e.target.name]: e.target.value });
   };
@@ -28,25 +31,28 @@ export default function Signup() {
 
     // Todo: password === confirm_password
 
-    const response = await axios.post(`${URL}/api/auth/save-user-details`, {
-      email: userState.email,
-      password: userState.password,
+    signup({
+      variables: {
+        data: {
+          emailId: userState.email,
+          password: userState.password,
+        },
+      },
     });
-    const data = response.data;
-
-    if (!data.success) {
-      navigate("/");
-      return window.alert(data.error);
-    }
-
+  };
+  if (signupData?.signup.success) {
     localStorage.setItem("email", userState.email);
-    localStorage.setItem("token", data.authToken);
+    localStorage.setItem("token", signupData.signup.token);
 
     // To avoid bugs
     setTimeout(() => {
       navigate("/home");
     }, 100);
-  };
+  }
+  if (signupError) {
+    navigate("/");
+    window.alert(signupError.message);
+  }
 
   return (
     <form onSubmit={handleOnSubmit}>
