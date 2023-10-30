@@ -1,6 +1,7 @@
 import { Doc } from "../models/doc";
 
 export const socket = (socketIO: any) => {
+  console.log("here")
   socketIO.on("connection", (socket: any) => {
     console.log(`${socket.id} user just connected!`);
 

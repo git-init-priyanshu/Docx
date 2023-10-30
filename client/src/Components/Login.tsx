@@ -1,6 +1,6 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { useMutation, useQuery } from "@apollo/client";
+import { useMutation, useLazyQuery } from "@apollo/client";
 
 import { FIND_USER_QUERY } from "../Graphql/queries";
 import { LOGIN_MUTATION } from "../Graphql/mutations";
@@ -21,11 +21,15 @@ export default function Login() {
 
   // If user already has token, redirect to "/home"
   const token = localStorage.getItem("token");
-  const { data } = useQuery(FIND_USER_QUERY, {
-    variables: {
-      token,
-    },
-  });
+  const [findUser, { data }] = useLazyQuery(FIND_USER_QUERY);
+
+  useEffect(() => {
+    findUser({
+      variables: {
+        token,
+      },
+    });
+  }, [findUser, token]);
   if (data?.findUser) navigate("/home");
 
   const handleOnChange = (e: React.ChangeEvent<HTMLInputElement>) => {
