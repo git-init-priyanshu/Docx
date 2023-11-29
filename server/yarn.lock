@@ -1018,12 +1018,12 @@
     "@graphql-tools/utils" "^9.2.1"
     "tslib" "^2.4.0"
 
-"@graphql-tools/merge@^9.0.0":
-  "integrity" "sha512-J7/xqjkGTTwOJmaJQJ2C+VDBDOWJL3lKrHJN4yMaRLAJH3PosB7GiPRaSDZdErs0+F77sH2MKs2haMMkywzx7Q=="
-  "resolved" "https://registry.npmjs.org/@graphql-tools/merge/-/merge-9.0.0.tgz"
-  "version" "9.0.0"
+"@graphql-tools/merge@^9.0.0", "@graphql-tools/merge@^9.0.1":
+  "integrity" "sha512-hIEExWO9fjA6vzsVjJ3s0cCQ+Q/BEeMVJZtMXd7nbaVefVy0YDyYlEkeoYYNV3NVVvu1G9lr6DM1Qd0DGo9Caw=="
+  "resolved" "https://registry.npmjs.org/@graphql-tools/merge/-/merge-9.0.1.tgz"
+  "version" "9.0.1"
   dependencies:
-    "@graphql-tools/utils" "^10.0.0"
+    "@graphql-tools/utils" "^10.0.10"
     "tslib" "^2.4.0"
 
 "@graphql-tools/merge@8.3.1":
@@ -1084,13 +1084,13 @@
     "@graphql-tools/utils" "^10.0.0"
     "tslib" "^2.4.0"
 
-"@graphql-tools/schema@^10.0.0":
-  "integrity" "sha512-kf3qOXMFcMs2f/S8Y3A8fm/2w+GaHAkfr3Gnhh2LOug/JgpY/ywgFVxO3jOeSpSEdoYcDKLcXVjMigNbY4AdQg=="
-  "resolved" "https://registry.npmjs.org/@graphql-tools/schema/-/schema-10.0.0.tgz"
-  "version" "10.0.0"
+"@graphql-tools/schema@^10.0.0", "@graphql-tools/schema@^10.0.2":
+  "integrity" "sha512-TbPsIZnWyDCLhgPGnDjt4hosiNU2mF/rNtSk5BVaXWnZqvKJ6gzJV4fcHcvhRIwtscDMW2/YTnK6dLVnk8pc4w=="
+  "resolved" "https://registry.npmjs.org/@graphql-tools/schema/-/schema-10.0.2.tgz"
+  "version" "10.0.2"
   dependencies:
-    "@graphql-tools/merge" "^9.0.0"
-    "@graphql-tools/utils" "^10.0.0"
+    "@graphql-tools/merge" "^9.0.1"
+    "@graphql-tools/utils" "^10.0.10"
     "tslib" "^2.4.0"
     "value-or-promise" "^1.0.12"
 
@@ -1104,7 +1104,17 @@
     "tslib" "^2.4.0"
     "value-or-promise" "1.0.11"
 
-"@graphql-tools/schema@^9.0.0", "@graphql-tools/schema@^9.0.18":
+"@graphql-tools/schema@^9.0.0":
+  "integrity" "sha512-oBRPoNBtCkk0zbUsyP4GaIzCt8C0aCI4ycIRUL67KK5pOHljKLBBtGT+Jr6hkzA74C8Gco8bpZPe7aWFjiaK2w=="
+  "resolved" "https://registry.npmjs.org/@graphql-tools/schema/-/schema-9.0.19.tgz"
+  "version" "9.0.19"
+  dependencies:
+    "@graphql-tools/merge" "^8.4.1"
+    "@graphql-tools/utils" "^9.2.1"
+    "tslib" "^2.4.0"
+    "value-or-promise" "^1.0.12"
+
+"@graphql-tools/schema@^9.0.18":
   "integrity" "sha512-oBRPoNBtCkk0zbUsyP4GaIzCt8C0aCI4ycIRUL67KK5pOHljKLBBtGT+Jr6hkzA74C8Gco8bpZPe7aWFjiaK2w=="
   "resolved" "https://registry.npmjs.org/@graphql-tools/schema/-/schema-9.0.19.tgz"
   "version" "9.0.19"
@@ -1133,7 +1143,7 @@
     "value-or-promise" "^1.0.11"
     "ws" "^8.12.0"
 
-"@graphql-tools/utils@^10.0.0", "@graphql-tools/utils@^10.0.5":
+"@graphql-tools/utils@^10.0.0":
   "integrity" "sha512-KOdeMj6Hd/MENDaqPbws3YJl3wVy0DeYnL7PyUms5Skyf7uzI9INynDwPMhLXfSb0/ph6BXTwMd5zBtWbF8tBQ=="
   "resolved" "https://registry.npmjs.org/@graphql-tools/utils/-/utils-10.0.7.tgz"
   "version" "10.0.7"
@@ -1142,7 +1152,26 @@
     "dset" "^3.1.2"
     "tslib" "^2.4.0"
 
+"@graphql-tools/utils@^10.0.10":
+  "integrity" "sha512-vVjXgKn6zjXIlYBd7yJxCVMYGb5j18gE3hx3Qw3mNsSEsYQXbJbPdlwb7Fc9FogsJei5AaqiQerqH4kAosp1nQ=="
+  "resolved" "https://registry.npmjs.org/@graphql-tools/utils/-/utils-10.0.11.tgz"
+  "version" "10.0.11"
+  dependencies:
+    "@graphql-typed-document-node/core" "^3.1.1"
+    "cross-inspect" "1.0.0"
+    "dset" "^3.1.2"
+    "tslib" "^2.4.0"
+
 "@graphql-tools/utils@^10.0.2":
+  "integrity" "sha512-KOdeMj6Hd/MENDaqPbws3YJl3wVy0DeYnL7PyUms5Skyf7uzI9INynDwPMhLXfSb0/ph6BXTwMd5zBtWbF8tBQ=="
+  "resolved" "https://registry.npmjs.org/@graphql-tools/utils/-/utils-10.0.7.tgz"
+  "version" "10.0.7"
+  dependencies:
+    "@graphql-typed-document-node/core" "^3.1.1"
+    "dset" "^3.1.2"
+    "tslib" "^2.4.0"
+
+"@graphql-tools/utils@^10.0.5":
   "integrity" "sha512-KOdeMj6Hd/MENDaqPbws3YJl3wVy0DeYnL7PyUms5Skyf7uzI9INynDwPMhLXfSb0/ph6BXTwMd5zBtWbF8tBQ=="
   "resolved" "https://registry.npmjs.org/@graphql-tools/utils/-/utils-10.0.7.tgz"
   "version" "10.0.7"
@@ -2250,6 +2279,13 @@
   dependencies:
     "node-fetch" "^2.6.12"
 
+"cross-inspect@1.0.0":
+  "integrity" "sha512-4PFfn4b5ZN6FMNGSZlyb7wUhuN8wvj8t/VQHZdM4JsDcruGJ8L2kf9zao98QIrBPFCpdk27qst/AGTl7pL3ypQ=="
+  "resolved" "https://registry.npmjs.org/cross-inspect/-/cross-inspect-1.0.0.tgz"
+  "version" "1.0.0"
+  dependencies:
+    "tslib" "^2.4.0"
+
 "cssfilter@0.0.10":
   "integrity" "sha512-FAaLDaplstoRsDR8XGYH51znUN0UY7nMc6Z9/fvE8EXGwvJE9hu7W2vHwx1+bd6gCYnln9nLbzxFTrcO9YQDZw=="
   "resolved" "https://registry.npmjs.org/cssfilter/-/cssfilter-0.0.10.tgz"
@@ -2778,7 +2814,7 @@
   dependencies:
     "tslib" "^2.1.0"
 
-"graphql-ws@^5.14.0":
+"graphql-ws@^5.14.0", "graphql-ws@^5.14.2":
   "integrity" "sha512-LycmCwhZ+Op2GlHz4BZDsUYHKRiiUz+3r9wbhBATMETNlORQJAaFlAgTFoeRh6xQoQegwYwIylVD1Qns9/DA3w=="
   "resolved" "https://registry.npmjs.org/graphql-ws/-/graphql-ws-5.14.2.tgz"
   "version" "5.14.2"
@@ -4624,25 +4660,15 @@
   "resolved" "https://registry.npmjs.org/wrappy/-/wrappy-1.0.2.tgz"
   "version" "1.0.2"
 
-"ws@*", "ws@~8.11.0":
+"ws@*", "ws@^8.12.0", "ws@^8.13.0", "ws@^8.14.2", "ws@8.14.2":
+  "integrity" "sha512-wEBG1ftX4jcglPxgFCMJmZ2PLtSbJ2Peg6TmpJFTbe9GZYOQCDPdMYu/Tm0/bGZkw8paZnJY45J4K2PZrLYq8g=="
+  "resolved" "https://registry.npmjs.org/ws/-/ws-8.14.2.tgz"
+  "version" "8.14.2"
+
+"ws@~8.11.0":
   "integrity" "sha512-HPG3wQd9sNQoT9xHyNCXoDUa+Xw/VevmY9FoHyQ+g+rrMn4j6FB4np7Z0OhdTgjx6MgQLK7jwSy1YecU1+4Asg=="
   "resolved" "https://registry.npmjs.org/ws/-/ws-8.11.0.tgz"
   "version" "8.11.0"
-
-"ws@^8.12.0":
-  "integrity" "sha512-wEBG1ftX4jcglPxgFCMJmZ2PLtSbJ2Peg6TmpJFTbe9GZYOQCDPdMYu/Tm0/bGZkw8paZnJY45J4K2PZrLYq8g=="
-  "resolved" "https://registry.npmjs.org/ws/-/ws-8.14.2.tgz"
-  "version" "8.14.2"
-
-"ws@^8.13.0":
-  "integrity" "sha512-wEBG1ftX4jcglPxgFCMJmZ2PLtSbJ2Peg6TmpJFTbe9GZYOQCDPdMYu/Tm0/bGZkw8paZnJY45J4K2PZrLYq8g=="
-  "resolved" "https://registry.npmjs.org/ws/-/ws-8.14.2.tgz"
-  "version" "8.14.2"
-
-"ws@8.14.2":
-  "integrity" "sha512-wEBG1ftX4jcglPxgFCMJmZ2PLtSbJ2Peg6TmpJFTbe9GZYOQCDPdMYu/Tm0/bGZkw8paZnJY45J4K2PZrLYq8g=="
-  "resolved" "https://registry.npmjs.org/ws/-/ws-8.14.2.tgz"
-  "version" "8.14.2"
 
 "xss@^1.0.8":
   "integrity" "sha512-og7TEJhXvn1a7kzZGQ7ETjdQVS2UfZyTlsEdDOqvQF7GoxNfY+0YLCzBy1kPdsDDx4QuNAonQPddpsn6Xl/7sw=="

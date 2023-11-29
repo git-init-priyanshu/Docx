@@ -1,12 +1,16 @@
-import { connectToMongoDB } from "./db";
 import express from "express";
 import { createServer } from "http";
-import { Server } from "socket.io";
 import cors from "cors";
 import dotenv from "dotenv";
+import { Server } from "socket.io";
 import { ApolloServer } from "@apollo/server";
 import { startStandaloneServer } from "@apollo/server/standalone";
+import { ApolloServerPluginDrainHttpServer } from '@apollo/server/plugin/drainHttpServer';
+import { makeExecutableSchema } from '@graphql-tools/schema';
+import { WebSocketServer } from 'ws';
+import { useServer } from 'graphql-ws/lib/use/ws'
 
+import { connectToMongoDB } from "./db";
 import { socketIO } from "./socket/index";
 import { typeDefs } from "./typeDefs";
 import { resolvers } from "./resolvers";
@@ -22,7 +26,7 @@ app.use(cors());
 app.use(express.json());
 
 app.get("/", (req, res) => {
-  res.send("Hello World!");
+  res.json({ msg: "Hello World!" });
 });
 
 const io = new Server(httpServer, {
@@ -34,6 +38,7 @@ const io = new Server(httpServer, {
       "http://localhost:5173",
     ],
   },
+  path: "/socket",
 });
 socketIO(io, app);
 
@@ -55,13 +60,3 @@ const PORT = 8000;
 httpServer.listen(PORT, () => {
   console.log(`🚀  Server ready at: http://localhost:${PORT}`);
 });
-
-// (async () => {
-//   await server.start();
-//   server.applyMiddleware({ app });
-
-//   const PORT = 4000;
-//   app.listen(PORT, () => {
-//     console.log(`🚀 Server listening on: http://localhost:${PORT}/graphql`);
-//   });
-// })();

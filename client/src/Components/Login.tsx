@@ -12,6 +12,7 @@ export default function Login() {
     email: string;
     password: string;
   }
+  const [token, setToken] = useState<string | null>(null);
   const [userState, setUserState] = useState<userState>({
     email: "",
     password: "",
@@ -20,9 +21,11 @@ export default function Login() {
   const [login, { data: loginData }] = useMutation(LOGIN_MUTATION);
 
   // If user already has token, redirect to "/home"
-  const token = localStorage.getItem("token");
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    setToken(token);
+  }, []);
   const [findUser, { data }] = useLazyQuery(FIND_USER_QUERY);
-
   useEffect(() => {
     findUser({
       variables: {
