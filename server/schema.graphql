@@ -35,6 +35,7 @@ type userOutput{
 type Query{
     getAllDocs(token: String): [Doc!]
     findUser(token: String): Boolean!
+    getDocData(docId: String!): Doc
 }
 
 input docInput{
@@ -54,4 +55,8 @@ type Mutation{
 
     login(data: userInput!): userOutput!
     signup(data: userInput!): userOutput!
+}
+
+type Subscription{
+    subscribeToDoc: Doc!
 }

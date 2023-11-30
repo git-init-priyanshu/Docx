@@ -72,6 +72,7 @@ export type Query = {
   __typename?: 'Query';
   findUser: Scalars['Boolean']['output'];
   getAllDocs?: Maybe<Array<Doc>>;
+  getDocData?: Maybe<Doc>;
 };
 
 
@@ -82,6 +83,16 @@ export type QueryFindUserArgs = {
 
 export type QueryGetAllDocsArgs = {
   token?: InputMaybe<Scalars['String']['input']>;
+};
+
+
+export type QueryGetDocDataArgs = {
+  docId: Scalars['String']['input'];
+};
+
+export type Subscription = {
+  __typename?: 'Subscription';
+  subscribeToDoc: Doc;
 };
 
 export type User = {
@@ -193,6 +204,7 @@ export type ResolversTypes = ResolversObject<{
   ObjectId: ResolverTypeWrapper<Scalars['ObjectId']['output']>;
   Query: ResolverTypeWrapper<{}>;
   String: ResolverTypeWrapper<Scalars['String']['output']>;
+  Subscription: ResolverTypeWrapper<{}>;
   User: ResolverTypeWrapper<User>;
   docInput: DocInput;
   userInput: UserInput;
@@ -210,6 +222,7 @@ export type ResolversParentTypes = ResolversObject<{
   ObjectId: Scalars['ObjectId']['output'];
   Query: {};
   String: Scalars['String']['output'];
+  Subscription: {};
   User: User;
   docInput: DocInput;
   userInput: UserInput;
@@ -253,6 +266,11 @@ export interface ObjectIdScalarConfig extends GraphQLScalarTypeConfig<ResolversT
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = ResolversObject<{
   findUser?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, Partial<QueryFindUserArgs>>;
   getAllDocs?: Resolver<Maybe<Array<ResolversTypes['Doc']>>, ParentType, ContextType, Partial<QueryGetAllDocsArgs>>;
+  getDocData?: Resolver<Maybe<ResolversTypes['Doc']>, ParentType, ContextType, RequireFields<QueryGetDocDataArgs, 'docId'>>;
+}>;
+
+export type SubscriptionResolvers<ContextType = any, ParentType extends ResolversParentTypes['Subscription'] = ResolversParentTypes['Subscription']> = ResolversObject<{
+  subscribeToDoc?: SubscriptionResolver<ResolversTypes['Doc'], "subscribeToDoc", ParentType, ContextType>;
 }>;
 
 export type UserResolvers<ContextType = any, ParentType extends ResolversParentTypes['User'] = ResolversParentTypes['User']> = ResolversObject<{
@@ -281,6 +299,7 @@ export type Resolvers<ContextType = any> = ResolversObject<{
   Mutation?: MutationResolvers<ContextType>;
   ObjectId?: GraphQLScalarType;
   Query?: QueryResolvers<ContextType>;
+  Subscription?: SubscriptionResolvers<ContextType>;
   User?: UserResolvers<ContextType>;
   userOutput?: UserOutputResolvers<ContextType>;
 }>;

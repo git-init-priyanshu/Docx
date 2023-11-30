@@ -3,11 +3,12 @@ import { createServer } from "http";
 import cors from "cors";
 import dotenv from "dotenv";
 import { ApolloServer } from "@apollo/server";
-import { expressMiddleware } from '@apollo/server/express4';
+import { expressMiddleware } from "@apollo/server/express4";
 import { ApolloServerPluginDrainHttpServer } from "@apollo/server/plugin/drainHttpServer";
 import { makeExecutableSchema } from "@graphql-tools/schema";
 import { WebSocketServer } from "ws";
 import { useServer } from "graphql-ws/lib/use/ws";
+import { PubSub } from "graphql-subscriptions";
 
 import { connectToMongoDB } from "./db";
 import { typeDefs } from "./typeDefs";
@@ -20,16 +21,24 @@ const app = express();
 const httpServer = createServer(app);
 
 // Whole code is copied from https://www.apollographql.com/docs/apollo-server/data/subscriptions
+export const pubsub = new PubSub();
 (async () => {
-  // @Todo: Set the context value of token
   const schema = makeExecutableSchema({ typeDefs, resolvers });
 
   const wsServer = new WebSocketServer({
     server: httpServer,
-    path: "/subscriptions",
+    path: "/graphql",
   });
 
-  const serverCleanup = useServer({ schema }, wsServer);
+  const serverCleanup = useServer(
+    {
+      schema,
+      context: async () => {
+        return { pubsub };
+      },
+    },
+    wsServer
+  );
 
   const server = new ApolloServer({
     schema,
@@ -55,7 +64,12 @@ const httpServer = createServer(app);
     "/graphql",
     cors<cors.CorsRequest>(),
     express.json(),
-    expressMiddleware(server)
+    expressMiddleware(server, {
+      // Passing pubsub as a context value
+      context: async () => {
+        return { pubsub };
+      },
+    })
   );
 
   const PORT = 4000;
