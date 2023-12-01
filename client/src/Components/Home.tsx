@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { v4 as uuidv4 } from "uuid";
-import { useMutation, useQuery } from "@apollo/client";
+import { useMutation, useLazyQuery } from "@apollo/client";
 
 import Logo from "../assets/Google_Docs.max-2800x2800-1 (1).svg";
 import { ADD_DOC_MUTATION, CREATE_DOC_MUTATION } from "../Graphql/mutations";
@@ -34,7 +34,17 @@ export default function Home() {
   const [createDoc, { data: createDocData }] = useMutation(CREATE_DOC_MUTATION);
 
   const token = localStorage.getItem("token");
-  const { data } = useQuery(GET_ALL_DOCS_QUERY, { variables: { token } });
+  const [getDocs, { data }] = useLazyQuery(GET_ALL_DOCS_QUERY, {
+    variables: { token },
+  });
+  
+  useEffect(() => {
+    getDocs({
+      variables: {
+        token,
+      },
+    });
+  }, [getDocs, token]);
 
   useEffect(() => {
     const newDocId = uuidv4();

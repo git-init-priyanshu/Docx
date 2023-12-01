@@ -6,9 +6,14 @@ import { addDoc } from "./Doc/addDoc";
 import { createDoc } from "./Doc/createDoc";
 import { getAllDocs } from "./Doc/getAllDocs";
 import { saveThumbnail } from "./Doc/saveThumbnail";
+import { getDocData } from "./Doc/getDocData";
+import { saveDoc } from "./Doc/saveDoc";
 import { findUser } from "./User/findUser";
 import { login } from "./User/login";
 import { signup } from "./User/signup";
+import { subscribeToDoc } from "./User/subscribeToDoc";
+import { changeText } from "./User/changeText";
+import { reflectChanges } from "./User/reflectChanges";
 
 dotenv.config();
 
@@ -23,6 +28,7 @@ export const resolvers: Resolvers = {
   Query: {
     getAllDocs,
     findUser,
+    getDocData,
   },
 
   // Mutations
@@ -30,8 +36,16 @@ export const resolvers: Resolvers = {
     addDoc,
     createDoc,
     saveThumbnail,
+    saveDoc,
     login,
     signup,
+    changeText,
+  },
+
+  // Subscriptions
+  Subscription: {
+    subscribeToDoc,
+    reflectChanges,
   },
 
   // graphql-scalar resolver

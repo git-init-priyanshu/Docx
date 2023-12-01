@@ -15,7 +15,7 @@ type User {
   forgotPasswordTokenExpiry: Date!
 }
 
-type Data{
+type Data {
   data: String
 }
 
@@ -27,31 +27,39 @@ type Doc {
   thumbnail: String!
 }
 
-type userOutput{
+type userOutput {
   success: Boolean!
   token: String!
 }
 
-type Query{
-    getAllDocs(token: String): [Doc!]
-    findUser(token: String): Boolean!
+type Query {
+  getAllDocs(token: String): [Doc!]
+  findUser(token: String): Boolean!
+  getDocData(docId: String!): Doc
 }
 
-input docInput{
-    docId: String!
-    emailId: String!
+input docInput {
+  docId: String!
+  emailId: String!
 }
 
-input userInput{
-    emailId: String!
-    password: String!
+input userInput {
+  emailId: String!
+  password: String!
 }
 
-type Mutation{
-    createDoc(data: docInput): Boolean!
-    addDoc(data: docInput): Boolean!
-    saveThumbnail(docId: String!, thumbnail: String!): Boolean!
+type Mutation {
+  createDoc(data: docInput): Boolean!
+  addDoc(data: docInput): Boolean!
+  saveThumbnail(docId: String!, thumbnail: String!): Boolean!
+  saveDoc(docId: String!, data: JSON!): Boolean!
 
-    login(data: userInput!): userOutput!
-    signup(data: userInput!): userOutput!
+  login(data: userInput!): userOutput!
+  signup(data: userInput!): userOutput!
+  changeText(docId: String!, userEmail: String!, data: JSON!): Boolean!
+}
+
+type Subscription {
+  subscribeToDoc: Doc!
+  reflectChanges(docId: String!, userEmail: String!): JSON!
 }

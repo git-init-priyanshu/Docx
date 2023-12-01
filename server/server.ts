@@ -1,13 +1,16 @@
-import { connectToMongoDB } from "./db";
 import express from "express";
 import { createServer } from "http";
-import { Server } from "socket.io";
 import cors from "cors";
 import dotenv from "dotenv";
 import { ApolloServer } from "@apollo/server";
-import { startStandaloneServer } from "@apollo/server/standalone";
+import { expressMiddleware } from "@apollo/server/express4";
+import { ApolloServerPluginDrainHttpServer } from "@apollo/server/plugin/drainHttpServer";
+import { makeExecutableSchema } from "@graphql-tools/schema";
+import { WebSocketServer } from "ws";
+import { useServer } from "graphql-ws/lib/use/ws";
+import { PubSub } from "graphql-subscriptions";
 
-import { socketIO } from "./socket/index";
+import { connectToMongoDB } from "./db";
 import { typeDefs } from "./typeDefs";
 import { resolvers } from "./resolvers";
 
@@ -17,51 +20,60 @@ dotenv.config();
 const app = express();
 const httpServer = createServer(app);
 
-// middlewares
-app.use(cors());
-app.use(express.json());
-
-app.get("/", (req, res) => {
-  res.send("Hello World!");
-});
-
-const io = new Server(httpServer, {
-  cors: {
-    origin: [
-      process.env.VERCEL_URL,
-      "http://localhost:80",
-      "http://localhost:4173",
-      "http://localhost:5173",
-    ],
-  },
-});
-socketIO(io, app);
-
-const PORT = 8000;
-
+// Whole code is copied from https://www.apollographql.com/docs/apollo-server/data/subscriptions
+export const pubsub = new PubSub();
 (async () => {
-  // @Todo: Set the context value of token
+  const schema = makeExecutableSchema({ typeDefs, resolvers });
+
+  const wsServer = new WebSocketServer({
+    server: httpServer,
+    path: "/graphql",
+  });
+
+  const serverCleanup = useServer(
+    {
+      schema,
+      context: async () => {
+        return { pubsub };
+      },
+    },
+    wsServer
+  );
+
   const server = new ApolloServer({
-    typeDefs,
-    resolvers,
+    schema,
+    plugins: [
+      // Proper shutdown for the HTTP server.
+      ApolloServerPluginDrainHttpServer({ httpServer }),
+
+      // Proper shutdown for the WebSocket server.
+      {
+        async serverWillStart() {
+          return {
+            async drainServer() {
+              await serverCleanup.dispose();
+            },
+          };
+        },
+      },
+    ],
   });
 
-  const { url } = await startStandaloneServer(server, {
-    listen: { port: 4000 },
+  await server.start();
+  app.use(
+    "/graphql",
+    cors<cors.CorsRequest>(),
+    express.json(),
+    expressMiddleware(server, {
+      // Passing pubsub as a context value
+      context: async () => {
+        return { pubsub };
+      },
+    })
+  );
+
+  const PORT = 4000;
+  httpServer.listen(PORT, () => {
+    console.log(`Server is now running on http://localhost:${PORT}/graphql`);
   });
-  console.log(`🚀  Graphql server ready at: ${url}graphql`);
 })();
-
-httpServer.listen(PORT, () => {
-  console.log(`🚀  Server ready at: http://localhost:${PORT}`);
-});
-
-// (async () => {
-//   await server.start();
-//   server.applyMiddleware({ app });
-
-//   const PORT = 4000;
-//   app.listen(PORT, () => {
-//     console.log(`🚀 Server listening on: http://localhost:${PORT}/graphql`);
-//   });
-// })();
