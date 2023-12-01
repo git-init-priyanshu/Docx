@@ -2,17 +2,24 @@ import { useEffect, useState } from "react";
 import Quill from "quill";
 import { DeltaOperation, Sources, Quill as typesQuill } from "quill/index";
 import { useParams } from "react-router-dom";
-import { useMutation } from "@apollo/client";
+import { useLazyQuery, useMutation, useSubscription } from "@apollo/client";
 import html2canvas from "html2canvas";
 import _ from "lodash";
 
 import "quill/dist/quill.snow.css";
-import { socket } from "../socket";
+import { debounce } from "./utils/debounceFunction";
 import { TOOLBAR_OPTIONS } from "./utils/ToolbarOptions";
-import { SAVE_THUMBNAIL_MUTATION } from "../Graphql/mutations";
+import {
+  CHANGE_TEXT_MUTATION,
+  SAVE_DOC_MUTATION,
+  SAVE_THUMBNAIL_MUTATION,
+} from "../Graphql/mutations";
+import { GET_DOC_DATA_QUERY } from "../Graphql/queries";
+import { REFLECT_CHANGES_SUBSCRIPTION } from "../Graphql/subscriptions";
 
 export default function Doc() {
   const { id: docId } = useParams();
+  const userEmail = localStorage.getItem("email");
 
   const [isConnected, setIsConnected] = useState<boolean>(false);
 
@@ -20,12 +27,29 @@ export default function Doc() {
   const [quill, setQuill] = useState<any>(null);
 
   const [saveThumbnail] = useMutation(SAVE_THUMBNAIL_MUTATION);
+  const [saveDocData] = useMutation(SAVE_DOC_MUTATION);
+  const [changeText] = useMutation(CHANGE_TEXT_MUTATION);
+
+  const [getDocData, { data }] = useLazyQuery(GET_DOC_DATA_QUERY, {
+    variables: { docId },
+  });
+  useEffect(() => {
+    getDocData({
+      variables: {
+        docId,
+      },
+    });
+  }, [docId, getDocData]);
+
+  const { data: changes } = useSubscription(REFLECT_CHANGES_SUBSCRIPTION, {
+    variables: { docId, userEmail },
+  });
 
   const toggleConnected: () => void = () => {
     setIsConnected((isConnected) => !isConnected);
   };
 
-  const getDocThumbnail: () => void = async () => {
+  const createDocThumbnail: () => void = async () => {
     const page = document.getElementById("container");
 
     if (!page) return;
@@ -43,27 +67,28 @@ export default function Doc() {
 
   // // Load Doc
   useEffect(() => {
-    if (socket == null || quill == null) return;
-
-    socket.emit("get-doc", docId);
-
-    socket.once("load-doc", (doc) => {
-      quill.setContents(doc);
-      quill.enable();
-    });
-  }, [quill, docId]);
+    if (!data || !quill) return;
+    quill.setContents(data.getDocData.data);
+    quill.enable();
+  }, [quill, data]);
 
   // // Save Doc
+  // Why is this function triggering multiple times?
   const saveDoc = () => {
-    socket.emit("save-doc", quill.getContents());
+    const data = quill.getContents();
+    saveDocData({
+      variables: {
+        docId,
+        data,
+      },
+    });
     console.log("save");
-    getDocThumbnail();
+    createDocThumbnail();
   };
-  const debounce_saveDoc = _.debounce(saveDoc, 1000);
+  const debounce_saveDoc = debounce(saveDoc, 1000);
 
   // // Socket and Quill
   useEffect(() => {
-    socket.connect();
     toggleConnected();
 
     const quill: typesQuill = new Quill("#container", {
@@ -77,7 +102,6 @@ export default function Doc() {
 
     return () => {
       // Need to remove the Toolbar while unmounting
-
       const rootElement = document.getElementById("root");
       /**
        * Modified the code because it was causing some issues.
@@ -86,7 +110,6 @@ export default function Doc() {
        * The new solution now only removes the necessary element and does not completely change the entire root element.
        */
       rootElement?.children[0].remove();
-      socket.disconnect();
       toggleConnected();
     };
   }, []);
@@ -101,18 +124,23 @@ export default function Doc() {
       ) {
         if (source == "api") return;
         if (source == "user") {
-          const content: DeltaOperation = quill.getContents();
-
-          isConnected && socket.emit("text-change", content);
-
+          const data: DeltaOperation = quill.getContents();
+          isConnected &&
+            changeText({
+              variables: {
+                docId,
+                data,
+                userEmail,
+              },
+            });
           debounce_saveDoc();
         }
       }
     );
-
-    socket.on("text-changed", (content: DeltaOperation) => {
-      quill.setContents(content);
-    });
+    if (changes) {
+      // console.log(changes);
+      quill.setContents(changes.reflectChanges);
+    }
   }
 
   return <div id="container">Hello</div>;

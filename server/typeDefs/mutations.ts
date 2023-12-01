@@ -5,6 +5,8 @@ export const mutations = gql`
     createDoc(data: docInput): Boolean!
     addDoc(data: docInput): Boolean!
     saveThumbnail(docId: String!, thumbnail: String!): Boolean!
+    saveDoc(docId: String!, data: JSON!): Boolean!
+    changeText(docId: String!, userEmail: String!, data: JSON!): Boolean!
 
     login(data: userInput!): userOutput!
     signup(data: userInput!): userOutput!

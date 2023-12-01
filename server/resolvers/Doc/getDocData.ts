@@ -12,13 +12,6 @@ export const getDocData: QueryResolvers["getDocData"] = async (
 
   if (docId === null) return;
   const doc = await Doc.findOne({ docId });
-
-  if (doc) {
-    contextValue.pubsub.publish("SUBSCRIBE_DOC", {
-      docData: {
-        doc,
-      },
-    });
-    return doc;
-  }
+  if (!doc) throw new Error("Doc not found");
+  return doc;
 };

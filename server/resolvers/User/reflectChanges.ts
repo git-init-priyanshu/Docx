@@ -9,7 +9,11 @@ export const reflectChanges: SubscriptionResolvers["reflectChanges"] = {
       return contextValue.pubsub.asyncIterator(["CHANGE_TEXT"]);
     },
     (payload, variables) => {
-      return payload.docId === variables.docId;
+      if (payload.docId === variables.docId) {
+        if (payload.userEmail !== variables.userEmail) return true;
+        return false;
+      }
+      return false;
     }
   ),
 };

@@ -43,7 +43,7 @@ export const SAVE_DOC_MUTATION = gql`
 `;
 
 export const CHANGE_TEXT_MUTATION = gql`
-  mutation ChangeText($docId: String!, $data: JSON!) {
-    changeText(docId: $docId, data: $data)
+  mutation ChangeText($docId: String!, $userEmail: String!, $data: JSON!) {
+    changeText(docId: $docId, userEmail: $userEmail, data: $data)
   }
 `;

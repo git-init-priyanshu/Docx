@@ -56,10 +56,10 @@ type Mutation {
 
   login(data: userInput!): userOutput!
   signup(data: userInput!): userOutput!
-  changeText(docId: String!, data: JSON!): Boolean!
+  changeText(docId: String!, userEmail: String!, data: JSON!): Boolean!
 }
 
 type Subscription {
   subscribeToDoc: Doc!
-  reflectChanges(docId: String!): JSON!
+  reflectChanges(docId: String!, userEmail: String!): JSON!
 }
