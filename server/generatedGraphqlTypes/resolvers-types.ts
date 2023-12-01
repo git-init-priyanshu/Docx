@@ -36,8 +36,10 @@ export type Doc = {
 export type Mutation = {
   __typename?: 'Mutation';
   addDoc: Scalars['Boolean']['output'];
+  changeText: Scalars['Boolean']['output'];
   createDoc: Scalars['Boolean']['output'];
   login: UserOutput;
+  saveDoc: Scalars['Boolean']['output'];
   saveThumbnail: Scalars['Boolean']['output'];
   signup: UserOutput;
 };
@@ -48,6 +50,12 @@ export type MutationAddDocArgs = {
 };
 
 
+export type MutationChangeTextArgs = {
+  data: Scalars['JSON']['input'];
+  docId: Scalars['String']['input'];
+};
+
+
 export type MutationCreateDocArgs = {
   data?: InputMaybe<DocInput>;
 };
@@ -55,6 +63,12 @@ export type MutationCreateDocArgs = {
 
 export type MutationLoginArgs = {
   data: UserInput;
+};
+
+
+export type MutationSaveDocArgs = {
+  data: Scalars['JSON']['input'];
+  docId: Scalars['String']['input'];
 };
 
 
@@ -92,7 +106,13 @@ export type QueryGetDocDataArgs = {
 
 export type Subscription = {
   __typename?: 'Subscription';
+  reflectChanges: Scalars['JSON']['output'];
   subscribeToDoc: Doc;
+};
+
+
+export type SubscriptionReflectChangesArgs = {
+  docId: Scalars['String']['input'];
 };
 
 export type User = {
@@ -253,8 +273,10 @@ export interface JsonScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes
 
 export type MutationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = ResolversObject<{
   addDoc?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, Partial<MutationAddDocArgs>>;
+  changeText?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationChangeTextArgs, 'data' | 'docId'>>;
   createDoc?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, Partial<MutationCreateDocArgs>>;
   login?: Resolver<ResolversTypes['userOutput'], ParentType, ContextType, RequireFields<MutationLoginArgs, 'data'>>;
+  saveDoc?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationSaveDocArgs, 'data' | 'docId'>>;
   saveThumbnail?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationSaveThumbnailArgs, 'docId' | 'thumbnail'>>;
   signup?: Resolver<ResolversTypes['userOutput'], ParentType, ContextType, RequireFields<MutationSignupArgs, 'data'>>;
 }>;
@@ -270,6 +292,7 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
 }>;
 
 export type SubscriptionResolvers<ContextType = any, ParentType extends ResolversParentTypes['Subscription'] = ResolversParentTypes['Subscription']> = ResolversObject<{
+  reflectChanges?: SubscriptionResolver<ResolversTypes['JSON'], "reflectChanges", ParentType, ContextType, RequireFields<SubscriptionReflectChangesArgs, 'docId'>>;
   subscribeToDoc?: SubscriptionResolver<ResolversTypes['Doc'], "subscribeToDoc", ParentType, ContextType>;
 }>;
 

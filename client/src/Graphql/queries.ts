@@ -14,3 +14,11 @@ export const FIND_USER_QUERY = gql`
     findUser(token: $token)
   }
 `;
+
+export const GET_DOC_DATA_QUERY = gql`
+  query GetDocData($docId: String!) {
+    getDocData(docId: $docId) {
+      data
+    }
+  }
+`;

@@ -35,3 +35,15 @@ export const SIGNUP_MUTATION = gql`
     }
   }
 `;
+
+export const SAVE_DOC_MUTATION = gql`
+  mutation SaveDoc($docId: String!, $data: JSON!) {
+    saveDoc(docId: $docId, data: $data)
+  }
+`;
+
+export const CHANGE_TEXT_MUTATION = gql`
+  mutation ChangeText($docId: String!, $data: JSON!) {
+    changeText(docId: $docId, data: $data)
+  }
+`;
