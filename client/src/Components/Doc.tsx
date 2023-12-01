@@ -7,7 +7,6 @@ import html2canvas from "html2canvas";
 import _ from "lodash";
 
 import "quill/dist/quill.snow.css";
-import { debounce } from "./utils/debounceFunction";
 import { TOOLBAR_OPTIONS } from "./utils/ToolbarOptions";
 import {
   CHANGE_TEXT_MUTATION,
