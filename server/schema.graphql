@@ -1,0 +1,65 @@
+scalar ObjectId
+
+scalar Date
+
+scalar JSON
+
+type User {
+  _id: ObjectId!
+  email: String!
+  isVerified: Boolean!
+  isAdmin: Boolean!
+  verifyToken: String!
+  verifyTokenExpiry: Date!
+  forgotPasswordToken: String!
+  forgotPasswordTokenExpiry: Date!
+}
+
+type Data {
+  data: String
+}
+
+type Doc {
+  _id: ObjectId!
+  docId: String!
+  email: [String!]
+  data: JSON
+  thumbnail: String!
+}
+
+type userOutput {
+  success: Boolean!
+  token: String!
+}
+
+type Query {
+  getAllDocs(token: String): [Doc!]
+  findUser(token: String): Boolean!
+  getDocData(docId: String!): Doc
+}
+
+input docInput {
+  docId: String!
+  emailId: String!
+}
+
+input userInput {
+  emailId: String!
+  password: String!
+}
+
+type Mutation {
+  createDoc(data: docInput): Boolean!
+  addDoc(data: docInput): Boolean!
+  saveThumbnail(docId: String!, thumbnail: String!): Boolean!
+  saveDoc(docId: String!, data: JSON!): Boolean!
+
+  login(data: userInput!): userOutput!
+  signup(data: userInput!): userOutput!
+  changeText(docId: String!, userEmail: String!, data: JSON!): Boolean!
+}
+
+type Subscription {
+  subscribeToDoc: Doc!
+  reflectChanges(docId: String!, userEmail: String!): JSON!
+}

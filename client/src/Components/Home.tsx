@@ -1,10 +1,11 @@
-import { useEffect, useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { v4 as uuidv4 } from "uuid";
-import axios from "axios";
+import { useMutation, useLazyQuery } from "@apollo/client";
 
 import Logo from "../assets/Google_Docs.max-2800x2800-1 (1).svg";
-import { URL } from "../App";
+import { ADD_DOC_MUTATION, CREATE_DOC_MUTATION } from "../Graphql/mutations";
+import { GET_ALL_DOCS_QUERY } from "../Graphql/queries";
 
 export default function Home() {
   const navigate = useNavigate();
@@ -17,16 +18,38 @@ export default function Home() {
       modal.style.display = "none";
     }
   };
+
   interface docType {
     _id: string;
     docId: string;
-    email: string;
+    email: [string];
     data: string | object;
     thumbnail?: string | null;
   }
 
-  const [docs, setDocs] = useState<[docType] | null>(null);
-  const [inputValue, setInputValue] = useState<string>("");
+  const [docId, setDocId] = useState<string>("");
+  const [newDocId, setNewDocId] = useState<string>("");
+
+  const [addDoc, { data: addDocData }] = useMutation(ADD_DOC_MUTATION);
+  const [createDoc, { data: createDocData }] = useMutation(CREATE_DOC_MUTATION);
+
+  const token = localStorage.getItem("token");
+  const [getDocs, { data }] = useLazyQuery(GET_ALL_DOCS_QUERY, {
+    variables: { token },
+  });
+  
+  useEffect(() => {
+    getDocs({
+      variables: {
+        token,
+      },
+    });
+  }, [getDocs, token]);
+
+  useEffect(() => {
+    const newDocId = uuidv4();
+    setNewDocId(newDocId);
+  }, []);
 
   const handleLogout = () => {
     localStorage.removeItem("email");
@@ -36,6 +59,7 @@ export default function Home() {
   };
 
   const toggleModal = () => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const modal: any = modalRef.current;
 
     const displayProperty = modal.style.display;
@@ -43,49 +67,37 @@ export default function Home() {
     modal.style.display = "block";
   };
 
-  const addDoc = async () => {
-    const docId = inputValue;
-    const email = localStorage.getItem("email");
+  const addDocFunc = async () => {
+    const emailId = localStorage.getItem("email");
 
-    const response = await axios.post(`${URL}/api/doc/add-doc`, {
-      docId,
-      email,
+    addDoc({
+      variables: {
+        data: {
+          docId,
+          emailId,
+        },
+      },
     });
-
-    if (!response.data.success) return console.log("Internal Server Error");
-    navigate(`/documents/${docId}`);
   };
+  if (addDocData?.addDoc) {
+    navigate(`/documents/${docId}`);
+  }
 
   const createNewDoc = async () => {
-    const newDocId = uuidv4();
-    const email = localStorage.getItem("email");
+    const emailId = localStorage.getItem("email");
 
-    const response = await axios.post(`${URL}/api/doc/create-doc`, {
-      newDocId,
-      email,
+    createDoc({
+      variables: {
+        data: {
+          docId: newDocId,
+          emailId,
+        },
+      },
     });
-
-    if (!response.data.success) return console.log("Internal Server Error");
-    navigate(`/documents/${newDocId}`);
   };
-
-  useEffect(() => {
-    const getAllDocs = async () => {
-      const email = localStorage.getItem("email");
-      const authToken = localStorage.getItem("auth-token");
-
-      const response = await axios.post(`${URL}/api/doc/get-all-docs`, {
-        email,
-        authToken,
-      });
-      console.log(response);
-      const docs = response.data.docs;
-      if (!docs) return;
-
-      setDocs(docs);
-    };
-    getAllDocs();
-  }, []);
+  if (createDocData?.createDoc) {
+    navigate(`/documents/${newDocId}`);
+  }
 
   return (
     <>
@@ -101,12 +113,12 @@ export default function Home() {
             <div>
               <input
                 type="text"
-                value={inputValue}
-                onChange={(e) => setInputValue(e.target.value)}
+                value={docId}
+                onChange={(e) => setDocId(e.target.value)}
                 placeholder="Paste your Doc Id here"
               />
               <div>
-                <button onClick={addDoc} className="submit">
+                <button onClick={addDocFunc} className="submit">
                   Submit
                 </button>
                 <button onClick={createNewDoc} className="create">
@@ -153,9 +165,9 @@ export default function Home() {
 
       {/* Docs */}
       <div className="body" id="docs">
-        {docs ? (
-          docs.length > 0 ? (
-            docs.map((doc) => {
+        {data?.getAllDocs ? (
+          data.getAllDocs.length > 0 ? (
+            data?.getAllDocs.map((doc: docType) => {
               return (
                 <div className="card" key={doc._id}>
                   <div
@@ -167,7 +179,7 @@ export default function Home() {
                       backgroundSize: "cover",
                       backgroundPosition: "center",
                       cursor: "pointer",
-                      backgroundPositionY: "0"
+                      backgroundPositionY: "0",
                     }}
                     onClick={() => {
                       navigate(`/documents/${doc.docId}`);
