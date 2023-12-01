@@ -41,9 +41,12 @@ export default function Doc() {
     });
   }, [docId, getDocData]);
 
-  const { data: changes } = useSubscription(REFLECT_CHANGES_SUBSCRIPTION, {
-    variables: { docId, userEmail },
-  });
+  const { data: contentChange } = useSubscription(
+    REFLECT_CHANGES_SUBSCRIPTION,
+    {
+      variables: { docId, userEmail },
+    }
+  );
 
   const toggleConnected: () => void = () => {
     setIsConnected((isConnected) => !isConnected);
@@ -85,7 +88,18 @@ export default function Doc() {
     console.log("save");
     createDocThumbnail();
   };
-  const debounce_saveDoc = debounce(saveDoc, 1000);
+  useEffect(() => {
+    if (!quill) return;
+    let timer: any;
+    clearTimeout(timer);
+    return () => {
+      timer = setTimeout(() => {
+        saveDoc();
+      }, 1000);
+    };
+  }, [contentChange]);
+
+  // const debounce_saveDoc = debounce(saveDoc, 1000);
 
   // // Socket and Quill
   useEffect(() => {
@@ -133,13 +147,12 @@ export default function Doc() {
                 userEmail,
               },
             });
-          debounce_saveDoc();
+          // debounce_saveDoc();
         }
       }
     );
-    if (changes) {
-      // console.log(changes);
-      quill.setContents(changes.reflectChanges);
+    if (contentChange) {
+      quill.setContents(contentChange.reflectChanges);
     }
   }
 

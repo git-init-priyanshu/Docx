@@ -4,6 +4,7 @@ export const GET_ALL_DOCS_QUERY = gql`
   query GetAllDocs($token: String) {
     getAllDocs(token: $token) {
       _id
+      docId
       thumbnail
     }
   }
