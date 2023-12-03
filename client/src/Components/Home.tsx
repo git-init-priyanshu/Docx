@@ -37,7 +37,7 @@ export default function Home() {
   const [getDocs, { data }] = useLazyQuery(GET_ALL_DOCS_QUERY, {
     variables: { token },
   });
-  
+
   useEffect(() => {
     getDocs({
       variables: {
@@ -112,6 +112,7 @@ export default function Home() {
           <div className="modal-body">
             <div>
               <input
+                name="docId"
                 type="text"
                 value={docId}
                 onChange={(e) => setDocId(e.target.value)}
@@ -142,7 +143,7 @@ export default function Home() {
         {/* Search*/}
         <div className="search-bar">
           <span className="material-symbols-outlined">search</span>
-          <input type="text" placeholder="Search" />
+          <input type="text" name="searchBar" placeholder="Search" />
         </div>
         {/* Hamburger */}
         <div className="nav-btn">

@@ -55,7 +55,7 @@ export default function Signup() {
   }
 
   return (
-    <form onSubmit={handleOnSubmit}>
+    <form onSubmit={handleOnSubmit} id="signupForm">
       <div className="form-title">Signup</div>
       <div className="group">
         <input

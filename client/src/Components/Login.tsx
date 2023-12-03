@@ -67,7 +67,7 @@ export default function Login() {
   // if (loginError) return window.alert(loginError.message);
 
   return (
-    <form onSubmit={handleOnSubmit}>
+    <form onSubmit={handleOnSubmit} id="loginForm">
       <div className="form-title">Login</div>
       <div className="group">
         <input
