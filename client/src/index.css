@@ -12,7 +12,7 @@ body {
 }
 
 /* Login */
-form {
+/* form {
   width: 380px;
   margin: 4em auto;
   padding: 1em 2em 2em 2em;
@@ -228,7 +228,7 @@ input:focus ~ .highlight {
     text-decoration: none;
     color: #3160b6;
   }
-}
+} */
 
 /* Doc */
 #container .ql-editor {
