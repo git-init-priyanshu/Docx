@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { v4 as uuidv4 } from "uuid";
 import { useMutation, useLazyQuery } from "@apollo/client";
@@ -12,6 +12,7 @@ import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import CloseIcon from "@mui/icons-material/Close";
+import { toast } from "react-hot-toast";
 
 import { ADD_DOC_MUTATION, CREATE_DOC_MUTATION } from "../Graphql/mutations";
 import { GET_ALL_DOCS_QUERY } from "../Graphql/queries";
@@ -20,15 +21,6 @@ import Navbar from "./Navbar";
 
 export default function Home() {
   const navigate = useNavigate();
-  const modalRef = useRef(null);
-
-  window.onclick = (event) => {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const modal: any = modalRef.current;
-    if (event.target == modal) {
-      modal.style.display = "none";
-    }
-  };
 
   interface docType {
     _id: string;
@@ -96,6 +88,7 @@ export default function Home() {
     });
   };
   if (addDocData?.addDoc) {
+    toast.success("Successfully Added the Doc");
     navigate(`/documents/${docId}`);
   }
 
@@ -112,15 +105,14 @@ export default function Home() {
     });
   };
   if (createDocData?.createDoc) {
-    console.log("here",newDocId)
+    toast.success("Successfully Created New Doc");
     navigate(`/documents/${newDocId}`);
   }
 
   return (
     <>
-
       {/* Navbar */}
-      <Navbar toggleModalProp={()=>toggleModal()}/>
+      <Navbar toggleModalProp={() => toggleModal()} />
 
       {/* Docs */}
       <Container sx={{ py: 8 }} maxWidth="md">

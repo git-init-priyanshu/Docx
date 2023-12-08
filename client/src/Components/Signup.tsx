@@ -13,6 +13,7 @@ import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 
 import { SIGNUP_MUTATION } from "../Graphql/mutations";
+import { toast } from "react-hot-toast";
 
 export default function Signup() {
   const navigate = useNavigate();
@@ -43,7 +44,9 @@ export default function Signup() {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    if(userState.password === userState.confirm_password) return;
+    if (userState.password !== userState.confirm_password)
+      return toast.error("Password and Confirm Password are not same.");
+
     signup({
       variables: {
         data: {
@@ -54,6 +57,7 @@ export default function Signup() {
     });
   };
   if (signupData?.signup.success) {
+    toast.success("Successfully Signed Up")
     localStorage.setItem("email", userState.email);
     localStorage.setItem("token", signupData.signup.token);
 
