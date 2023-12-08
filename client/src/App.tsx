@@ -10,7 +10,9 @@ import { split, HttpLink } from "@apollo/client";
 import { getMainDefinition } from "@apollo/client/utilities";
 import { GraphQLWsLink } from "@apollo/client/link/subscriptions";
 import { createClient } from "graphql-ws";
+import { ThemeProvider } from "@mui/material";
 
+import { Theme } from "./Theme/theme";
 import PrivateRoute from "./Components/PrivateRoute";
 import Login from "./Components/Login";
 import Signup from "./Components/Signup";
@@ -73,9 +75,11 @@ function App() {
     link: splitLink,
   });
   return (
-    <ApolloProvider client={client}>
-      <RouterProvider router={router} />
-    </ApolloProvider>
+    <ThemeProvider theme={Theme}>
+      <ApolloProvider client={client}>
+        <RouterProvider router={router} />
+      </ApolloProvider>
+    </ThemeProvider>
   );
 }
 

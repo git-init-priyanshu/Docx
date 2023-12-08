@@ -80,7 +80,6 @@ export default function Login() {
   // if (loginError) return window.alert(loginError.message);
 
   return (
-    <ThemeProvider theme={defaultTheme}>
       <Container component="main" maxWidth="xs">
         <CssBaseline />
         <Box
@@ -91,7 +90,7 @@ export default function Login() {
             alignItems: "center",
           }}
         >
-          <Avatar sx={{ m: 1, bgcolor: "secondary.main" }}>
+          <Avatar sx={{ m: 1, bgcolor: "primary.main" }}>
             <LockOutlinedIcon />
           </Avatar>
           <Typography component="h1" variant="h5">
@@ -148,7 +147,6 @@ export default function Login() {
           </Box>
         </Box>
       </Container>
-    </ThemeProvider>
     // <form onSubmit={handleOnSubmit} id="loginForm">
     //   <div className="form-title">Login</div>
     //   <div className="group">
