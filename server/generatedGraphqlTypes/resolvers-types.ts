@@ -27,15 +27,19 @@ export type Data = {
 export type Doc = {
   __typename?: 'Doc';
   _id: Scalars['ObjectId']['output'];
+  createdAt: Scalars['Date']['output'];
   data?: Maybe<Scalars['JSON']['output']>;
   docId: Scalars['String']['output'];
   email?: Maybe<Array<Scalars['String']['output']>>;
+  isShared: Scalars['Boolean']['output'];
+  name: Scalars['String']['output'];
   thumbnail: Scalars['String']['output'];
 };
 
 export type Mutation = {
   __typename?: 'Mutation';
   addDoc: Scalars['Boolean']['output'];
+  changeDocName: Scalars['Boolean']['output'];
   changeText: Scalars['Boolean']['output'];
   createDoc: Scalars['Boolean']['output'];
   login: UserOutput;
@@ -50,6 +54,13 @@ export type MutationAddDocArgs = {
 };
 
 
+export type MutationChangeDocNameArgs = {
+  docId: Scalars['String']['input'];
+  newDocName: Scalars['String']['input'];
+  userEmail: Scalars['String']['input'];
+};
+
+
 export type MutationChangeTextArgs = {
   data: Scalars['JSON']['input'];
   docId: Scalars['String']['input'];
@@ -58,7 +69,9 @@ export type MutationChangeTextArgs = {
 
 
 export type MutationCreateDocArgs = {
-  data?: InputMaybe<DocInput>;
+  docId: Scalars['String']['input'];
+  docName: Scalars['String']['input'];
+  emailId: Scalars['String']['input'];
 };
 
 
@@ -262,9 +275,12 @@ export interface DateScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes
 
 export type DocResolvers<ContextType = any, ParentType extends ResolversParentTypes['Doc'] = ResolversParentTypes['Doc']> = ResolversObject<{
   _id?: Resolver<ResolversTypes['ObjectId'], ParentType, ContextType>;
+  createdAt?: Resolver<ResolversTypes['Date'], ParentType, ContextType>;
   data?: Resolver<Maybe<ResolversTypes['JSON']>, ParentType, ContextType>;
   docId?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   email?: Resolver<Maybe<Array<ResolversTypes['String']>>, ParentType, ContextType>;
+  isShared?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   thumbnail?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
@@ -275,8 +291,9 @@ export interface JsonScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes
 
 export type MutationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = ResolversObject<{
   addDoc?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, Partial<MutationAddDocArgs>>;
+  changeDocName?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationChangeDocNameArgs, 'docId' | 'newDocName' | 'userEmail'>>;
   changeText?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationChangeTextArgs, 'data' | 'docId' | 'userEmail'>>;
-  createDoc?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, Partial<MutationCreateDocArgs>>;
+  createDoc?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationCreateDocArgs, 'docId' | 'docName' | 'emailId'>>;
   login?: Resolver<ResolversTypes['userOutput'], ParentType, ContextType, RequireFields<MutationLoginArgs, 'data'>>;
   saveDoc?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationSaveDocArgs, 'data' | 'docId'>>;
   saveThumbnail?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationSaveThumbnailArgs, 'docId' | 'thumbnail'>>;

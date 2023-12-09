@@ -11,13 +11,13 @@ import { getMainDefinition } from "@apollo/client/utilities";
 import { GraphQLWsLink } from "@apollo/client/link/subscriptions";
 import { createClient } from "graphql-ws";
 import { ThemeProvider } from "@mui/material";
-import {Toaster} from "react-hot-toast";
+import { Toaster } from "react-hot-toast";
 
 import { Theme } from "./Theme/theme";
 import PrivateRoute from "./Components/PrivateRoute";
 import Login from "./Components/Login";
 import Signup from "./Components/Signup";
-import Home from "./Components/Home";
+import Home from "./Components/Home/Home";
 import Doc from "./Components/Doc";
 
 export const GraphqlURI: string = import.meta.env.DEV

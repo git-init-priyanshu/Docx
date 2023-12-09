@@ -1,26 +1,20 @@
 import { MutationResolvers } from "../../generatedGraphqlTypes/resolvers-types";
 import { Doc } from "../../models/doc";
 
-export const addDoc: MutationResolvers["addDoc"] = async (
+export const changeDocName: MutationResolvers["changeDocName"] = async (
   _parent: any,
   args: any,
   _contextValue: any,
   _info: any
 ) => {
-  const { docId, emailId } = args.data;
+  const { docId, userEmail, newDocName } = args;
   const doc = await Doc.findOne({ docId });
-
-  if(doc.email.includes(emailId)) throw new Error("Doc already exists.")
+console.log("here")
+  if (!doc.email.includes(userEmail)) throw new Error("Not Authorized");
 
   // Updating doc
   try {
-    const emailArray = doc.email;
-    emailArray.push(emailId);
-
-    await Doc.findOneAndUpdate(
-      { docId },
-      { email: emailArray, isShared: true }
-    );
+    await Doc.findOneAndUpdate({ docId }, { name: newDocName });
 
     return true;
   } catch (error) {

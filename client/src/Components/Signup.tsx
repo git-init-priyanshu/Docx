@@ -34,7 +34,7 @@ export default function Signup() {
     confirm_password: "",
   });
 
-  const [signup, { data: signupData, error: signupError }] =
+  const [signup, { data: signupData, error, called, reset }] =
     useMutation(SIGNUP_MUTATION);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -57,7 +57,7 @@ export default function Signup() {
     });
   };
   if (signupData?.signup.success) {
-    toast.success("Successfully Signed Up")
+    toast.success("Successfully Signed Up");
     localStorage.setItem("email", userState.email);
     localStorage.setItem("token", signupData.signup.token);
 
@@ -66,9 +66,10 @@ export default function Signup() {
       navigate("/home");
     }, 100);
   }
-  if (signupError) {
+  if (called && error) {
     navigate("/");
-    window.alert(signupError.message);
+    window.alert(error.message);
+    reset();
   }
 
   return (

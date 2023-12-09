@@ -1,8 +1,8 @@
 import { gql } from "@apollo/client";
 
 export const CREATE_DOC_MUTATION = gql`
-  mutation CreateDoc($data: docInput!) {
-    createDoc(data: $data)
+  mutation CreateDoc($docId: String!, $emailId: String!, $docName: String!) {
+    createDoc(docId: $docId, emailId: $emailId, docName: $docName)
   }
 `;
 
@@ -15,6 +15,16 @@ export const ADD_DOC_MUTATION = gql`
 export const SAVE_THUMBNAIL_MUTATION = gql`
   mutation SaveThumbnail($docId: String!, $thumbnail: String!) {
     saveThumbnail(docId: $docId, thumbnail: $thumbnail)
+  }
+`;
+
+export const CHANGE_DOC_NAME = gql`
+  mutation ChangeDocName(
+    $docId: String!
+    $emailId: String!
+    $docName: String!
+  ) {
+    changeDocName(docId: $docId, userEmail: $emailId, newDocName: $docName)
   }
 `;
 

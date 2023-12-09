@@ -14,7 +14,7 @@ import Container from "@mui/material/Container";
 
 import { FIND_USER_QUERY } from "../Graphql/queries";
 import { LOGIN_MUTATION } from "../Graphql/mutations";
-import {toast} from "react-hot-toast";
+import { toast } from "react-hot-toast";
 
 export default function Login() {
   const navigate = useNavigate();
@@ -29,7 +29,8 @@ export default function Login() {
     password: "",
   });
 
-  const [login, { data: loginData }] = useMutation(LOGIN_MUTATION);
+  const [login, { data: loginData, error, called, reset }] =
+    useMutation(LOGIN_MUTATION);
 
   // If user already has token, redirect to "/home"
   useEffect(() => {
@@ -72,6 +73,11 @@ export default function Login() {
       navigate("/home");
     }, 100);
   }
+  if (called && error){
+    toast.error(error?.message);
+    reset();
+  } 
+  
 
   return (
     <Container component="main" maxWidth="xs">

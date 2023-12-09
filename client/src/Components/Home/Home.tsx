@@ -12,23 +12,31 @@ import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import CloseIcon from "@mui/icons-material/Close";
+import PeopleAltOutlinedIcon from "@mui/icons-material/PeopleAltOutlined";
+import { Modal, TextField } from "@mui/material";
 import { toast } from "react-hot-toast";
 
-import { ADD_DOC_MUTATION, CREATE_DOC_MUTATION } from "../Graphql/mutations";
-import { GET_ALL_DOCS_QUERY } from "../Graphql/queries";
-import { Modal, TextField } from "@mui/material";
-import Navbar from "./Navbar";
+import { ADD_DOC_MUTATION, CREATE_DOC_MUTATION } from "../../Graphql/mutations";
+import { GET_ALL_DOCS_QUERY } from "../../Graphql/queries";
+import Navbar from "../Navbar";
+import MenuButton from "./MenuButton";
+import DocSkeleton from "./DocSkeleton";
+
+const skeleton = [1, 2, 3, 4, 5, 6];
+
+export interface docType {
+  _id: string;
+  name: string;
+  docId: string;
+  email: [string];
+  data: string | object;
+  thumbnail?: string | null;
+  createdAt: string;
+  isShared: boolean;
+}
 
 export default function Home() {
   const navigate = useNavigate();
-
-  interface docType {
-    _id: string;
-    docId: string;
-    email: [string];
-    data: string | object;
-    thumbnail?: string | null;
-  }
 
   enum docModeEnum {
     Create,
@@ -45,7 +53,8 @@ export default function Home() {
   const [isOpen, setIsOpen] = useState(false);
 
   const [addDoc, { data: addDocData }] = useMutation(ADD_DOC_MUTATION);
-  const [createDoc, { data: createDocData }] = useMutation(CREATE_DOC_MUTATION);
+  const [createDoc, { data: createDocData, error, called, reset }] =
+    useMutation(CREATE_DOC_MUTATION);
 
   const token = localStorage.getItem("token");
   const [getDocs, { data }] = useLazyQuery(GET_ALL_DOCS_QUERY, {
@@ -58,7 +67,7 @@ export default function Home() {
         token,
       },
     });
-  }, [getDocs, token]);
+  }, [getDocs, data, token]);
 
   useEffect(() => {
     const newDocId = uuidv4();
@@ -97,16 +106,19 @@ export default function Home() {
 
     createDoc({
       variables: {
-        data: {
-          docId: newDocId,
-          emailId,
-        },
+        docId: newDocId,
+        emailId,
+        docName,
       },
     });
   };
   if (createDocData?.createDoc) {
     toast.success("Successfully Created New Doc");
     navigate(`/documents/${newDocId}`);
+  }
+  if (called && error) {
+    toast.error(error.message);
+    reset();
   }
 
   return (
@@ -156,41 +168,54 @@ export default function Home() {
                         style={{
                           fontSize: "1rem",
                           fontWeight: "normal",
+                          overflow: "hidden",
+                          height: "25px",
                         }}
                       >
-                        Heading
+                        {doc.name}
                       </Typography>
                       <Typography
                         component="p"
                         style={{
                           fontSize: "0.8rem",
-                          fontWeight: "lighter",
+                          fontWeight: "normal",
+                          display: "flex",
+                          justifyContent: "space-between",
+                          alignItems: "center",
                         }}
                       >
-                        Date of creation
+                        Created At: {doc.createdAt}
+                        {doc.isShared ? <PeopleAltOutlinedIcon /> : <></>}
                       </Typography>
                     </CardContent>
                     <CardActions
                       style={{
                         backgroundColor: "#f3f3f3",
+                        display: "flex",
+                        justifyContent: "space-between",
                       }}
                     >
-                      <Button
-                        variant="contained"
-                        size="small"
-                        onClick={() => {
-                          navigate(`/documents/${doc.docId}`);
-                        }}
-                      >
-                        Edit
-                      </Button>
-                      <Button
-                        variant="contained"
-                        size="small"
-                        onClick={() => navigator.clipboard.writeText(doc.docId)}
-                      >
-                        Share
-                      </Button>
+                      <Box sx={{ display: "flex", gap: "10px" }}>
+                        <Button
+                          variant="contained"
+                          size="small"
+                          onClick={() => {
+                            navigate(`/documents/${doc.docId}`);
+                          }}
+                        >
+                          Edit
+                        </Button>
+                        <Button
+                          variant="contained"
+                          size="small"
+                          onClick={() =>
+                            navigator.clipboard.writeText(doc.docId)
+                          }
+                        >
+                          Share
+                        </Button>
+                      </Box>
+                      <MenuButton doc={doc} />
                     </CardActions>
                   </Card>
                 </Grid>
@@ -202,7 +227,9 @@ export default function Home() {
               </Typography>
             )
           ) : (
-            <Typography>Loading Docs...</Typography>
+            skeleton.map((e) => {
+              return <DocSkeleton key={e} />;
+            })
           )}
         </Grid>
       </Container>
