@@ -42,6 +42,7 @@ export type Mutation = {
   changeDocName: Scalars['Boolean']['output'];
   changeText: Scalars['Boolean']['output'];
   createDoc: Scalars['Boolean']['output'];
+  deleteEmail: Scalars['Boolean']['output'];
   login: UserOutput;
   saveDoc: Scalars['Boolean']['output'];
   saveThumbnail: Scalars['Boolean']['output'];
@@ -72,6 +73,13 @@ export type MutationCreateDocArgs = {
   docId: Scalars['String']['input'];
   docName: Scalars['String']['input'];
   emailId: Scalars['String']['input'];
+};
+
+
+export type MutationDeleteEmailArgs = {
+  deleteEmail: Scalars['String']['input'];
+  docId: Scalars['String']['input'];
+  userEmail: Scalars['String']['input'];
 };
 
 
@@ -294,6 +302,7 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   changeDocName?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationChangeDocNameArgs, 'docId' | 'newDocName' | 'userEmail'>>;
   changeText?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationChangeTextArgs, 'data' | 'docId' | 'userEmail'>>;
   createDoc?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationCreateDocArgs, 'docId' | 'docName' | 'emailId'>>;
+  deleteEmail?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationDeleteEmailArgs, 'deleteEmail' | 'docId' | 'userEmail'>>;
   login?: Resolver<ResolversTypes['userOutput'], ParentType, ContextType, RequireFields<MutationLoginArgs, 'data'>>;
   saveDoc?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationSaveDocArgs, 'data' | 'docId'>>;
   saveThumbnail?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationSaveThumbnailArgs, 'docId' | 'thumbnail'>>;

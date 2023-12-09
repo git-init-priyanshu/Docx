@@ -8,6 +8,7 @@ export interface InterfaceDoc {
   email: [string];
   data: object;
   thumbnail: string;
+  creator: string;
   createdAt: Date;
   isShared: boolean;
 }
@@ -30,6 +31,9 @@ const DocSchema = new Schema<InterfaceDoc>({
     type: Object,
   },
   thumbnail: {
+    type: String,
+  },
+  creator: {
     type: String,
   },
   createdAt: {

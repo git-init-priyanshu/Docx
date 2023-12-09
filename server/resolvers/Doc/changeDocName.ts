@@ -9,8 +9,8 @@ export const changeDocName: MutationResolvers["changeDocName"] = async (
 ) => {
   const { docId, userEmail, newDocName } = args;
   const doc = await Doc.findOne({ docId });
-console.log("here")
-  if (!doc.email.includes(userEmail)) throw new Error("Not Authorized");
+
+  if (doc.creator !== userEmail) throw new Error("Not Authorized");
 
   // Updating doc
   try {

@@ -7,7 +7,16 @@ export const mutations = gql`
     saveThumbnail(docId: String!, thumbnail: String!): Boolean!
     saveDoc(docId: String!, data: JSON!): Boolean!
     changeText(docId: String!, userEmail: String!, data: JSON!): Boolean!
-    changeDocName(docId: String!, userEmail: String!, newDocName: String!): Boolean!
+    changeDocName(
+      docId: String!
+      userEmail: String!
+      newDocName: String!
+    ): Boolean!
+    deleteEmail(
+      docId: String!
+      deleteEmail: String!
+      userEmail: String!
+    ): Boolean!
 
     login(data: userInput!): userOutput!
     signup(data: userInput!): userOutput!

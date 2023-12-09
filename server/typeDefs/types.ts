@@ -19,6 +19,7 @@ export const types = gql`
     email: [String!]
     data: JSON
     thumbnail: String!
+    creator: String!
     createdAt: Date!
     isShared: Boolean!
   }

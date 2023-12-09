@@ -57,3 +57,13 @@ export const CHANGE_TEXT_MUTATION = gql`
     changeText(docId: $docId, userEmail: $userEmail, data: $data)
   }
 `;
+
+export const REMOVE_EMAIL = gql`
+  mutation RemoveEmail(
+    $docId: String!
+    $deleteEmail: String!
+    $userEmail: String!
+  ) {
+    deleteEmail(docId: $docId, deleteEmail: $deleteEmail, userEmail: $userEmail)
+  }
+`;

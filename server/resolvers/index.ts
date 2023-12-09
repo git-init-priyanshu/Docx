@@ -15,6 +15,7 @@ import { signup } from "./User/signup";
 import { subscribeToDoc } from "./User/subscribeToDoc";
 import { changeText } from "./User/changeText";
 import { reflectChanges } from "./User/reflectChanges";
+import {deleteEmail} from "./User/deleteUser"
 
 dotenv.config();
 
@@ -42,6 +43,7 @@ export const resolvers: Resolvers = {
     login,
     signup,
     changeText,
+    deleteEmail
   },
 
   // Subscriptions

@@ -19,6 +19,7 @@ export const createDoc: MutationResolvers["createDoc"] = async (
       email: [emailId],
       data: { data: "" },
       thumbnail: "",
+      creator: emailId,
       createdAt: new Date(),
       isShared: false,
     });
