@@ -17,8 +17,9 @@ export const getAllDocs: QueryResolvers["getAllDocs"] = async (
     const decoded = jwt.verify(token, process.env.JWT_SECRET) as JwtPayload;
     const userEmail = decoded.user.emailId;
 
-    const docs = await Doc.find({ email: userEmail }).select("-__v");
+    if (!userEmail) throw new Error("Not Authorized");
 
+    const docs = await Doc.find({ email: userEmail }).select("-__v");
     return docs;
   } catch (error) {
     throw new Error("Internal server error");

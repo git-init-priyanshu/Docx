@@ -4,7 +4,7 @@ import { DeltaOperation, Sources, Quill as typesQuill } from "quill/index";
 import { useParams } from "react-router-dom";
 import { useLazyQuery, useMutation, useSubscription } from "@apollo/client";
 import html2canvas from "html2canvas";
-import _ from "lodash";
+import _, { debounce } from "lodash";
 
 import "quill/dist/quill.snow.css";
 import { TOOLBAR_OPTIONS } from "./utils/ToolbarOptions";
@@ -69,9 +69,10 @@ export default function Doc() {
 
   // // Load Doc
   useEffect(() => {
-    if (!data || !quill) return;
-    quill.setContents(data.getDocData.data);
-    quill.enable();
+    if (quill && data) {
+      quill.setContents(data.getDocData.data);
+      quill.enable();
+    }
   }, [quill, data]);
 
   // // Save Doc
@@ -87,20 +88,8 @@ export default function Doc() {
     console.log("save");
     createDocThumbnail();
   };
-  useEffect(() => {
-    if (!quill) return;
-    let timer: any;
-    clearTimeout(timer);
-    return () => {
-      timer = setTimeout(() => {
-        saveDoc();
-      }, 1000);
-    };
-  }, [contentChange]);
+  const debounce_saveDoc = debounce(saveDoc, 1000);
 
-  // const debounce_saveDoc = debounce(saveDoc, 1000);
-
-  // // Socket and Quill
   useEffect(() => {
     toggleConnected();
 
@@ -112,7 +101,6 @@ export default function Doc() {
     quill.setText("Loading...");
 
     setQuill(quill);
-
     return () => {
       // Need to remove the Toolbar while unmounting
       const rootElement = document.getElementById("root");
@@ -122,7 +110,7 @@ export default function Doc() {
        * This was resulting in a blank page appearing when navigating back to the home page.
        * The new solution now only removes the necessary element and does not completely change the entire root element.
        */
-      rootElement?.children[0].remove();
+      rootElement?.children[1].remove();
       toggleConnected();
     };
   }, []);
@@ -130,11 +118,7 @@ export default function Doc() {
   if (quill) {
     quill.on(
       "text-change",
-      function (
-        _delta: DeltaOperation,
-        _oldDelta: DeltaOperation,
-        source: Sources
-      ) {
+      (_delta: DeltaOperation, _oldDelta: DeltaOperation, source: Sources) => {
         if (source == "api") return;
         if (source == "user") {
           const data: DeltaOperation = quill.getContents();
@@ -146,13 +130,11 @@ export default function Doc() {
                 userEmail,
               },
             });
-          // debounce_saveDoc();
         }
+        debounce_saveDoc();
       }
     );
-    if (contentChange) {
-      quill.setContents(contentChange.reflectChanges);
-    }
+    if (contentChange) quill.setContents(contentChange.reflectChanges);
   }
 
   return <div id="container">Hello</div>;

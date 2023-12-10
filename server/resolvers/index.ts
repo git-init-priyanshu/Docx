@@ -8,12 +8,14 @@ import { getAllDocs } from "./Doc/getAllDocs";
 import { saveThumbnail } from "./Doc/saveThumbnail";
 import { getDocData } from "./Doc/getDocData";
 import { saveDoc } from "./Doc/saveDoc";
+import {changeDocName} from './Doc/changeDocName'
 import { findUser } from "./User/findUser";
 import { login } from "./User/login";
 import { signup } from "./User/signup";
 import { subscribeToDoc } from "./User/subscribeToDoc";
 import { changeText } from "./User/changeText";
 import { reflectChanges } from "./User/reflectChanges";
+import {deleteEmail} from "./User/deleteUser"
 
 dotenv.config();
 
@@ -37,9 +39,11 @@ export const resolvers: Resolvers = {
     createDoc,
     saveThumbnail,
     saveDoc,
+    changeDocName,
     login,
     signup,
     changeText,
+    deleteEmail
   },
 
   // Subscriptions

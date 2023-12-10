@@ -13,11 +13,15 @@ export const types = gql`
   }
 
   type Doc {
-    _id: ID!
+    _id: ObjectId!
+    name: String!
     docId: String!
     email: [String!]
     data: JSON
     thumbnail: String!
+    creator: String!
+    createdAt: Date!
+    isShared: Boolean!
   }
 
   type userOutput {

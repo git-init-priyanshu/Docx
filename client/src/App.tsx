@@ -10,17 +10,15 @@ import { split, HttpLink } from "@apollo/client";
 import { getMainDefinition } from "@apollo/client/utilities";
 import { GraphQLWsLink } from "@apollo/client/link/subscriptions";
 import { createClient } from "graphql-ws";
+import { ThemeProvider } from "@mui/material";
+import { Toaster } from "react-hot-toast";
 
+import { Theme } from "./Theme/theme";
 import PrivateRoute from "./Components/PrivateRoute";
 import Login from "./Components/Login";
 import Signup from "./Components/Signup";
-import Home from "./Components/Home";
+import Home from "./Components/Home/Home";
 import Doc from "./Components/Doc";
-
-// eslint-disable-next-line react-refresh/only-export-components
-// export const URL: string = import.meta.env.DEV
-//   ? import.meta.env.VITE_DEV_URL
-//   : import.meta.env.VITE_PROD_URL;
 
 export const GraphqlURI: string = import.meta.env.DEV
   ? import.meta.env.VITE_GRAPHQL_DEV_URI
@@ -73,9 +71,12 @@ function App() {
     link: splitLink,
   });
   return (
-    <ApolloProvider client={client}>
-      <RouterProvider router={router} />
-    </ApolloProvider>
+    <ThemeProvider theme={Theme}>
+      <ApolloProvider client={client}>
+        <Toaster position="top-right" reverseOrder={false} />
+        <RouterProvider router={router} />
+      </ApolloProvider>
+    </ThemeProvider>
   );
 }
 
