@@ -101,7 +101,6 @@ export default function Doc() {
     quill.setText("Loading...");
 
     setQuill(quill);
-
     return () => {
       // Need to remove the Toolbar while unmounting
       const rootElement = document.getElementById("root");
@@ -111,7 +110,7 @@ export default function Doc() {
        * This was resulting in a blank page appearing when navigating back to the home page.
        * The new solution now only removes the necessary element and does not completely change the entire root element.
        */
-      rootElement?.children[0].remove();
+      rootElement?.children[1].remove();
       toggleConnected();
     };
   }, []);

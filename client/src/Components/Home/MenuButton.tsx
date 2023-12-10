@@ -39,6 +39,7 @@ export default function MenuButton({ doc }: { doc: docType }) {
   };
 
   const handleOnClick = (option: string) => {
+    handleClose();
     if (option === options[0]) {
       toggleNameModal();
     } else {
@@ -65,7 +66,6 @@ export default function MenuButton({ doc }: { doc: docType }) {
       },
     });
     toggleNameModal();
-    handleClose();
   };
   if (data?.changeName) {
     toast.success("Name Changed Successfully");
