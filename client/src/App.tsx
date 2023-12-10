@@ -39,17 +39,17 @@ const router = createBrowserRouter(
     </Route>
   )
 );
-
+console.log(import.meta.env.PRO)
 function App() {
   // Defining Apollo Client
   const httpLink = new HttpLink({
-    uri: import.meta.env.DEV
+    uri: import.meta.env.PROD
       ? import.meta.env.VITE_HTTPS_URL
       : "http://localhost:4000/graphql",
   });
   const wsLink = new GraphQLWsLink(
     createClient({
-      url: import.meta.env.DEV
+      url: import.meta.env.PROD
         ? import.meta.env.VITE_WSS_URL
         : "wss://localhost:4000/graphql",
       connectionParams: {
