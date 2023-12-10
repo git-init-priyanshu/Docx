@@ -1,10 +1,11 @@
 # Google-docs-clone
-A platform that replicates the collaborative and customizable features of Google Docs. Multiple users can work together in real time on documents. It offers font customization and color adjustments for a unique look. You can log in with your account, create docs, edit docs, and share the docs with different users for collaboration.
+A platform that replicates the collaborative and customizable features of Google Docs. Multiple users can work together in real time on documents. It offers font customization and color adjustments for a unique look. You can log in with your account, create docs, edit docs, manage docs, and share the docs with different users for collaboration.
 
 Tech Stack:
-* MERN stack
-* Socket.io
-* TypeScript
+* Rect.js ( frontend )
+* GraphQl ( backend )
+* GraphQl - Subscriptions ( Real Time collaboration )
+* TypeScript 
 * Docker
 * Nginx
 
