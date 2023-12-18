@@ -1,6 +1,9 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useMutation, useLazyQuery } from "@apollo/client";
+import { ZodType, z } from "zod";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import CssBaseline from "@mui/material/CssBaseline";
@@ -19,15 +22,26 @@ import { toast } from "react-hot-toast";
 export default function Login() {
   const navigate = useNavigate();
 
-  interface userState {
+  interface inputType {
     email: string;
     password: string;
   }
-  const [token, setToken] = useState<string | null>(null);
-  const [userState, setUserState] = useState<userState>({
-    email: "",
-    password: "",
+
+  const inputSchema: ZodType<inputType> = z.object({
+    email: z.string().email(),
+    password: z.string(),
   });
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<inputType>({
+    resolver: zodResolver(inputSchema),
+  });
+
+  const [email, setEmail] = useState<string | null>(null);
+  const [token, setToken] = useState<string | null>(null);
 
   const [login, { data: loginData, error, called, reset }] =
     useMutation(LOGIN_MUTATION);
@@ -47,25 +61,21 @@ export default function Login() {
   }, [findUser, token]);
   if (data?.findUser) navigate("/home");
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setUserState({ ...userState, [e.target.name]: e.target.value });
-  };
-
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-
+  const submitData = async (data: inputType) => {
+    setEmail(data.email);
     login({
       variables: {
         data: {
-          emailId: userState.email,
-          password: userState.password,
+          emailId: data.email,
+          password: data.password,
         },
       },
     });
   };
+  console.log({ ...register("email") });
   if (loginData?.login.success) {
     toast.success("Successfully Logged In");
-    localStorage.setItem("email", userState.email);
+    localStorage.setItem("email", email!);
     localStorage.setItem("token", loginData.login.token);
 
     // To avoid bugs
@@ -73,11 +83,10 @@ export default function Login() {
       navigate("/home");
     }, 100);
   }
-  if (called && error){
+  if (called && error) {
     toast.error(error?.message);
     reset();
-  } 
-  
+  }
 
   return (
     <Container component="main" maxWidth="xs">
@@ -96,28 +105,35 @@ export default function Login() {
         <Typography component="h1" variant="h5">
           Log In
         </Typography>
-        <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
+        <Box
+          component="form"
+          onSubmit={handleSubmit(submitData)}
+          noValidate
+          sx={{ mt: 1 }}
+        >
           <TextField
             margin="normal"
             required
             fullWidth
             id="email"
             label="Email Address"
-            name="email"
             autoComplete="email"
             autoFocus
-            onChange={handleChange}
+            {...register("email")}
+            error={errors.email ? true : false}
+            helperText={errors.email && errors.email.message}
           />
           <TextField
             margin="normal"
             required
             fullWidth
-            name="password"
             label="Password"
             type="password"
             id="password"
             autoComplete="current-password"
-            onChange={handleChange}
+            {...register("password")}
+            error={errors.password ? true : false}
+            helperText={errors.password && errors.password.message}
           />
           <Button
             type="submit"

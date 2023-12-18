@@ -16,11 +16,12 @@ import Container from "@mui/material/Container";
 
 import { SIGNUP_MUTATION } from "../Graphql/mutations";
 import { toast } from "react-hot-toast";
+import { useState } from "react";
 
 export default function Signup() {
   const navigate = useNavigate();
 
-  type userType = {
+  type inputType = {
     firstName: string;
     lastName: string;
     email: string;
@@ -28,7 +29,7 @@ export default function Signup() {
     confirm_password: string;
   };
 
-  const inputSchema: ZodType<userType> = z
+  const inputSchema: ZodType<inputType> = z
     .object({
       firstName: z.string().min(1),
       lastName: z.string().min(1),
@@ -45,14 +46,17 @@ export default function Signup() {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<userType>({
+  } = useForm<inputType>({
     resolver: zodResolver(inputSchema),
   });
+
+  const [email, setEmail] = useState<string | null>(null);
 
   const [signup, { data: signupData, error, called, reset }] =
     useMutation(SIGNUP_MUTATION);
 
-  const submitData = async (data: userType) => {
+  const submitData = async (data: inputType) => {
+    setEmail(data.email);
     signup({
       variables: {
         data: {
@@ -64,7 +68,7 @@ export default function Signup() {
   };
   if (signupData?.signup.success) {
     toast.success("Successfully Signed Up");
-    localStorage.setItem("email", signupData.signup.email);
+    localStorage.setItem("email", email!);
     localStorage.setItem("token", signupData.signup.token);
 
     // To avoid bugs
@@ -83,7 +87,7 @@ export default function Signup() {
       <CssBaseline />
       <Box
         sx={{
-          marginTop: 8,
+          marginTop: 2,
           display: "flex",
           flexDirection: "column",
           alignItems: "center",
