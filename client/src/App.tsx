@@ -39,7 +39,7 @@ const router = createBrowserRouter(
     </Route>
   )
 );
-console.log(import.meta.env.PRO)
+
 function App() {
   // Defining Apollo Client
   const httpLink = new HttpLink({

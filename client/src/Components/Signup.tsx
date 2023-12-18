@@ -1,6 +1,8 @@
-import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useMutation } from "@apollo/client";
+import { ZodType, z } from "zod";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import CssBaseline from "@mui/material/CssBaseline";
@@ -18,47 +20,51 @@ import { toast } from "react-hot-toast";
 export default function Signup() {
   const navigate = useNavigate();
 
-  interface userState {
+  type userType = {
     firstName: string;
     lastName: string;
     email: string;
     password: string;
     confirm_password: string;
-  }
+  };
 
-  const [userState, setUserState] = useState<userState>({
-    firstName: "",
-    lastName: "",
-    email: "",
-    password: "",
-    confirm_password: "",
+  const inputSchema: ZodType<userType> = z
+    .object({
+      firstName: z.string().min(1),
+      lastName: z.string().min(1),
+      email: z.string().email(),
+      password: z.string().min(5).max(10),
+      confirm_password: z.string().min(5).max(10),
+    })
+    .refine((data) => data.password === data.confirm_password, {
+      message: "Password and Confirm Password do not match",
+      path: ["confirm_password"],
+    });
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<userType>({
+    resolver: zodResolver(inputSchema),
   });
 
   const [signup, { data: signupData, error, called, reset }] =
     useMutation(SIGNUP_MUTATION);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setUserState({ ...userState, [e.target.name]: e.target.value });
-  };
-
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-
-    if (userState.password !== userState.confirm_password)
-      return toast.error("Password and Confirm Password are not same.");
-
+  const submitData = async (data: userType) => {
     signup({
       variables: {
         data: {
-          emailId: userState.email,
-          password: userState.password,
+          emailId: data.email,
+          password: data.password,
         },
       },
     });
   };
   if (signupData?.signup.success) {
     toast.success("Successfully Signed Up");
-    localStorage.setItem("email", userState.email);
+    localStorage.setItem("email", signupData.signup.email);
     localStorage.setItem("token", signupData.signup.token);
 
     // To avoid bugs
@@ -89,17 +95,24 @@ export default function Signup() {
         <Typography component="h1" variant="h5">
           Sign up
         </Typography>
-        <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
+        <Box
+          component="form"
+          onSubmit={handleSubmit(submitData)}
+          noValidate
+          sx={{ mt: 1 }}
+        >
           <Grid container spacing={2}>
             <Grid item xs={12} sm={6}>
               <TextField
                 autoComplete="given-name"
-                name="firstName"
                 required
                 fullWidth
                 id="firstName"
                 label="First Name"
                 autoFocus
+                {...register("firstName")}
+                error={errors.firstName ? true : false}
+                helperText={errors.firstName && errors.firstName.message}
               />
             </Grid>
             <Grid item xs={12} sm={6}>
@@ -108,8 +121,10 @@ export default function Signup() {
                 fullWidth
                 id="lastName"
                 label="Last Name"
-                name="lastName"
                 autoComplete="family-name"
+                {...register("lastName")}
+                error={errors.lastName ? true : false}
+                helperText={errors.lastName && errors.lastName.message}
               />
             </Grid>
           </Grid>
@@ -120,10 +135,11 @@ export default function Signup() {
               fullWidth
               id="email"
               label="Email Address"
-              name="email"
               autoComplete="email"
               autoFocus
-              onChange={handleChange}
+              {...register("email")}
+              error={errors.email ? true : false}
+              helperText={errors.email && errors.email.message}
             />
           </Grid>
           <Grid item xs={12}>
@@ -131,11 +147,12 @@ export default function Signup() {
               margin="normal"
               required
               fullWidth
-              name="password"
               label="Password"
               type="password"
               id="password"
-              onChange={handleChange}
+              {...register("password")}
+              error={errors.password ? true : false}
+              helperText={errors.password && errors.password.message}
             />
           </Grid>
           <Grid item xs={12}>
@@ -143,11 +160,14 @@ export default function Signup() {
               margin="normal"
               required
               fullWidth
-              name="confirm_password"
               label="Confirm Password"
               type="password"
-              id="password"
-              onChange={handleChange}
+              id="cPassword"
+              {...register("confirm_password")}
+              error={errors.confirm_password ? true : false}
+              helperText={
+                errors.confirm_password && errors.confirm_password.message
+              }
             />
           </Grid>
           <Grid>
