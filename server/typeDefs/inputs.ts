@@ -6,7 +6,14 @@ export const inputs = gql`
     emailId: String!
   }
 
-  input userInput {
+  input signupInput {
+    firstName: String!
+    lastName: String!
+    emailId: String!
+    password: String!
+  }
+
+  input loginInput {
     emailId: String!
     password: String!
   }

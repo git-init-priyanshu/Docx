@@ -3,6 +3,8 @@ import { gql } from "apollo-server-express";
 export const types = gql`
   type User {
     _id: ObjectId!
+    firstName: String!
+    lastName: String!
     email: String!
     isVerified: Boolean!
     isAdmin: Boolean!

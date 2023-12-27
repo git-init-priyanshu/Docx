@@ -28,6 +28,7 @@ export type Doc = {
   __typename?: 'Doc';
   _id: Scalars['ObjectId']['output'];
   createdAt: Scalars['Date']['output'];
+  creator: Scalars['String']['output'];
   data?: Maybe<Scalars['JSON']['output']>;
   docId: Scalars['String']['output'];
   email?: Maybe<Array<Scalars['String']['output']>>;
@@ -84,7 +85,7 @@ export type MutationDeleteEmailArgs = {
 
 
 export type MutationLoginArgs = {
-  data: UserInput;
+  data: LoginInput;
 };
 
 
@@ -101,7 +102,7 @@ export type MutationSaveThumbnailArgs = {
 
 
 export type MutationSignupArgs = {
-  data: UserInput;
+  data: SignupInput;
 };
 
 export type Query = {
@@ -142,10 +143,12 @@ export type User = {
   __typename?: 'User';
   _id: Scalars['ObjectId']['output'];
   email: Scalars['String']['output'];
+  firstName: Scalars['String']['output'];
   forgotPasswordToken: Scalars['String']['output'];
   forgotPasswordTokenExpiry: Scalars['Date']['output'];
   isAdmin: Scalars['Boolean']['output'];
   isVerified: Scalars['Boolean']['output'];
+  lastName: Scalars['String']['output'];
   verifyToken: Scalars['String']['output'];
   verifyTokenExpiry: Scalars['Date']['output'];
 };
@@ -155,8 +158,15 @@ export type DocInput = {
   emailId: Scalars['String']['input'];
 };
 
-export type UserInput = {
+export type LoginInput = {
   emailId: Scalars['String']['input'];
+  password: Scalars['String']['input'];
+};
+
+export type SignupInput = {
+  emailId: Scalars['String']['input'];
+  firstName: Scalars['String']['input'];
+  lastName: Scalars['String']['input'];
   password: Scalars['String']['input'];
 };
 
@@ -250,7 +260,8 @@ export type ResolversTypes = ResolversObject<{
   Subscription: ResolverTypeWrapper<{}>;
   User: ResolverTypeWrapper<User>;
   docInput: DocInput;
-  userInput: UserInput;
+  loginInput: LoginInput;
+  signupInput: SignupInput;
   userOutput: ResolverTypeWrapper<UserOutput>;
 }>;
 
@@ -268,7 +279,8 @@ export type ResolversParentTypes = ResolversObject<{
   Subscription: {};
   User: User;
   docInput: DocInput;
-  userInput: UserInput;
+  loginInput: LoginInput;
+  signupInput: SignupInput;
   userOutput: UserOutput;
 }>;
 
@@ -284,6 +296,7 @@ export interface DateScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes
 export type DocResolvers<ContextType = any, ParentType extends ResolversParentTypes['Doc'] = ResolversParentTypes['Doc']> = ResolversObject<{
   _id?: Resolver<ResolversTypes['ObjectId'], ParentType, ContextType>;
   createdAt?: Resolver<ResolversTypes['Date'], ParentType, ContextType>;
+  creator?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   data?: Resolver<Maybe<ResolversTypes['JSON']>, ParentType, ContextType>;
   docId?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   email?: Resolver<Maybe<Array<ResolversTypes['String']>>, ParentType, ContextType>;
@@ -327,10 +340,12 @@ export type SubscriptionResolvers<ContextType = any, ParentType extends Resolver
 export type UserResolvers<ContextType = any, ParentType extends ResolversParentTypes['User'] = ResolversParentTypes['User']> = ResolversObject<{
   _id?: Resolver<ResolversTypes['ObjectId'], ParentType, ContextType>;
   email?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  firstName?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   forgotPasswordToken?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   forgotPasswordTokenExpiry?: Resolver<ResolversTypes['Date'], ParentType, ContextType>;
   isAdmin?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   isVerified?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  lastName?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   verifyToken?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   verifyTokenExpiry?: Resolver<ResolversTypes['Date'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;

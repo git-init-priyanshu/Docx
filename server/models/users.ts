@@ -3,6 +3,8 @@ import mongoose, { Types } from "mongoose";
 const { Schema, model } = mongoose;
 
 export interface InterfaceUser {
+  firstName: string;
+  lastName: string;
   email: string;
   password: string;
   isVerified: boolean;
@@ -14,6 +16,14 @@ export interface InterfaceUser {
 }
 
 const UserSchema = new Schema<InterfaceUser>({
+  firstName: {
+    type: String,
+    required: [true, "Please provide firstname"],
+  },
+  lastName: {
+    type: String,
+    required: [true, "Please provide lastname"],
+  },
   email: {
     type: String,
     required: [true, "Please provide an email"],

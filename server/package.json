@@ -4,7 +4,6 @@
   "description": "",
   "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
     "generate": "graphql-codegen --config codegen.yml",
     "compile": "npm run generate && tsc",
     "build": "npm run compile && node ./dist/server.js",
@@ -28,9 +27,11 @@
     "graphql-ws": "^5.14.2",
     "jsonwebtoken": "^9.0.1",
     "mongoose": "^7.4.1",
+    "nanoid": "^5.0.4",
     "node-pre-gyp": "^0.17.0",
     "socket.io": "^4.7.1",
-    "ws": "^8.14.2"
+    "ws": "^8.14.2",
+    "zod": "^3.22.4"
   },
   "devDependencies": {
     "@graphql-codegen/cli": "^5.0.0",

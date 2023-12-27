@@ -6,6 +6,8 @@ scalar JSON
 
 type User {
   _id: ObjectId!
+  firstName: String!
+  lastName: String!
   email: String!
   isVerified: Boolean!
   isAdmin: Boolean!
@@ -47,11 +49,17 @@ input docInput {
   emailId: String!
 }
 
-input userInput {
+input signupInput {
+  firstName: String!
+  lastName: String!
   emailId: String!
   password: String!
 }
 
+input loginInput {
+  emailId: String!
+  password: String!
+}
 type Mutation {
   createDoc(docId: String!, emailId: String!, docName: String!): Boolean!
   addDoc(data: docInput): Boolean!
@@ -63,10 +71,14 @@ type Mutation {
     newDocName: String!
   ): Boolean!
 
-  login(data: userInput!): userOutput!
-  signup(data: userInput!): userOutput!
+  login(data: loginInput!): userOutput!
+  signup(data: signupInput!): userOutput!
   changeText(docId: String!, userEmail: String!, data: JSON!): Boolean!
-  deleteEmail(docId: String!, deleteEmail: String!, userEmail: String!): Boolean!
+  deleteEmail(
+    docId: String!
+    deleteEmail: String!
+    userEmail: String!
+  ): Boolean!
 }
 
 type Subscription {
