@@ -1,58 +1,36 @@
-# Google-docs-clone
-A platform that replicates the collaborative and customizable features of Google Docs. Multiple users can work together in real time on documents. It offers font customization and color adjustments for a unique look. You can log in with your account, create docs, edit docs, manage docs, and share the docs with different users for collaboration. <br/>
-Now with new and improved UI with many new features.
+This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
-Tech Stack:
-* Rect.js ( frontend )
-* GraphQl ( backend )
-* GraphQl - Subscriptions ( Real Time collaboration )
-* TypeScript 
-* Docker
-* Nginx
+## Getting Started
 
-## Website link
-[Visit Website](https://docx-git-init-priyanshu.vercel.app/)
+First, run the development server:
 
-## How it works:
+```bash
+npm run dev
+# or
+yarn dev
+# or
+pnpm dev
+# or
+bun dev
+```
 
-* You need to sign up with your email id and password.
+Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-* After signing up, you will be redirected to the home page where you can see all your documents. If you are a new user, this section will be empty, and you will need to create a new document.
-  
-* To create a new document, click the button on the top right corner.
+You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
-* Edit your document as you like; changes will be saved automatically.
+This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
 
-* You can share your document with others for collaboration. To do this, click on the 'Share Doc' button located under the thumbnail of each document on the home page.
+## Learn More
 
-* After clicking the button, send the link to your friend. They will paste the link, and both of you can then edit the same document simultaneously.
+To learn more about Next.js, take a look at the following resources:
 
-## Screenshots
+- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
+- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
 
-  <div style="display: flex;">
-    <img width="480" alt="Screenshot 2023-12-10 123504" src="https://github.com/git-init-priyanshu/Docx/assets/110045644/ed80c831-698b-4cac-a3fb-61728f690e0e">
-    <img width="480" alt="image" src="https://github.com/git-init-priyanshu/Docx/assets/110045644/9374ba10-49af-4d1a-9290-a595be9e74b8">
-  </div>
-  <img width="960" alt="image" src="https://github.com/git-init-priyanshu/Docx/assets/110045644/a958a7e2-8903-4aeb-bac8-dd155a038b20">
-<img width="960" alt="image" src="https://github.com/git-init-priyanshu/Docx/assets/110045644/14393200-d0fc-47ff-84ba-ed1ebb7e0417">
-<img width="960" alt="image" src="https://github.com/git-init-priyanshu/Docx/assets/110045644/d9181f2f-783b-4bb6-bc9d-9edc71b8d2db">
-<img width="960" alt="image" src="https://github.com/git-init-priyanshu/Docx/assets/110045644/bd403f84-5e71-48fa-9aec-52ec66e7c5a4">
+You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
 
-## Features:
-* User Registration: User can Sign up using their email and password for secure access.
-* Secure: Passwords are encrypted in the database.
-* Real-time Editing: Collaborate with others in real time on the same Doc.
-* Sharing: Share Doc with others for seamless collaboration.
-* Management: The owner of the Doc can manage who has access to collaborate and who does not.
+## Deploy on Vercel
 
-## Installation:
-* You need to install Docker.
-* Fork this repo.
-* Open git bash and paste these commands:
-  * `Git clone https://github.com/<YourGithubProfileName>/Docx.git`
-  * `cd Google-docs-clone`
-  * `code .`
-* Open integrated terminal window and paste this command:
-  * `docker compose up -d`
-* Wait for the docker containers to properly start.
-* Then go to `localhost:80` and start contributing.       
+The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+
+Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
