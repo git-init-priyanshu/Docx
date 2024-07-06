@@ -1,4 +1,5 @@
 import {
+  ALargeSmall,
   Book,
   Bot,
   Code2,
@@ -6,7 +7,6 @@ import {
   Settings2,
   SquareTerminal,
   SquareUser,
-  Triangle,
 } from "lucide-react"
 import {
   Tooltip,
@@ -29,7 +29,7 @@ export default function Tabs() {
                 className="rounded-lg bg-muted"
                 aria-label="Playground"
               >
-                <SquareTerminal className="size-5" />
+                <ALargeSmall className="size-5" />
               </Button>
             </TooltipTrigger>
             <TooltipContent side="right" sideOffset={5}>
