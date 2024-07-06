@@ -23,10 +23,10 @@ export default function RootLayout({
     <ReactQueryProvider>
       <html lang="en">
         <body className={cn(
-          "min-h-screen bg-background font-sans antialiased",
+          "min-h-screen bg-slate-50 font-sans antialiased",
           inter.className
         )}>
-          <Header />
+          {/* <Header /> */}
           {children}
           <ReactQueryDevtools initialIsOpen={false} />
         </body>
