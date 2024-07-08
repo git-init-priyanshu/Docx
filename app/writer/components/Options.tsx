@@ -1,5 +1,6 @@
 "use client"
 
+import { Editor } from "@tiptap/react";
 import {
   AlignCenter,
   AlignJustify,
@@ -17,10 +18,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import { Label } from "@radix-ui/react-label";
+import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input"
-
-import { Editor } from "@tiptap/react";
 
 export default function Options({ editor }: { editor: Editor | null }) {
   const formattingBtns = [
@@ -35,6 +34,21 @@ export default function Options({ editor }: { editor: Editor | null }) {
     { Icon: AlignJustify, align: "justify" },
   ]
 
+  const setDefaultStyleValue = () => {
+    let level: string = "normal";
+    for (let i = 1; i <= 6; i++) {
+      if(editor?.isActive('heading', {level: i})) return level = `heading,${String(i)}`;
+    }
+    return level;
+  }
+  const onFontStyleChange = (e: string) => {
+    if (!editor) return;
+    const matcher = e.split(",")
+    if (matcher[0] === "normal") return editor.commands.setParagraph();
+    // @ts-ignore
+    return editor.chain().focus().setHeading({ level: Number(matcher[1]) }).run()
+  }
+
   if (!editor) return <></>;
   return (
     <div className="hidden flex-col items-start gap-8 md:flex" x-chunk="dashboard-03-chunk-0">
@@ -44,8 +58,8 @@ export default function Options({ editor }: { editor: Editor | null }) {
             Edit
           </legend>
           <div className="grid gap-3">
-            <Label htmlFor="model">Style</Label>
-            <Select>
+            <Label htmlFor="Style">Style</Label>
+            <Select value={setDefaultStyleValue()} onValueChange={onFontStyleChange}>
               <SelectTrigger
                 id="model"
                 className="items-start [&_[data-description]]:hidden"
@@ -54,16 +68,18 @@ export default function Options({ editor }: { editor: Editor | null }) {
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="normal">Normal</SelectItem>
-                <SelectItem value="h1">Heading 1</SelectItem>
-                <SelectItem value="h2">Heading 2</SelectItem>
-                <SelectItem value="h3">Heading 3</SelectItem>
-                <SelectItem value="highlight">Highlight</SelectItem>
+                <SelectItem value="heading,1">Heading 1</SelectItem>
+                <SelectItem value="heading,2">Heading 2</SelectItem>
+                <SelectItem value="heading,3">Heading 3</SelectItem>
+                <SelectItem value="heading,4">Heading 4</SelectItem>
+                <SelectItem value="heading,5">Heading 5</SelectItem>
+                <SelectItem value="heading,6">Heading 6</SelectItem>
               </SelectContent>
             </Select>
           </div>
           <div className="grid gap-3">
             <Label htmlFor="Font">Font</Label>
-            <Select>
+            <Select defaultValue="normal" onValueChange={(e) => console.log(e)}>
               <SelectTrigger
                 id="model"
                 className="items-start [&_[data-description]]:hidden"
@@ -87,8 +103,8 @@ export default function Options({ editor }: { editor: Editor | null }) {
                     // @ts-ignore
                     onClick={() => editor.chain().focus()[func]().run()}
                     className={`${editor.isActive(name)
-                      ? 'bg-black text-white rounded hover:bg-black'
-                      : ''} bg-white p-2 hover:bg-neutral-100 ${i === formattingBtns.length - 1
+                      ? 'bg-blue-500 text-white hover:bg-blue-500'
+                      : 'hover:bg-slate-100 bg-white'} p-2 rounded ${i === formattingBtns.length - 1
                         ? "border-none"
                         : "border-r"}`}
                   />
@@ -105,8 +121,8 @@ export default function Options({ editor }: { editor: Editor | null }) {
                   size={35}
                   onClick={() => editor.chain().focus().setTextAlign(align).run()}
                   className={`${editor.isActive({ textAlign: align })
-                    ? 'bg-black text-white rounded hover:bg-black'
-                    : ''} bg-white p-2 hover:bg-neutral-100 ${i === paragraphBtns.length - 1
+                    ? 'bg-blue-500 text-white hover:bg-blue-500'
+                    : 'hover:bg-slate-100 bg-white'} p-2 rounded ${i === paragraphBtns.length - 1
                       ? "border-none"
                       : "border-r"}`}
                 />
