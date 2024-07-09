@@ -2,52 +2,40 @@
 
 import { EditorContent } from '@tiptap/react'
 import { useEditor } from "@tiptap/react"
-import StarterKit from '@tiptap/starter-kit'
-import Highlight from '@tiptap/extension-highlight'
-import Document from '@tiptap/extension-document'
-import Heading from '@tiptap/extension-heading'
-import TextAlign from '@tiptap/extension-text-align'
 
 import { ScrollArea } from "@radix-ui/react-scroll-area"
 
 import Header from "./components/Header"
-import Options from "./components/Options"
+import { FormatOptions, InsertOptions } from "./components/options"
 import Tabs from "./components/Tabs"
-import { cn } from '@/lib/utils'
+import { extensions, props } from './editorConfig'
+import { useState } from 'react'
+
 
 export default function Dashboard() {
   const editor = useEditor({
-    extensions: [
-      StarterKit,
-      Highlight,
-      Document,
-      Heading.configure({
-        levels: [1, 2, 3, 4, 5],
-      }),
-      TextAlign.configure({
-        types: ['heading', 'paragraph'],
-      }),
-    ],
-    editorProps: {
-      attributes: {
-        class: cn("prose [&_ol]:list-decimal [&_ul]:list-disc bg-white rounded-md resize-none border p-8 shadow-none focus-visible:outline-none")
-      }
-    },
+    extensions: extensions,
+    editorProps: props,
     content: `
-        <h1>This is a 1st level heading</h1>
-        <h2>This is a 2nd level heading</h2>
-        <h3>This is a 3rd level heading</h3>
-        <h4>This 4th level heading will be converted to a paragraph, because levels are configured to be only 1, 2 or 3.</h4>
+<p><span style="font-family: Inter">Did you know that Inter is a really nice font for interfaces?</span></p>
+        <p><span style="font-family: Comic Sans MS, Comic Sans">It doesn’t look as professional as Comic Sans.</span></p>
+        <p><span style="font-family: serif">Serious people use serif fonts anyway.</span></p>
+        <p><span style="font-family: monospace">The cool kids can apply monospace fonts aswell.</span></p>
+        <p><span style="font-family: cursive">But hopefully we all can agree, that cursive fonts are the best.</span></p>
+        
       `,
   })
+
+  const Options = [<FormatOptions editor={editor} />, <InsertOptions editor={editor} />]
+  const [option, setOption] = useState(0)
 
   return (
     <div className="h-screen overflow-hidden w-full ">
       <Header editor={editor} />
       <div className="flex h-full">
-        <Tabs />
+        <Tabs option={option} setOption={setOption} />
         <div className="grid flex-1 gap-4 overflow-auto p-4 md:grid-cols-2 lg:grid-cols-3">
-          <Options editor={editor} />
+          {Options[option]}
           <ScrollArea className="col-span-2">
             <EditorContent editor={editor} />
           </ScrollArea>

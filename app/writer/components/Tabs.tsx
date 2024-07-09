@@ -1,11 +1,7 @@
 import {
   ALargeSmall,
-  Book,
   Bot,
-  Code2,
   LifeBuoy,
-  Settings2,
-  SquareTerminal,
   SquareUser,
 } from "lucide-react"
 import {
@@ -16,7 +12,11 @@ import {
 } from "@/components/ui/tooltip"
 import { Button } from "@/components/ui/button"
 
-export default function Tabs() {
+type TabsPropType = {
+  option: number;
+  setOption: React.Dispatch<React.SetStateAction<number>>
+}
+export default function Tabs({ option, setOption }: TabsPropType) {
   return (
     <aside className="bg-white flex h-[calac(100vh - 57px)] justify-between flex-col border-r">
       <nav className="grid gap-1 p-2">
@@ -26,14 +26,15 @@ export default function Tabs() {
               <Button
                 variant="ghost"
                 size="icon"
-                className="rounded-lg bg-muted"
-                aria-label="Playground"
+                className={`rounded-lg ${option === 0 ? "bg-muted" : ""}`}
+                aria-label="Format"
+                onClick={() => setOption(0)}
               >
                 <ALargeSmall className="size-5" />
               </Button>
             </TooltipTrigger>
             <TooltipContent side="right" sideOffset={5}>
-              Playground
+              Format
             </TooltipContent>
           </Tooltip>
         </TooltipProvider>
@@ -43,65 +44,15 @@ export default function Tabs() {
               <Button
                 variant="ghost"
                 size="icon"
-                className="rounded-lg"
-                aria-label="Models"
+                className={`rounded-lg ${option === 1 ? "bg-muted" : ""}`}
+                aria-label="Insert"
+                onClick={() => setOption(1)}
               >
                 <Bot className="size-5" />
               </Button>
             </TooltipTrigger>
             <TooltipContent side="right" sideOffset={5}>
-              Models
-            </TooltipContent>
-          </Tooltip>
-        </TooltipProvider>
-        <TooltipProvider>
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Button
-                variant="ghost"
-                size="icon"
-                className="rounded-lg"
-                aria-label="API"
-              >
-                <Code2 className="size-5" />
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent side="right" sideOffset={5}>
-              API
-            </TooltipContent>
-          </Tooltip>
-        </TooltipProvider>
-        <TooltipProvider>
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Button
-                variant="ghost"
-                size="icon"
-                className="rounded-lg"
-                aria-label="Documentation"
-              >
-                <Book className="size-5" />
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent side="right" sideOffset={5}>
-              Documentation
-            </TooltipContent>
-          </Tooltip>
-        </TooltipProvider>
-        <TooltipProvider>
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Button
-                variant="ghost"
-                size="icon"
-                className="rounded-lg"
-                aria-label="Settings"
-              >
-                <Settings2 className="size-5" />
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent side="right" sideOffset={5}>
-              Settings
+              Inster
             </TooltipContent>
           </Tooltip>
         </TooltipProvider>
