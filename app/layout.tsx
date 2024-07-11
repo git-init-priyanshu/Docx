@@ -4,8 +4,8 @@ import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 
 import ReactQueryProvider from "./ReactQueryProvider";
 import "./globals.css";
-import Header from "@/components/Header";
 import { cn } from "@/lib/utils";
+import { Toaster } from "@/components/ui/sonner";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -26,7 +26,7 @@ export default function RootLayout({
           "min-h-screen bg-slate-50 font-sans antialiased",
           inter.className
         )}>
-          {/* <Header /> */}
+          <Toaster />
           {children}
           <ReactQueryDevtools initialIsOpen={false} />
         </body>

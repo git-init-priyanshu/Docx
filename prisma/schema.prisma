@@ -12,3 +12,22 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
+model User {
+  id          String     @id @default(uuid())
+  username    String
+  email       String     @unique
+  name        String
+  password    String
+  isVerified  Boolean    @default(false)
+  verifyToken String
+  joinedAt    DateTime   @default(now())
+  documents   Document[]
+}
+
+model Document {
+  id    String @id @default(uuid())
+  name  String @default("Untitled Document")
+  data  String
+  users User[]
+}
