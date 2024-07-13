@@ -26,8 +26,10 @@ model User {
 }
 
 model Document {
-  id    String @id @default(uuid())
-  name  String @default("Untitled Document")
-  data  String
-  users User[]
+  id        String   @id @default(uuid())
+  name      String   @default("Untitled Document")
+  data      String
+  users     User[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }

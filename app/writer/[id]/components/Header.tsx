@@ -1,3 +1,4 @@
+import { useRouter } from 'next/navigation';
 import {
   Redo,
   Triangle,
@@ -26,11 +27,13 @@ import { Editor } from "@tiptap/react";
 import { Button } from "@/components/ui/button"
 
 export default function Header({ editor }: { editor: Editor | null }) {
+  const router = useRouter();
+
   if (!editor) return <></>;
   return (
     <header className="flex h-[57px] items-center gap-1 border-b bg-background">
       <div className="p-2 border-r">
-        <Button variant="outline" size="icon" aria-label="Home">
+        <Button variant="outline" size="icon" aria-label="Home" onClick={()=> router.push("/")}>
           <Triangle className="size-5 fill-foreground" />
         </Button>
       </div>

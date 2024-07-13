@@ -12,9 +12,8 @@ import { Label } from "@/components/ui/label"
 import { LoginAction } from "../actions"
 import { loginSchema } from '../zodSchema'
 import { toast } from "sonner"
-import { resolve } from "path"
 
-export default function Signup() {
+export default function Login() {
   const router = useRouter()
 
   const { register, handleSubmit } = useForm<z.infer<typeof loginSchema>>();
@@ -26,7 +25,7 @@ export default function Signup() {
     })
     const response = await LoginAction(parsedData);
     if(response.success){
-      toast.success("Signup completed")
+      toast.success("login completed")
       router.push('/')
     }else{
       toast.error(response.error)

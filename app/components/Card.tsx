@@ -1,5 +1,6 @@
 'use client'
 
+import { useRouter } from "next/navigation"
 import Image from "next/image"
 import {
   EllipsisVertical,
@@ -22,12 +23,17 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 
-import Doc from '@/public/z19dz5c84b2bb2b1e4c418b64605e596cb9bd.png'
 import { useRef, useState } from "react"
-import { isRegExp } from "util/types"
 import { Input } from "@/components/ui/input"
 
-export default function DocCard() {
+type DocCardPropType = {
+  docId: string;
+  thumbnail: string;
+  title: string;
+  createdAt: string
+}
+export default function DocCard({ docId, thumbnail, title, createdAt }: DocCardPropType) {
+  const router = useRouter();
   const inputRef = useRef();
 
   const docOptions = [
@@ -37,16 +43,16 @@ export default function DocCard() {
     { icon: Trash2, color: "#f94848", title: "Delete", onClick: () => console.log("edit") },
   ]
 
-  const [name, setName] = useState("Untitled Document")
+  const [name, setName] = useState(title)
   const [isOptionsOpen, setIsOptionsOpen] = useState(false)
 
   const renameDocument = () => {
     setIsOptionsOpen(false);
   }
   return (
-    <Card className="hover:shadow-lg cursor-pointer">
+    <Card className="hover:shadow-lg cursor-pointer" onClick={() => router.push(`/writer/${docId}`)}>
       <div className="size-40 mx-auto overflow-hidden">
-        <Image src={Doc} alt="doc" className="border" />
+        <Image src={thumbnail} alt="doc" className="border" />
       </div>
       <CardFooter className="flex flex-col items-start gap-4 border-t p-4">
         <div className="flex items-center gap-1">
@@ -64,7 +70,7 @@ export default function DocCard() {
               <AvatarImage src="https://github.com/shadcn.png" />
               <AvatarFallback>CN</AvatarFallback>
             </Avatar>
-            <p className="text-neutral-600">Jul 08 2024</p>
+            <p className="text-neutral-600">{createdAt}</p>
           </div>
           <Popover open={isOptionsOpen}>
             <PopoverTrigger onClick={() => setIsOptionsOpen(true)}>

@@ -1,3 +1,6 @@
+"use client"
+
+import { useRouter } from "next/navigation"
 import Image from "next/image"
 
 import { Button } from "@/components/ui/button"
@@ -8,8 +11,24 @@ import {
   Upload
 } from "lucide-react"
 import logo from "@/public/doc.svg"
+import { CreateNewDocument } from "./actions"
+import { toast } from "sonner"
 
 export default function Header() {
+  const router = useRouter();
+
+  const createDocument = async () => {
+    const email = "bartwalpriyanshu00@gmail.com"
+    const response = await CreateNewDocument(email)
+    console.log(response)
+    if (response.success) {
+      toast.success("Successfully created new document")
+      router.push(`/writer/${response.data?.id}`)
+    } else {
+      toast.error(response.error)
+    }
+  }
+
   return (
     <div className="flex border-b bg-white justify-between items-center py-2 px-4">
       <div className="flex gap-2 items-center">
@@ -30,6 +49,7 @@ export default function Header() {
         </Button>
         <Button
           className="flex gap-2 bg-blue-500 text-white hover:bg-blue-600 rounded-full"
+          onClick={createDocument}
         >
           <Plus size={20} />
           Create New
