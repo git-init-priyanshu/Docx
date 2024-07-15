@@ -1,16 +1,16 @@
 "use client"
 
+import { useState } from 'react'
 import { EditorContent } from '@tiptap/react'
 import { useEditor } from "@tiptap/react"
 
 import { ScrollArea } from "@radix-ui/react-scroll-area"
 
-import Header from "./components/Header"
 import { FormatOptions, InsertOptions } from "./components/options"
+import Header from "./components/Header"
 import Tabs from "./components/Tabs"
-import { extensions, props } from './editorConfig'
-import { useState } from 'react'
 
+import { extensions, props } from './editorConfig'
 
 export default function Dashboard() {
   const editor = useEditor({

@@ -30,7 +30,7 @@ export const SignupAction = async (data: z.infer<typeof signupSchema>) => {
     };
 
     // Hashing password
-    const salt = await bcrypt.genSalt(Number(process.env.SALT));
+    const salt = await bcrypt.genSalt(Number(process.env.SALT) || 10);
     const hashedPassword = await bcrypt.hash(data.password, salt);
 
     const authToken = getJwtToken(data.email);
@@ -42,12 +42,13 @@ export const SignupAction = async (data: z.infer<typeof signupSchema>) => {
         email: data.email,
         password: hashedPassword,
         isVerified: true,
-        verifyToken: authToken
+        verifyToken: authToken,
       }
     })
 
     return { success: true, data: authToken }
   } catch (e) {
+    console.log(e);
     return { success: false, error: "Internal server error" }
   }
 }
@@ -84,6 +85,7 @@ export const LoginAction = async (data: z.infer<typeof loginSchema>) => {
 
     return { success: true, data: authToken }
   } catch (e) {
+    console.log(e);
     return { success: false, error: "Internal server error" }
   }
 }

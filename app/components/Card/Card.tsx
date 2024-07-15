@@ -1,7 +1,8 @@
 'use client'
 
+import { useRef, useState } from "react"
 import { useRouter } from "next/navigation"
-import Image from "next/image"
+import Image, { StaticImageData } from "next/image"
 import {
   EllipsisVertical,
   FilePenLine,
@@ -22,15 +23,15 @@ import {
 } from "@/components/ui/popover"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
-
-import { useRef, useState } from "react"
 import { Input } from "@/components/ui/input"
+
+import prettifyDate from '@/helpers/prettifyDates'
 
 type DocCardPropType = {
   docId: string;
-  thumbnail: string;
+  thumbnail: StaticImageData;
   title: string;
-  createdAt: string
+  createdAt: Date
 }
 export default function DocCard({ docId, thumbnail, title, createdAt }: DocCardPropType) {
   const router = useRouter();
@@ -50,15 +51,18 @@ export default function DocCard({ docId, thumbnail, title, createdAt }: DocCardP
     setIsOptionsOpen(false);
   }
   return (
-    <Card className="hover:shadow-lg cursor-pointer" onClick={() => router.push(`/writer/${docId}`)}>
-      <div className="size-40 mx-auto overflow-hidden">
+    <Card className="hover:shadow-lg" >
+      <div
+        className="size-40 mx-auto overflow-hidden cursor-pointer"
+        onClick={() => router.push(`/writer/${docId}`)}
+      >
         <Image src={thumbnail} alt="doc" className="border" />
       </div>
       <CardFooter className="flex flex-col items-start gap-4 border-t p-4">
         <div className="flex items-center gap-1">
           <FileText size={25} className="text-neutral-500" />
           <Input
-            // ref={inputRef}
+            ref={inputRef}
             className="w-full text-md border-none"
             value={name}
             onChange={(e) => setName(e.target.value)}
@@ -70,7 +74,7 @@ export default function DocCard({ docId, thumbnail, title, createdAt }: DocCardP
               <AvatarImage src="https://github.com/shadcn.png" />
               <AvatarFallback>CN</AvatarFallback>
             </Avatar>
-            <p className="text-neutral-600">{createdAt}</p>
+            <p className="text-neutral-600 cursor-default">{prettifyDate(String(createdAt))}</p>
           </div>
           <Popover open={isOptionsOpen}>
             <PopoverTrigger onClick={() => setIsOptionsOpen(true)}>

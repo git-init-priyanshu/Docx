@@ -22,14 +22,30 @@ model User {
   isVerified  Boolean    @default(false)
   verifyToken String
   joinedAt    DateTime   @default(now())
-  documents   Document[]
+  createdDocs Document[] @relation("CreatedDocuments")
+
+  documents UserOnDocument[]
 }
 
 model Document {
   id        String   @id @default(uuid())
   name      String   @default("Untitled Document")
   data      String
-  users     User[]
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  userId    String
+  createdBy User     @relation(fields: [userId], references: [id], name: "CreatedDocuments")
+
+  users UserOnDocument[]
+}
+
+model UserOnDocument {
+  userId     String
+  user       User     @relation(fields: [userId], references: [id])
+  documentId String
+  document   Document @relation(fields: [documentId], references: [id])
+
+  assignedAt DateTime @default(now())
+
+  @@id([userId, documentId])
 }
