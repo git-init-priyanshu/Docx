@@ -1,43 +1,75 @@
 "use client"
 
-import { useState } from 'react'
+import { useState, useMemo, useCallback } from 'react'
+import { useParams } from 'next/navigation'
+import { useQuery } from '@tanstack/react-query'
 import { EditorContent } from '@tiptap/react'
 import { useEditor } from "@tiptap/react"
+import { debounce } from 'lodash'
 
-import { ScrollArea } from "@radix-ui/react-scroll-area"
+import { ScrollArea } from "@/components/ui/scroll-area"
 
 import { FormatOptions, InsertOptions } from "./components/options"
 import Header from "./components/Header"
 import Tabs from "./components/Tabs"
+import Loading from './components/EditorLoading'
 
 import { extensions, props } from './editorConfig'
+import { GetDocDetails, UpdateDocData } from './actions'
 
 export default function Dashboard() {
+  const params = useParams()
+
+  const { data, isLoading } = useQuery({
+    queryKey: ["doc-details"],
+    queryFn: async () => {
+      const response = await GetDocDetails(params.id);
+      if (response.success) {
+        return response.data;
+      } else {
+        return null;
+      }
+    }
+  })
+
+  // const cont = { "type": "doc", "content": [{ "type": "paragraph", "attrs": { "textAlign": "left" }, "content": [{ "type": "text", "text": "This is cont" }] }] }
+  const createDocThumbnail = () => {
+
+  }
+
+  const saveDoc = useCallback((editor: any) => {
+    UpdateDocData(params.id, JSON.stringify(editor.getJSON()));
+    createDocThumbnail();
+  }, []);
+
+  const debouncedSaveDoc = useMemo(
+    () => debounce((editor: any) => saveDoc(editor), 1000),
+    [saveDoc]
+  );
+
   const editor = useEditor({
     extensions: extensions,
     editorProps: props,
-    content: `
-<p><span style="font-family: Inter">Did you know that Inter is a really nice font for interfaces?</span></p>
-        <p><span style="font-family: Comic Sans MS, Comic Sans">It doesn’t look as professional as Comic Sans.</span></p>
-        <p><span style="font-family: serif">Serious people use serif fonts anyway.</span></p>
-        <p><span style="font-family: monospace">The cool kids can apply monospace fonts aswell.</span></p>
-        <p><span style="font-family: cursive">But hopefully we all can agree, that cursive fonts are the best.</span></p>
-        
-      `,
+    content: data && data.data && JSON.parse(data?.data),
+    onUpdate({ editor }) {
+      debouncedSaveDoc(editor);
+    },
   })
 
-  const Options = [<FormatOptions editor={editor} />, <InsertOptions editor={editor} />]
+  const Options = [<FormatOptions key={1} editor={editor} />, <InsertOptions key={2} editor={editor} />]
   const [option, setOption] = useState(0)
 
   return (
-    <div className="h-screen overflow-hidden w-full ">
-      <Header editor={editor} />
+    <div className="h-screen overflow-hidden w-full">
+      <Header editor={editor} name={data?.name || ""} />
       <div className="flex h-full">
         <Tabs option={option} setOption={setOption} />
-        <div className="grid flex-1 gap-4 overflow-auto p-4 md:grid-cols-2 lg:grid-cols-3">
+        <div className="flex gap-4 p-4">
           {Options[option]}
-          <ScrollArea className="col-span-2">
-            <EditorContent editor={editor} />
+          <ScrollArea className="w-full mb-4">
+            {isLoading ? <Loading /> :
+              <EditorContent editor={editor} />
+            }
           </ScrollArea>
         </div>
       </div>

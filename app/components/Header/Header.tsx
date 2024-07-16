@@ -29,10 +29,8 @@ export default function Header() {
       toast.success("Successfully created new document")
       router.push(`/writer/${response.data?.id}`)
     } else {
-      if (response.success) {
-        setIsLoading(false);
-        toast.error(response.error)
-      }
+      setIsLoading(false);
+      toast.error(response.error)
     }
   }
 

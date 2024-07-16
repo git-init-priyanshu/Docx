@@ -43,7 +43,7 @@ model UserOnDocument {
   userId     String
   user       User     @relation(fields: [userId], references: [id])
   documentId String
-  document   Document @relation(fields: [documentId], references: [id])
+  document   Document @relation(fields: [documentId], references: [id], onDelete: Cascade)
 
   assignedAt DateTime @default(now())
 

@@ -5,6 +5,7 @@ import {
   Undo,
 } from 'lucide-react'
 import { Editor } from "@tiptap/react";
+import { Button } from '@/components/ui/button';
 
 // import {
 //   Drawer,
@@ -24,37 +25,37 @@ import { Editor } from "@tiptap/react";
 // import { Label } from "@/components/ui/label"
 // import { Input } from "@/components/ui/input"
 // import { Textarea } from "@/components/ui/textarea"
-import { Button } from "@/components/ui/button"
 
-export default function Header({ editor }: { editor: Editor | null }) {
+export default function Header({ editor, name }: { editor: Editor | null, name: string }) {
   const router = useRouter();
 
-  if (!editor) return <></>;
   return (
     <header className="flex h-[57px] items-center gap-1 border-b bg-background">
       <div className="p-2 border-r">
-        <Button variant="outline" size="icon" aria-label="Home" onClick={()=> router.push("/")}>
-          <Triangle className="size-5 fill-foreground" />
+        <Button variant="outline" size="icon" onClick={() => router.push("/")} >
+          <Triangle
+            className="size-5 fill-foreground"
+          />
         </Button>
       </div>
-      <h1 className="text-xl font-semibold ml-4">Format</h1>
+      <h1 className="text-xl font-semibold mx-4">{name}</h1>
       <Undo
         size={35}
-        onClick={() => editor.chain().focus().undo().run()}
-        className={`${editor.can().chain().focus().undo().run()
+        onClick={() => editor?.chain().focus().undo().run()}
+        className={`${editor?.can().chain().focus().undo().run()
           ? "cursor-pointer hover:bg-neutral-100"
           : ""} border rounded bg-white p-2 `}
-        color={`${editor.can().chain().focus().undo().run()
+        color={`${editor?.can().chain().focus().undo().run()
           ? "black"
           : "#ababab"}`}
       />
       <Redo
         size={35}
-        onClick={() => editor.chain().focus().redo().run()}
-        className={`${editor.can().chain().focus().redo().run()
+        onClick={() => editor?.chain().focus().redo().run()}
+        className={`${editor?.can().chain().focus().redo().run()
           ? "cursor-pointer hover:bg-neutral-100"
           : ""} border rounded bg-white p-2 `}
-        color={`${editor.can().chain().focus().redo().run()
+        color={`${editor?.can().chain().focus().redo().run()
           ? "black"
           : "#ababab"}`}
       />

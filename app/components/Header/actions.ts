@@ -25,7 +25,7 @@ export const CreateNewDocument = async (email: string) => {
             }
           },
         },
-      },
+      }
     });
 
     return { success: true, data: doc };

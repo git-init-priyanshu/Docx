@@ -9,7 +9,7 @@ import Loading from "./Loading";
 import Doc from '@/public/z19dz5c84b2bb2b1e4c418b64605e596cb9bd.png'
 
 export default function Home() {
-  const { data, isLoading } = useQuery({
+  const { data, isLoading, refetch } = useQuery({
     queryKey: ["documents"],
     queryFn: async () => {
       const response = await getAllDocuments();
@@ -31,6 +31,7 @@ export default function Home() {
               thumbnail={Doc}
               title={doc.name}
               createdAt={doc.createdAt}
+              refetch={refetch}
             />
           )
         })}

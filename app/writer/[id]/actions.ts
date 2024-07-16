@@ -2,7 +2,7 @@
 
 import prisma from "@/prisma/prismaClient"
 
-export const GetDocDetails = async (id: string) => {
+export const GetDocDetails = async (id: any) => {
   try {
     const doc = await prisma.document.findFirst({ where: { id } })
     if (!doc) return {
@@ -15,4 +15,14 @@ export const GetDocDetails = async (id: string) => {
     console.log(e)
     return { success: false, error: "Internal server error" }
   }
-} 
+}
+
+export const UpdateDocData = async (id: any, data: string) => {
+  console.log(data)
+  try {
+    await prisma.document.update({ where: { id }, data: { data: data } })
+  } catch (e) {
+    console.log(e)
+    return { success: false, error: "Internal server error" }
+  }
+}

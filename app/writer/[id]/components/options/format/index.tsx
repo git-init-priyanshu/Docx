@@ -69,9 +69,8 @@ export default function FormatOptions({ editor }: { editor: Editor | null }) {
     return editor.chain().focus().setFontFamily(font).run()
   }
 
-  if (!editor) return <></>;
   return (
-    <div className="hidden flex-col items-start gap-8 md:flex" x-chunk="dashboard-03-chunk-0">
+    <div className="w-fit hidden flex-col items-start gap-8 md:flex" x-chunk="dashboard-03-chunk-0">
       <form className="grid w-full items-start gap-6">
         <fieldset className="grid gap-6 bg-white rounded-lg border p-4">
           <legend className="-ml-1 px-1 text-sm font-medium">
@@ -112,7 +111,7 @@ export default function FormatOptions({ editor }: { editor: Editor | null }) {
               </SelectTrigger>
               <SelectContent>
                 {fontFamily.map((item) => {
-                  return <SelectItem value={item.font}>{item.title}</SelectItem>
+                  return <SelectItem key={item.title} value={item.font}>{item.title}</SelectItem>
                 })}
               </SelectContent>
             </Select>
@@ -125,8 +124,8 @@ export default function FormatOptions({ editor }: { editor: Editor | null }) {
                     key={name}
                     size={35}
                     // @ts-ignore
-                    onClick={() => editor.chain().focus()[func]().run()}
-                    className={`${editor.isActive(name)
+                    onClick={() => editor?.chain().focus()[func]().run()}
+                    className={`${editor?.isActive(name)
                       ? 'bg-blue-500 text-white hover:bg-blue-500'
                       : 'hover:bg-slate-100 bg-white'} p-2 rounded ${i === formattingBtns.length - 1
                         ? "border-none"
@@ -151,8 +150,8 @@ export default function FormatOptions({ editor }: { editor: Editor | null }) {
                   <Icon
                     key={align}
                     size={35}
-                    onClick={() => editor.chain().focus().setTextAlign(align).run()}
-                    className={`${editor.isActive({ textAlign: align })
+                    onClick={() => editor?.chain().focus().setTextAlign(align).run()}
+                    className={`${editor?.isActive({ textAlign: align })
                       ? 'bg-blue-500 text-white hover:bg-blue-500'
                       : 'hover:bg-slate-100 bg-white'} p-2 rounded ${i === paragraphBtns.length - 1
                         ? "border-none"

@@ -31,13 +31,12 @@ export default function ColorHighlight({ editor }: { editor: Editor | null }) {
     editor.chain().focus().toggleHighlight({ color: hex }).run()
   }
 
-  if (!editor) return <></>;
   return (
     <div className="flex cursor-pointer border rounded w-fit">
       <Baseline
         size={35}
         color={fontColor}
-        onClick={() => editor.chain().focus().setColor(fontColor).run()}
+        onClick={() => editor?.chain().focus().setColor(fontColor).run()}
         className="hover:bg-slate-100 p-2 rounded border-r"
       />
       <Popover>
@@ -60,7 +59,7 @@ export default function ColorHighlight({ editor }: { editor: Editor | null }) {
       <Highlighter
         size={35}
         color={highlightColor}
-        onClick={() => editor.chain().focus().toggleHighlight({ color: highlightColor }).run()}
+        onClick={() => editor?.chain().focus().toggleHighlight({ color: highlightColor }).run()}
         className="hover:bg-slate-100 p-2 rounded border-r"
       />
       <Popover>
