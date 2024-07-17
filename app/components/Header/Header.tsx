@@ -55,6 +55,7 @@ export default function Header() {
         <Button
           className="flex gap-2 bg-blue-500 text-white hover:bg-blue-600 rounded-full"
           onClick={createDocument}
+          disabled={isLoading}
         >
           {isLoading ? <svg
             className="animate-spin lucide lucide-loader-circle"

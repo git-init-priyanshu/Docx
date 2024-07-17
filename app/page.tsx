@@ -6,7 +6,7 @@ import Header from "./components/Header/Header"
 import { getAllDocuments } from "./actions";
 
 import Loading from "./Loading";
-import Doc from '@/public/z19dz5c84b2bb2b1e4c418b64605e596cb9bd.png'
+import Doc from '@/public/110045644.png'
 
 export default function Home() {
   const { data, isLoading, refetch } = useQuery({
@@ -28,7 +28,7 @@ export default function Home() {
           return (
             <DocCard
               docId={doc.id}
-              thumbnail={Doc}
+              thumbnail={doc.thumbnail}
               title={doc.name}
               createdAt={doc.createdAt}
               refetch={refetch}
