@@ -50,23 +50,20 @@ export default function FormatOptions({ editor }: { editor: Editor | null }) {
     return level;
   }
   const onFontStyleChange = (val: string) => {
-    if (!editor) return;
     const matcher = val.split(" ")
-    if (matcher[0] === "normal") return editor.commands.setParagraph();
+    if (matcher[0] === "normal") return editor?.commands.setParagraph();
     // @ts-ignore
-    return editor.chain().focus().setHeading({ level: Number(matcher[1]) }).run()
+    return editor?.chain().focus().setHeading({ level: Number(matcher[1]) }).run();
   }
 
   const setDefaultFontFamily = () => {
-    if (!editor) return;
     const matcher = fontFamily.find((item) => {
       return editor?.isActive('textStyle', { fontFamily: item.font });
     })
     return matcher?.font || "Inter";
   }
   const onFontFamilyChange = (font: string) => {
-    if (!editor) return;
-    return editor.chain().focus().setFontFamily(font).run()
+    return editor?.chain().focus().setFontFamily(font).run()
   }
 
   return (

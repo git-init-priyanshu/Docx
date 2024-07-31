@@ -35,7 +35,6 @@ export const UpdateDocData = async (id: any, data: string) => {
 }
 
 export const UpdateThumbnail = async (id: any, thumbnail: string) => {
-  console.log(thumbnail)
   try {
     const doc = await prisma.document.findFirst({ where: { id } })
     if (!doc) return {
@@ -44,6 +43,8 @@ export const UpdateThumbnail = async (id: any, thumbnail: string) => {
     }
 
     await prisma.document.update({ where: { id }, data: { thumbnail } })
+
+    return { success: true, data: "Internal server error" }
   } catch (e) {
     console.log(e)
     return { success: false, error: "Internal server error" }

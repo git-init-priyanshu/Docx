@@ -26,7 +26,13 @@ import { Button } from '@/components/ui/button';
 // import { Input } from "@/components/ui/input"
 // import { Textarea } from "@/components/ui/textarea"
 
-export default function Header({ editor, name }: { editor: Editor | null, name: string }) {
+type HeaderPropType = {
+  editor: Editor | null,
+  name: string
+  isSaving: boolean;
+}
+
+export default function Header({ editor, name, isSaving }: HeaderPropType) {
   const router = useRouter();
 
   return (
@@ -38,7 +44,8 @@ export default function Header({ editor, name }: { editor: Editor | null, name: 
           />
         </Button>
       </div>
-      <h1 className="text-xl font-semibold mx-4">{name}</h1>
+      {name ? <h1 className="text-xl font-semibold mx-4">{name}</h1>
+        : <div className='h-7 w-40 rounded bg-neutral-100 animate-pulse mx-4'></div>}
       <Undo
         size={35}
         onClick={() => editor?.chain().focus().undo().run()}
@@ -59,6 +66,22 @@ export default function Header({ editor, name }: { editor: Editor | null, name: 
           ? "black"
           : "#ababab"}`}
       />
+
+      {isSaving ?
+        <>
+          <svg
+            className="animate-spin lucide lucide-loader-circle ml-4"
+            xmlns="http://www.w3.org/2000/svg"
+            width="20"
+            height="20"
+            viewBox="0 0 24 24"
+            fill="none" stroke="currentColor"
+            stroke-width="1" stroke-linecap="round"
+            stroke-linejoin="round">
+            <path d="M21 12a9 9 0 1 1-6.219-8.56" />
+          </svg>
+          <p>Saving...</p>
+        </> : <></>}
 
       {/* <Drawer> */}
       {/*   <DrawerTrigger asChild> */}

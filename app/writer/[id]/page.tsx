@@ -1,8 +1,8 @@
 "use client"
 
-import { useState, useMemo, useCallback, useEffect } from 'react'
+import { useState, useMemo, useCallback } from 'react'
 import { useParams } from 'next/navigation'
-import { useMutation, useQuery } from '@tanstack/react-query'
+import { useQuery } from '@tanstack/react-query'
 import { EditorContent } from '@tiptap/react'
 import { useEditor } from "@tiptap/react"
 import { debounce } from 'lodash'
@@ -17,11 +17,12 @@ import Loading from './components/EditorLoading'
 
 import { extensions, props } from './editorConfig'
 import { GetDocDetails, UpdateDocData, UpdateThumbnail } from './actions'
+import { toast } from 'sonner'
 
 export default function Dashboard() {
   const params = useParams()
 
-  const [content, setContent] = useState("");
+  const [isSaving, setIsSaving] = useState(false);
 
   const { data, isLoading, refetch } = useQuery({
     queryKey: ["doc-details"],
@@ -35,42 +36,41 @@ export default function Dashboard() {
     },
     enabled: false
   })
-  const { data: url, mutate } = useMutation({
-    mutationKey: ["upload-thumbnail"],
-    mutationFn: async (body: FormData) => {
-      const response = await fetch(
-        `https://api.imgbb.com/1/upload?expiration=600&key=${process.env.NEXT_PUBLIC_IMGBB_API_KEY}`,
-        {
-          method: "POST",
-          body
-        })
-      const url = await response.json();
-      return url.data.display_url;
-    }
-  })
-
-  useEffect(() => {
-    if (!data) return;
-    setContent(data?.data)
-  }, [data])
 
   const createDocThumbnail = async () => {
-    const page = document.getElementsByClassName("tiptap")[0];
-    if (!page) return;
+    try {
+      const page = document.getElementsByClassName("tiptap")[0];
+      if (!page) return;
 
-    // @ts-ignore
-    const canvas = await html2canvas(page, { scale: 0.5 })
+      // @ts-ignore
+      const canvas = await html2canvas(page, { scale: 0.5 })
 
-    const thumbnail = canvas.toDataURL(`${data?.id}thumbnail/png`).replace(/^data:image\/\w+;base64,/, '');
+      const thumbnail = canvas.toDataURL(`${data?.id}thumbnail/png`).replace(/^data:image\/\w+;base64,/, '');
 
-    const formData = new FormData();
-    formData.append('image', thumbnail);
+      const formData = new FormData();
+      formData.append('image', thumbnail);
 
-    mutate(formData);
-    await UpdateThumbnail(params.id, url)
+      const upload = await fetch(
+        `https://api.imgbb.com/1/upload?key=${process.env.NEXT_PUBLIC_IMGBB_API_KEY}`,
+        {
+          method: "POST",
+          body: formData
+        })
+      const res = await upload.json();
+      const url = res.data.display_url;
+
+      await UpdateThumbnail(params.id, url)
+
+      setIsSaving(false);
+    } catch (e) {
+      console.log(e)
+      toast.error("Something went wrong")
+      setIsSaving(false);
+    }
   }
 
   const saveDoc = useCallback((editor: any) => {
+    setIsSaving(true);
     UpdateDocData(params.id, JSON.stringify(editor.getJSON()));
     createDocThumbnail();
   }, []);
@@ -80,14 +80,10 @@ export default function Dashboard() {
     [saveDoc]
   );
 
-  console.log(content);
   const editor = useEditor({
     extensions: extensions,
     editorProps: props,
-    content: content,
-    onBeforeCreate: () => {
-      refetch();
-    },
+    content: data ? JSON.parse(data.data) : "",
     onUpdate({ editor }) {
       debouncedSaveDoc(editor);
     },
@@ -96,9 +92,11 @@ export default function Dashboard() {
   const Options = [<FormatOptions key={1} editor={editor} />, <InsertOptions key={2} editor={editor} />]
   const [option, setOption] = useState(0)
 
+  console.log(data?.data);
+
   return (
     <div className="h-screen overflow-hidden w-full">
-      <Header editor={editor} name={data?.name || ""} />
+      <Header editor={editor} name={data?.name || ""} isSaving={isSaving} />
       <div className="flex h-full">
         <Tabs option={option} setOption={setOption} />
         <div className="flex gap-4 p-4">
