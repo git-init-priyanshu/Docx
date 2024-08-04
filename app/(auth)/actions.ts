@@ -1,22 +1,29 @@
 'use server'
 
+import { cookies } from "next/headers"
 import { z } from 'zod';
+import { JWTPayload, SignJWT, importJWK } from 'jose';
 // @ts-ignore
 import bcrypt from 'bcryptjs';
-import jwt from "jsonwebtoken"
 
 import prisma from "@/prisma/prismaClient";
-import { loginSchema, signupSchema } from './zodSchema';
+import { loginSchema, signinSchema } from './zodSchema';
 
-const getJwtToken = (email: string) => {
-  return jwt.sign({
-    user: {
-      email: email
-    }
-  }, String(process.env.JWT_SECRET));
-}
+const generateJWT = async (payload: JWTPayload) => {
+  const secret = process.env.JWT_SECRET || 'secret';
 
-export const SignupAction = async (data: z.infer<typeof signupSchema>) => {
+  const jwk = await importJWK({ k: secret, alg: 'HS256', kty: 'oct' });
+
+  const jwt = await new SignJWT(payload)
+    .setProtectedHeader({ alg: 'HS256' })
+    .setIssuedAt()
+    .setExpirationTime('365d')
+    .sign(jwk);
+
+  return jwt;
+};
+
+export const SigninAction = async (data: z.infer<typeof signinSchema>) => {
   try {
     // User validation
     const isUserExist = await prisma.user.findFirst({
@@ -33,7 +40,7 @@ export const SignupAction = async (data: z.infer<typeof signupSchema>) => {
     const salt = await bcrypt.genSalt(Number(process.env.SALT) || 10);
     const hashedPassword = await bcrypt.hash(data.password, salt);
 
-    const authToken = getJwtToken(data.email);
+    const authToken = await generateJWT({ email: data.email });
 
     await prisma.user.create({
       data: {
@@ -45,6 +52,9 @@ export const SignupAction = async (data: z.infer<typeof signupSchema>) => {
         verifyToken: authToken,
       }
     })
+
+    // Setting the cookie
+    cookies().set('token', authToken, { httpOnly: true });
 
     return { success: true, data: authToken }
   } catch (e) {
@@ -73,7 +83,7 @@ export const LoginAction = async (data: z.infer<typeof loginSchema>) => {
       error: "Invalid credentials",
     }
 
-    const authToken = getJwtToken(data.email);
+    const authToken = await generateJWT({ email: data.email });
 
     await prisma.user.update({
       where: { id: user.id },
@@ -82,6 +92,9 @@ export const LoginAction = async (data: z.infer<typeof loginSchema>) => {
         verifyToken: authToken
       }
     })
+
+    // Setting the cookie
+    cookies().set('token', authToken, { httpOnly: true });
 
     return { success: true, data: authToken }
   } catch (e) {
