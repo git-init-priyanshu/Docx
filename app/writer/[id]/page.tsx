@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useMemo, useCallback } from 'react'
+import { useState, useMemo, useCallback, useEffect } from 'react'
 import { useParams } from 'next/navigation'
 import { useQuery } from '@tanstack/react-query'
 import { EditorContent } from '@tiptap/react'
@@ -15,7 +15,8 @@ import Header from "./components/Header"
 import Tabs from "./components/Tabs"
 import Loading from './components/EditorLoading'
 
-import { extensions, props } from './editorConfig'
+import { extensions, props } from './editor/editorConfig'
+// import { editor } from './editor';
 import { GetDocDetails, UpdateDocData, UpdateThumbnail } from './actions'
 import { toast } from 'sonner'
 
@@ -23,18 +24,20 @@ export default function Dashboard() {
   const params = useParams()
 
   const [isSaving, setIsSaving] = useState(false);
+  const [docData, setDocData] = useState<string | JSX.Element | JSX.Element[] | undefined>(undefined);
 
-  const { data, isLoading, refetch } = useQuery({
-    queryKey: ["doc-details"],
+  const { data } = useQuery({
+    queryKey: ["doc-details", params.id],
     queryFn: async () => {
       const response = await GetDocDetails(params.id);
       if (response.success) {
+        response.data?.data &&
+          setDocData(JSON.parse(response.data?.data));
         return response.data;
       } else {
         return null;
       }
     },
-    enabled: false
   })
 
   const createDocThumbnail = async () => {
@@ -83,16 +86,20 @@ export default function Dashboard() {
   const editor = useEditor({
     extensions: extensions,
     editorProps: props,
-    content: data ? JSON.parse(data.data) : "",
+    content: "",
     onUpdate({ editor }) {
       debouncedSaveDoc(editor);
     },
-  })
+  });
+
+  useEffect(() => {
+    if (editor && docData) {
+      editor.commands.setContent(docData);
+    }
+  }, [docData, editor]);
 
   const Options = [<FormatOptions key={1} editor={editor} />, <InsertOptions key={2} editor={editor} />]
   const [option, setOption] = useState(0)
-
-  console.log(data?.data);
 
   return (
     <div className="h-screen overflow-hidden w-full">
@@ -102,7 +109,7 @@ export default function Dashboard() {
         <div className="flex gap-4 p-4">
           {Options[option]}
           <ScrollArea className="w-full mb-4">
-            {isLoading ? <Loading /> :
+            {!data?.data ? <Loading /> :
               <EditorContent editor={editor} />
             }
           </ScrollArea>
