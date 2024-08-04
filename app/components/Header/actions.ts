@@ -1,6 +1,9 @@
 "use server"
 
+import { cookies } from "next/headers";
+
 import prisma from "@/prisma/prismaClient";
+import { signOut } from "next-auth/react";
 
 export const CreateNewDocument = async (email: string) => {
   try {
@@ -29,6 +32,18 @@ export const CreateNewDocument = async (email: string) => {
     });
 
     return { success: true, data: doc };
+  } catch (e) {
+    console.error(e);
+    return { success: false, error: "Internal server error" };
+  }
+}
+
+export const LogoutAction = async () => {
+  try {
+    cookies().delete('token');
+    signOut();
+
+    return { success: true, data: null };
   } catch (e) {
     console.error(e);
     return { success: false, error: "Internal server error" };

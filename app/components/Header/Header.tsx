@@ -1,22 +1,25 @@
 "use client"
-
+import { useState } from "react"
 import { useRouter } from "next/navigation"
 import Image from "next/image"
+import { toast } from "sonner"
+import { signOut, useSession } from 'next-auth/react'
+import {
+  CloudUpload,
+  LogOut,
+  Plus,
+  Search,
+} from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import {
-  Plus,
-  Search,
-  Upload
-} from "lucide-react"
 import logo from "@/public/doc.svg"
-import { CreateNewDocument } from "./actions"
-import { toast } from "sonner"
-import { useState } from "react"
+import { CreateNewDocument, LogoutAction } from "./actions"
 
 export default function Header() {
   const router = useRouter();
+
+  const session = useSession();
 
   const [isLoading, setIsLoading] = useState(false);
 
@@ -34,8 +37,19 @@ export default function Header() {
     }
   }
 
+  const logout = async () => {
+    const response = await LogoutAction();
+    if (response.success) {
+      toast.success("Successfully logged out")
+      router.push('/api/auth/signin')
+    } else {
+      toast.error(response.error)
+    }
+  }
+
   return (
     <div className="flex border-b bg-white justify-between items-center py-2 px-4">
+      {JSON.stringify(session.data?.user)}
       <div className="flex gap-2 items-center">
         <Image src={logo} width={45} alt="logo" />
         <p className="text-2xl">Docx</p>
@@ -49,7 +63,7 @@ export default function Header() {
           variant="outline"
           className="flex gap-2 text-blue-500 hover:text-blue-500 hover:border-blue-200 rounded-full"
         >
-          <Upload size={15} />
+          <CloudUpload size={15} />
           Upload
         </Button>
         <Button
@@ -69,6 +83,13 @@ export default function Header() {
             <path d="M21 12a9 9 0 1 1-6.219-8.56" />
           </svg> : <Plus size={20} />}
           Create New
+        </Button>
+        <Button
+          variant="outline"
+          className="flex gap-2 text-blue-500 hover:text-blue-500 hover:border-blue-200 rounded-full"
+          onClick={logout}
+        >
+          <LogOut size={15} />
         </Button>
       </div>
     </div>
