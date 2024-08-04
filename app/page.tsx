@@ -1,37 +1,24 @@
-"use client"
-
-import { useQuery } from "@tanstack/react-query";
 import DocCard from "./components/Card/Card";
 import Header from "./components/Header/Header"
-import { getAllDocuments } from "./actions";
+import { GetAllDocs } from "./actions";
 
-import Loading from "./Loading";
-import Doc from '@/public/110045644.png'
-
-export default function Home() {
-  const { data, isLoading, refetch } = useQuery({
-    queryKey: ["documents"],
-    queryFn: async () => {
-      const response = await getAllDocuments();
-      return response;
-    }
-  })
-  if (isLoading) return <Loading />
+export default async function Home() {
+  const data = await GetAllDocs();
 
   return (
     <main>
       <Header />
-      <div 
+      <div
         className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 my-8 max-w-[80vw] mx-auto"
       >
         {data && data.map((doc) => {
           return (
             <DocCard
+              key={doc.id}
               docId={doc.id}
               thumbnail={doc.thumbnail}
               title={doc.name}
               createdAt={doc.createdAt}
-              refetch={refetch}
             />
           )
         })}

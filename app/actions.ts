@@ -2,7 +2,7 @@
 
 import prisma from "@/prisma/prismaClient"
 
-export const getAllDocuments = async() => {
-  const docs = await prisma.document.findMany()
-  return docs
+export const GetAllDocs = async () => {
+  return await prisma.document.findMany({ orderBy: { updatedAt: 'desc' } });
 }
+

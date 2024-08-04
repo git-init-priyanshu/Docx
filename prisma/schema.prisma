@@ -36,6 +36,7 @@ model Document {
   userId    String
   createdBy User     @relation(fields: [userId], references: [id], name: "CreatedDocuments")
   thumbnail String?
+  deleteUrl String?
 
   users UserOnDocument[]
 }

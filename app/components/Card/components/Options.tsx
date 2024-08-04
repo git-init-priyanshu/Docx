@@ -28,10 +28,9 @@ import { DeleteDocument } from "../actions"
 type CardOptionsPropType = {
   docId: string,
   inputRef: React.RefObject<HTMLInputElement>,
-  refetch: () => void
 }
 
-export default function CardOptions({docId, inputRef, refetch }: CardOptionsPropType) {
+export default function CardOptions({ docId, inputRef }: CardOptionsPropType) {
   const router = useRouter();
 
   const docOptions = [
@@ -92,7 +91,6 @@ export default function CardOptions({docId, inputRef, refetch }: CardOptionsProp
             <Button variant="destructive" onClick={async () => {
               const response = await DeleteDocument("bartwalpriyanshu@gmail.com", docId)
               if (response.success) {
-                refetch();
                 toast.success(response.data)
               } else {
                 toast.error(response.error)

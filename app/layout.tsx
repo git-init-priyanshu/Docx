@@ -2,10 +2,12 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 
-import ReactQueryProvider from "./ReactQueryProvider";
-import "./globals.css";
 import { cn } from "@/lib/utils";
 import { Toaster } from "@/components/ui/sonner";
+
+import { NextAuthProvider } from './NextAuthProvider';
+import ReactQueryProvider from "./ReactQueryProvider";
+import "./globals.css";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -22,14 +24,16 @@ export default function RootLayout({
   return (
     <ReactQueryProvider>
       <html lang="en">
-        <body className={cn(
-          "min-h-screen bg-slate-50 font-sans antialiased",
-          inter.className
-        )}>
-          <Toaster />
-          {children}
-          <ReactQueryDevtools initialIsOpen={false} />
-        </body>
+        <NextAuthProvider>
+          <body className={cn(
+            "min-h-screen bg-slate-50 font-sans antialiased",
+            inter.className
+          )}>
+            <Toaster />
+            {children}
+            <ReactQueryDevtools initialIsOpen={false} />
+          </body>
+        </NextAuthProvider>
       </html>
     </ReactQueryProvider>
   );
