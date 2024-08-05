@@ -49,7 +49,6 @@ export default function Header() {
 
   return (
     <div className="flex border-b bg-white justify-between items-center py-2 px-4">
-      {JSON.stringify(session.data?.user)}
       <div className="flex gap-2 items-center">
         <Image src={logo} width={45} alt="logo" />
         <p className="text-2xl">Docx</p>

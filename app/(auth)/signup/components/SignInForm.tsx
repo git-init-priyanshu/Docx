@@ -68,7 +68,7 @@ export default function CredentialsForm() {
         />
       </div>
       <Button type="submit" className="w-full bg-blue-500">
-        Signin
+        Sign In
       </Button>
     </form>
   )

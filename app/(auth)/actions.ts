@@ -26,12 +26,12 @@ const generateJWT = async (payload: JWTPayload) => {
 export const SigninAction = async (data: z.infer<typeof signinSchema>) => {
   try {
     // User validation
-    const isUserExist = await prisma.user.findFirst({
+    const user = await prisma.user.findFirst({
       where: {
         email: data.email
       }
     })
-    if (isUserExist) return {
+    if (user && user.password) return {
       success: false,
       error: "Looks like you already have an account",
     };
@@ -48,8 +48,7 @@ export const SigninAction = async (data: z.infer<typeof signinSchema>) => {
         username: data.username,
         email: data.email,
         password: hashedPassword,
-        isVerified: true,
-        verifyToken: authToken,
+        isVerified: false,
       }
     })
 
@@ -84,14 +83,6 @@ export const LoginAction = async (data: z.infer<typeof loginSchema>) => {
     }
 
     const authToken = await generateJWT({ email: data.email });
-
-    await prisma.user.update({
-      where: { id: user.id },
-      data: {
-        isVerified: true,
-        verifyToken: authToken
-      }
-    })
 
     // Setting the cookie
     cookies().set('token', authToken, { httpOnly: true });
