@@ -7,22 +7,22 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 
-import { LoginAction } from "../../actions"
-import { loginSchema } from '../../zodSchema'
+import { SigninAction } from "../../actions"
+import { signinSchema } from '../../zodSchema'
 import { toast } from "sonner"
 
 
 export default function LogInForm() {
   const router = useRouter()
 
-  const { register, handleSubmit } = useForm<z.infer<typeof loginSchema>>();
+  const { register, handleSubmit } = useForm<z.infer<typeof signinSchema>>();
 
-  const submitForm = async (data: z.infer<typeof loginSchema>) => {
-    const parsedData = loginSchema.parse({
+  const submitForm = async (data: z.infer<typeof signinSchema>) => {
+    const parsedData = signinSchema.parse({
       email: data.email,
       password: data.password
     })
-    const response = await LoginAction(parsedData);
+    const response = await SigninAction(parsedData);
     if (response.success) {
       toast.success("login completed")
       router.push('/')
@@ -57,7 +57,7 @@ export default function LogInForm() {
         />
       </div>
       <Button type="submit" className="w-full bg-blue-500">
-        Login
+        Sign in
       </Button>
     </form>
   )

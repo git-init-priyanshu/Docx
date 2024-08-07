@@ -16,7 +16,6 @@ import Tabs from "./components/Tabs"
 import Loading from './components/EditorLoading'
 
 import { extensions, props } from './editor/editorConfig'
-// import { editor } from './editor';
 import { GetDocDetails, UpdateDocData, UpdateThumbnail } from './actions'
 import { toast } from 'sonner'
 
@@ -31,8 +30,9 @@ export default function Dashboard() {
     queryFn: async () => {
       const response = await GetDocDetails(params.id);
       if (response.success) {
-        response.data?.data &&
+        if (response.data?.data) {
           setDocData(JSON.parse(response.data?.data));
+        }
         return response.data;
       } else {
         return null;
@@ -109,7 +109,7 @@ export default function Dashboard() {
         <div className="flex gap-4 p-4">
           {Options[option]}
           <ScrollArea className="w-full mb-4">
-            {!data?.data ? <Loading /> :
+            {!data ? <Loading /> :
               <EditorContent editor={editor} />
             }
           </ScrollArea>

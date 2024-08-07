@@ -24,6 +24,7 @@ import {
 import { Button } from "@/components/ui/button"
 
 import { DeleteDocument } from "../actions"
+import useClientSession from "@/lib/customHooks/useClientSession"
 
 type CardOptionsPropType = {
   docId: string,
@@ -32,6 +33,8 @@ type CardOptionsPropType = {
 
 export default function CardOptions({ docId, inputRef }: CardOptionsPropType) {
   const router = useRouter();
+
+  const session = useClientSession();
 
   const docOptions = [
     { icon: Type, color: "#60b7c3", title: "Rename", onClick: () => renameDocument() },
@@ -57,6 +60,17 @@ export default function CardOptions({ docId, inputRef }: CardOptionsPropType) {
     setIsOptionsOpen(false);
     setIsOpen(true);
   }
+
+  const confirmDeleteDocument = async () => {
+    const email = session.email;
+    if (!email) return;
+    const response = await DeleteDocument(email, docId);
+    if (response.success) {
+      toast.success(response.data)
+    } else {
+      toast.error(response.error)
+    }
+  }
   return (
     <>
       <Popover open={isOptionsOpen}>
@@ -69,7 +83,7 @@ export default function CardOptions({ docId, inputRef }: CardOptionsPropType) {
         >
           {docOptions.map((item) => {
             return (
-              <Button variant="ghost" className="gap-2 justify-start" onClick={item.onClick}>
+              <Button id={item.title} variant="ghost" className="gap-2 justify-start" onClick={item.onClick}>
                 <item.icon size={20} color={item.color} strokeWidth={1.5} />
                 <p className="text-neutral-600">{item.title}</p>
               </Button>
@@ -88,14 +102,13 @@ export default function CardOptions({ docId, inputRef }: CardOptionsPropType) {
           </DialogHeader>
           <div className="flex gap-4">
             <Button variant="outline" onClick={() => setIsOpen(false)}>Cancel</Button>
-            <Button variant="destructive" onClick={async () => {
-              const response = await DeleteDocument("bartwalpriyanshu@gmail.com", docId)
-              if (response.success) {
-                toast.success(response.data)
-              } else {
-                toast.error(response.error)
-              }
-            }}>Confirm</Button>
+            <Button
+              variant="outline"
+              onClick={confirmDeleteDocument}
+              className="border-red-200 bg-red-100 hover:bg-red-200"
+            >
+              Confirm
+            </Button>
           </div>
         </DialogContent>
       </Dialog>

@@ -1,9 +1,9 @@
 "use client"
+
 import { useState } from "react"
 import { useRouter } from "next/navigation"
 import Image from "next/image"
 import { toast } from "sonner"
-import { signOut, useSession } from 'next-auth/react'
 import {
   CloudUpload,
   LogOut,
@@ -13,19 +13,23 @@ import {
 
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import logo from "@/public/doc.svg"
 import { CreateNewDocument, LogoutAction } from "./actions"
+import logo from "@/public/doc.svg"
+import useClientSession from "@/lib/customHooks/useClientSession"
 
 export default function Header() {
   const router = useRouter();
 
-  const session = useSession();
+  const session = useClientSession();
 
   const [isLoading, setIsLoading] = useState(false);
 
   const createDocument = async () => {
     setIsLoading(true);
-    const email = "bartwalpriyanshu@gmail.com"
+
+    const email = session.email;
+    if(!email) return;
+
     const response = await CreateNewDocument(email)
     if (response.success) {
       setIsLoading(false);
@@ -41,7 +45,7 @@ export default function Header() {
     const response = await LogoutAction();
     if (response.success) {
       toast.success("Successfully logged out")
-      router.push('/api/auth/signin')
+      router.push('/signup')
     } else {
       toast.error(response.error)
     }

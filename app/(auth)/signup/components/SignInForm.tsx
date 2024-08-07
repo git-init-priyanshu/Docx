@@ -9,23 +9,23 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { z } from 'zod'
 
-import { signinSchema } from '../../zodSchema'
-import { SigninAction } from '../../actions'
+import { signupSchema } from '../../zodSchema'
+import { SignupAction } from '../../actions'
 
 export default function CredentialsForm() {
   const router = useRouter();
 
-  const { register, handleSubmit } = useForm<z.infer<typeof signinSchema>>();
+  const { register, handleSubmit } = useForm<z.infer<typeof signupSchema>>();
 
-  const submitForm = async (data: z.infer<typeof signinSchema>) => {
-    const parsedData = signinSchema.parse({
+  const submitForm = async (data: z.infer<typeof signupSchema>) => {
+    const parsedData = signupSchema.parse({
       name: data.name,
       username: data.username,
       email: data.email,
       password: data.password
     })
 
-    const response = await SigninAction(parsedData);
+    const response = await SignupAction(parsedData);
     if (response.success) {
       toast.success("Signin completed")
       router.push('/')
@@ -68,7 +68,7 @@ export default function CredentialsForm() {
         />
       </div>
       <Button type="submit" className="w-full bg-blue-500">
-        Sign In
+        Sign up
       </Button>
     </form>
   )

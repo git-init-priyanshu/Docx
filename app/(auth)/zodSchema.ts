@@ -5,14 +5,14 @@ const passwordValidation = new RegExp(
   /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/
 );
 
-export const signinSchema = z.object({
+export const signupSchema = z.object({
   name: z.string().min(1).max(50),
   username: z.string().min(1).max(20),
   email: z.string().email(),
   password: z.string().min(1).regex(passwordValidation)
 })
 
-export const loginSchema = z.object({
+export const signinSchema = z.object({
   email: z.string().email(),
   password: z.string()
 })
