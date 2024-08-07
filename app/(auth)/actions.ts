@@ -7,7 +7,7 @@ import { JWTPayload, SignJWT, importJWK } from 'jose';
 import bcrypt from 'bcryptjs';
 
 import prisma from "@/prisma/prismaClient";
-import { loginSchema, signinSchema } from './zodSchema';
+import { signinSchema, signupSchema } from './zodSchema';
 
 const generateJWT = async (payload: JWTPayload) => {
   const secret = process.env.JWT_SECRET || 'secret';
@@ -23,15 +23,15 @@ const generateJWT = async (payload: JWTPayload) => {
   return jwt;
 };
 
-export const SigninAction = async (data: z.infer<typeof signinSchema>) => {
+export const SignupAction = async (data: z.infer<typeof signupSchema>) => {
   try {
     // User validation
-    const isUserExist = await prisma.user.findFirst({
+    const user = await prisma.user.findFirst({
       where: {
         email: data.email
       }
     })
-    if (isUserExist) return {
+    if (user && user.password) return {
       success: false,
       error: "Looks like you already have an account",
     };
@@ -40,16 +40,24 @@ export const SigninAction = async (data: z.infer<typeof signinSchema>) => {
     const salt = await bcrypt.genSalt(Number(process.env.SALT) || 10);
     const hashedPassword = await bcrypt.hash(data.password, salt);
 
-    const authToken = await generateJWT({ email: data.email });
+    const jwtPayload = {
+      id: user?.id,
+      email: data.email,
+      name: user?.name,
+      picture: user?.picture
+    }
+    const authToken = await generateJWT(jwtPayload);
 
-    await prisma.user.create({
-      data: {
+    await prisma.user.upsert({
+      where: { email: data.email },
+      update: {
+        password: hashedPassword 
+      },
+      create: {
         name: data.name,
         username: data.username,
         email: data.email,
         password: hashedPassword,
-        isVerified: true,
-        verifyToken: authToken,
       }
     })
 
@@ -63,7 +71,7 @@ export const SigninAction = async (data: z.infer<typeof signinSchema>) => {
   }
 }
 
-export const LoginAction = async (data: z.infer<typeof loginSchema>) => {
+export const SigninAction = async (data: z.infer<typeof signinSchema>) => {
   try {
     // User validation
     const user = await prisma.user.findFirst({
@@ -83,15 +91,13 @@ export const LoginAction = async (data: z.infer<typeof loginSchema>) => {
       error: "Invalid credentials",
     }
 
-    const authToken = await generateJWT({ email: data.email });
-
-    await prisma.user.update({
-      where: { id: user.id },
-      data: {
-        isVerified: true,
-        verifyToken: authToken
-      }
-    })
+    const jwtPayload = {
+      id: user?.id,
+      email: data.email,
+      name: user?.name,
+      picture: user?.picture
+    }
+    const authToken = await generateJWT(jwtPayload);
 
     // Setting the cookie
     cookies().set('token', authToken, { httpOnly: true });

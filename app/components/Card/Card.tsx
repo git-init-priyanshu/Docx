@@ -1,6 +1,6 @@
 'use client'
 
-import { useCallback, useEffect, useMemo, useRef, useState } from "react"
+import { useCallback, useMemo, useRef, useState } from "react"
 import { useRouter } from "next/navigation"
 
 import {
@@ -15,15 +15,25 @@ import prettifyDate from '@/helpers/prettifyDates'
 import CardOptions from "./components/Options"
 import { debounce } from "lodash"
 import { RenameDocument } from "./actions"
+import useClientSession from "@/lib/customHooks/useClientSession"
 
 type DocCardPropType = {
   docId: string;
   thumbnail: string | null;
   title: string;
-  createdAt: Date
+  updatedAt: Date
+  users: {
+    user:
+    {
+      name: string,
+      picture: string | null
+    }
+  }[]
 }
-export default function DocCard({ docId, thumbnail, title, createdAt }: DocCardPropType) {
+export default function DocCard({ docId, thumbnail, title, updatedAt, users }: DocCardPropType) {
   const router = useRouter();
+
+  const session = useClientSession();
 
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -31,10 +41,20 @@ export default function DocCard({ docId, thumbnail, title, createdAt }: DocCardP
 
   const saveName = useCallback(async () => {
     if (!inputRef.current) return;
-    await RenameDocument(docId, "bartwalpriyanshu@gmail.com", inputRef.current.value);
+    const email = session.email;
+    if (!email) return;
+
+    await RenameDocument(docId, email, inputRef.current.value);
   }, [])
 
   const debounceSaveName = useMemo(() => debounce(saveName, 2000), [saveName])
+
+  const getInitials = (name: string) => {
+    let initials = name.split(" ");
+
+    if (initials.length > 2) return initials[0][0] + initials[1][0];
+    return initials[0][0];
+  }
 
   return (
     <Card className="hover:shadow-lg" >
@@ -56,11 +76,18 @@ export default function DocCard({ docId, thumbnail, title, createdAt }: DocCardP
         />
         <div className="flex items-center w-full justify-between">
           <div className="flex gap-2 items-center">
-            <Avatar className="size-8">
-              <AvatarImage src="https://github.com/shadcn.png" />
-              <AvatarFallback>CN</AvatarFallback>
-            </Avatar>
-            <p className="text-neutral-600 cursor-default">{prettifyDate(String(createdAt))}</p>
+            {users.map((e, index) => {
+              return (
+                <Avatar key={index} className="size-8">
+                  {
+                    e.user.picture
+                      ? <AvatarImage src={e.user.picture} />
+                      : <AvatarFallback>{getInitials(e.user.name)}</AvatarFallback>
+                  }
+                </Avatar>
+              )
+            })}
+            <p className="text-neutral-600 cursor-default">{prettifyDate(String(updatedAt))}</p>
           </div>
           <CardOptions docId={docId} inputRef={inputRef} />
         </div>

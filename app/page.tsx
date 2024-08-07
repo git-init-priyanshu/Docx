@@ -11,14 +11,15 @@ export default async function Home() {
       <div
         className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 my-8 max-w-[80vw] mx-auto"
       >
-        {data && data.map((doc) => {
+        {data && data.map((doc, index) => {
           return (
             <DocCard
-              key={doc.id}
+              key={index}
               docId={doc.id}
               thumbnail={doc.thumbnail}
               title={doc.name}
-              createdAt={doc.createdAt}
+              updatedAt={doc.updatedAt}
+              users={doc.users}
             />
           )
         })}

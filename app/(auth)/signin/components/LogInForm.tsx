@@ -1,74 +1,63 @@
-"use client"
-
+import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { useForm } from 'react-hook-form'
-import { toast } from "sonner"
+import { z } from 'zod'
 
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { z } from 'zod'
 
+import { SigninAction } from "../../actions"
 import { signinSchema } from '../../zodSchema'
-import { SigninAction } from '../../actions'
+import { toast } from "sonner"
 
-export default function CredentialsForm() {
-  const router = useRouter();
+
+export default function LogInForm() {
+  const router = useRouter()
 
   const { register, handleSubmit } = useForm<z.infer<typeof signinSchema>>();
 
   const submitForm = async (data: z.infer<typeof signinSchema>) => {
     const parsedData = signinSchema.parse({
-      name: data.name,
-      username: data.username,
       email: data.email,
       password: data.password
     })
-
     const response = await SigninAction(parsedData);
     if (response.success) {
-      toast.success("Signin completed")
+      toast.success("login completed")
       router.push('/')
     } else {
-      console.log(response.error);
-      toast.error(response.error);
+      toast.error(response.error)
     }
   };
+
   return (
     <form className="grid gap-4 text-left" onSubmit={handleSubmit(submitForm)}>
-      <div className="grid gap-2">
-        <Label htmlFor="username">Username</Label>
-        <Input
-          type="text"
-          placeholder="JohnDoe"
-          {...register('username', { required: true })}
-        />
-      </div>
-      <div className="grid gap-2">
-        <Label htmlFor="name">Name</Label>
-        <Input
-          type="text"
-          placeholder="John Doe"
-          {...register('name', { required: true })}
-        />
-      </div>
       <div className="grid gap-2">
         <Label htmlFor="email">Email</Label>
         <Input
           type="email"
-          placeholder="m@example.com"
+          placeholder="johndoe@email.com"
           {...register('email', { required: true })}
         />
       </div>
       <div className="grid gap-2">
-        <Label htmlFor="password">Password</Label>
+        <div className="flex items-center">
+          <Label htmlFor="password">Password</Label>
+          <Link
+            href="/forgot-password"
+            className="ml-auto inline-block text-sm underline"
+          >
+            Forgot your password?
+          </Link>
+        </div>
         <Input
           type="password"
           {...register('password', { required: true })}
         />
       </div>
       <Button type="submit" className="w-full bg-blue-500">
-        Signin
+        Sign in
       </Button>
     </form>
   )

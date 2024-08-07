@@ -25,9 +25,16 @@ export const UpdateDocData = async (id: any, data: string) => {
       error: "Document does not exist",
     }
 
-    await prisma.document.update({ where: { id }, data: { data: data } })
+    await prisma.document.update(
+      {
+        where: { id },
+        data: {
+          data: data,
+          updatedAt: Date(),
+        }
+      })
 
-    return { success: true, data: "Saved"}
+    return { success: true, data: "Saved" }
   } catch (e) {
     console.log(e)
     return { success: false, error: "Internal server error" }

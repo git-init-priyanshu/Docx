@@ -3,6 +3,32 @@
 import prisma from "@/prisma/prismaClient"
 
 export const GetAllDocs = async () => {
-  return await prisma.document.findMany({ orderBy: { updatedAt: 'desc' } });
+  try {
+    const response = await prisma.document.findMany(
+      {
+        select: {
+          id: true,
+          thumbnail: true,
+          name: true,
+          updatedAt: true,
+          users: {
+            select: {
+              user: {
+                select: {
+                  name: true,
+                  picture: true
+                }
+              }
+            }
+          },
+        },
+        orderBy: { updatedAt: 'desc' }
+      }
+    );
+    return response;
+  } catch (e) {
+    console.log(e);
+    return null;
+  }
 }
 
