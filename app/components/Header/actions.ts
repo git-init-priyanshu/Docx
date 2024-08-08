@@ -32,17 +32,13 @@ export const CreateNewDocument = async (userId: string) => {
 
 export const LogoutAction = async () => {
   try {
-    console.log("here1")
     cookies().delete('token');
-    console.log("here2")
     cookies().delete('next-auth.session-token');
-    console.log("here3")
-    signOut();
-    console.log("here4")
+    // signOut();
+    console.log("here");
 
     return { success: true, data: null };
   } catch (e) {
-    console.log("here5")
     console.error(e);
     return { success: false, error: "Internal server error" };
   }
