@@ -84,7 +84,13 @@ export default function DocCard({ docId, thumbnail, title, updatedAt, users }: D
                 </Avatar>
               )
             })}
-            <p className="text-neutral-600 cursor-default">{prettifyDate(String(updatedAt))}</p>
+            <p className="text-neutral-600 cursor-default">
+              {prettifyDate(String(updatedAt), {
+                year: "numeric",
+                month: "short",
+                day: "2-digit"
+              })}
+            </p>
           </div>
           <CardOptions docId={docId} inputRef={inputRef} />
         </div>

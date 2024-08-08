@@ -1,6 +1,8 @@
 "use server"
 
+import prettifyDate from "@/helpers/prettifyDates"
 import prisma from "@/prisma/prismaClient"
+import { revalidatePath } from "next/cache"
 
 export const GetDocDetails = async (id: any, userId: string) => {
   try {
@@ -18,7 +20,6 @@ export const GetDocDetails = async (id: any, userId: string) => {
 }
 
 export const UpdateDocData = async (id: any, userId: string, data: string) => {
-  console.log("here3")
   try {
     const doc = await prisma.document.findFirst({ where: { id, userId } })
     if (!doc) return {
@@ -26,13 +27,12 @@ export const UpdateDocData = async (id: any, userId: string, data: string) => {
       error: "Document does not exist",
     }
 
-  console.log("here4")
     await prisma.document.update(
       {
         where: { id, userId },
         data: {
           data: data,
-          updatedAt: Date(),
+          updatedAt: new Date(),
         }
       })
 
@@ -52,6 +52,7 @@ export const UpdateThumbnail = async (id: any, userId: string, thumbnail: string
     }
 
     await prisma.document.update({ where: { id, userId }, data: { thumbnail } })
+    revalidatePath('/');
 
     return { success: true, data: "Internal server error" }
   } catch (e) {
