@@ -5,25 +5,17 @@ import { cookies } from "next/headers";
 import prisma from "@/prisma/prismaClient";
 import { signOut } from "next-auth/react";
 
-export const CreateNewDocument = async (email: string) => {
+export const CreateNewDocument = async (userId: string) => {
   try {
-    const user = await prisma.user.findFirst({ where: { email } });
-    if (!user) {
-      return {
-        success: false,
-        error: "Looks like you don't have an account",
-      };
-    }
-
     const doc = await prisma.document.create({
       data: {
         data: "",
-        userId: user.id,
+        userId,
         users: {
           create: {
             user: {
               connect: {
-                id: user.id
+                id: userId
               }
             }
           },
@@ -41,6 +33,7 @@ export const CreateNewDocument = async (email: string) => {
 export const LogoutAction = async () => {
   try {
     cookies().delete('token');
+    cookies().delete('next-auth.session-token');
     signOut();
 
     return { success: true, data: null };

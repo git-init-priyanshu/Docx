@@ -40,11 +40,8 @@ export default function DocCard({ docId, thumbnail, title, updatedAt, users }: D
   const [name, setName] = useState(title)
 
   const saveName = useCallback(async () => {
-    if (!inputRef.current) return;
-    const email = session.email;
-    if (!email) return;
-
-    await RenameDocument(docId, email, inputRef.current.value);
+    if (!inputRef.current || !session?.id) return;
+    await RenameDocument(docId, session.id, inputRef.current.value);
   }, [])
 
   const debounceSaveName = useMemo(() => debounce(saveName, 2000), [saveName])

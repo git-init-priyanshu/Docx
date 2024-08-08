@@ -62,9 +62,9 @@ export default function CardOptions({ docId, inputRef }: CardOptionsPropType) {
   }
 
   const confirmDeleteDocument = async () => {
-    const email = session.email;
-    if (!email) return;
-    const response = await DeleteDocument(email, docId);
+    if (!session.id) return;
+
+    const response = await DeleteDocument(docId, session.id);
     if (response.success) {
       toast.success(response.data)
     } else {
@@ -81,9 +81,15 @@ export default function CardOptions({ docId, inputRef }: CardOptionsPropType) {
           onPointerDownOutside={() => setIsOptionsOpen(false)}
           className="flex flex-col p-0 py-2 text-left w-min"
         >
-          {docOptions.map((item) => {
+          {docOptions.map((item, index) => {
             return (
-              <Button id={item.title} variant="ghost" className="gap-2 justify-start" onClick={item.onClick}>
+              <Button
+                key={index}
+                id={item.title}
+                variant="ghost"
+                className="gap-2 justify-start"
+                onClick={item.onClick}
+              >
                 <item.icon size={20} color={item.color} strokeWidth={1.5} />
                 <p className="text-neutral-600">{item.title}</p>
               </Button>

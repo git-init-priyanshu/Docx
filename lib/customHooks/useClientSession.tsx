@@ -19,7 +19,7 @@ export default function useClientSession(): ReturnType {
 
   useEffect(() => {
     (async () => {
-      if (!session) {
+      if (session === null) {
         const userDetails = await GetUserDetails();
         setUser({
           id: userDetails?.id,
@@ -32,12 +32,11 @@ export default function useClientSession(): ReturnType {
   }, [session])
 
   if (session) return {
-    id: "",
+    id: session.user?.id,
     name: session.user?.name,
     email: session.user?.email,
     image: session.user?.image
   };
-  console.log("Credentials")
 
   return {
     id: user?.id,

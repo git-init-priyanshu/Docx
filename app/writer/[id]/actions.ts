@@ -2,9 +2,9 @@
 
 import prisma from "@/prisma/prismaClient"
 
-export const GetDocDetails = async (id: any) => {
+export const GetDocDetails = async (id: any, userId: string) => {
   try {
-    const doc = await prisma.document.findFirst({ where: { id } })
+    const doc = await prisma.document.findFirst({ where: { id, userId } })
     if (!doc) return {
       success: false,
       error: "Document does not exist",
@@ -17,17 +17,19 @@ export const GetDocDetails = async (id: any) => {
   }
 }
 
-export const UpdateDocData = async (id: any, data: string) => {
+export const UpdateDocData = async (id: any, userId: string, data: string) => {
+  console.log("here3")
   try {
-    const doc = await prisma.document.findFirst({ where: { id } })
+    const doc = await prisma.document.findFirst({ where: { id, userId } })
     if (!doc) return {
       success: false,
       error: "Document does not exist",
     }
 
+  console.log("here4")
     await prisma.document.update(
       {
-        where: { id },
+        where: { id, userId },
         data: {
           data: data,
           updatedAt: Date(),
@@ -41,15 +43,15 @@ export const UpdateDocData = async (id: any, data: string) => {
   }
 }
 
-export const UpdateThumbnail = async (id: any, thumbnail: string) => {
+export const UpdateThumbnail = async (id: any, userId: string, thumbnail: string) => {
   try {
-    const doc = await prisma.document.findFirst({ where: { id } })
+    const doc = await prisma.document.findFirst({ where: { id, userId } })
     if (!doc) return {
       success: false,
       error: "Document does not exist",
     }
 
-    await prisma.document.update({ where: { id }, data: { thumbnail } })
+    await prisma.document.update({ where: { id, userId }, data: { thumbnail } })
 
     return { success: true, data: "Internal server error" }
   } catch (e) {

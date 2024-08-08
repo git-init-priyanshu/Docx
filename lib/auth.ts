@@ -59,21 +59,22 @@ export const authOptions: NextAuthOptions = {
       }
       return true;
     },
+    // jwt: ({ token }) => {
+    //   return token;
+    // },
+    session: async ({ session }: any) => {
+      if (session.user) {
+        const user = await prisma.user.findFirst(
+          {
+            where: { email: session.user.email }
+          });
+        session.user.id = user?.id;
+      }
+      return session;
+    },
     redirect({ baseUrl }) {
       return baseUrl;
     },
-    jwt: ({ user, token }: any) => {
-      if (user) {
-        token.uid = user.id;
-      }
-      return token;
-    },
-    session: ({ session, token }: any) => {
-      if (session.user) {
-        session.user.id = token.uid
-      }
-      return session
-    }
   },
   cookies: {
     sessionToken: {
