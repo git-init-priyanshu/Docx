@@ -6,9 +6,9 @@ export default function Loading() {
     <>
       <Header />
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 my-8 max-w-[80vw] mx-auto">
-        {[1, 2, 3, 4].map(() => {
+        {[1, 2, 3, 4].map((i) => {
           return (
-            <Card className="overflow-hidden">
+            <Card key={i} className="overflow-hidden">
               <div className="h-52 w-full bg-neutral-100 animate-pulse"></div>
               <CardFooter className=" flex flex-col items-start gap-4 border-t bg-slate-50 p-4">
                 <div className="flex items-center gap-1">

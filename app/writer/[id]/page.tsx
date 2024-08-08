@@ -18,9 +18,12 @@ import Loading from './components/EditorLoading'
 import { extensions, props } from './editor/editorConfig'
 import { GetDocDetails, UpdateDocData, UpdateThumbnail } from './actions'
 import { toast } from 'sonner'
+import useClientSession from '@/lib/customHooks/useClientSession'
 
 export default function Dashboard() {
   const params = useParams()
+
+  const session = useClientSession();
 
   const [isSaving, setIsSaving] = useState(false);
   const [docData, setDocData] = useState<string | JSX.Element | JSX.Element[] | undefined>(undefined);
@@ -28,7 +31,7 @@ export default function Dashboard() {
   const { data } = useQuery({
     queryKey: ["doc-details", params.id],
     queryFn: async () => {
-      const response = await GetDocDetails(params.id);
+      const response = await GetDocDetails(params.id, session.id!);
       if (response.success) {
         if (response.data?.data) {
           setDocData(JSON.parse(response.data?.data));
@@ -38,6 +41,8 @@ export default function Dashboard() {
         return null;
       }
     },
+    retry: 5,
+    retryDelay: 100,
   })
 
   const createDocThumbnail = async () => {
@@ -46,7 +51,7 @@ export default function Dashboard() {
       if (!page) return;
 
       // @ts-ignore
-      const canvas = await html2canvas(page, { scale: 0.5 })
+      const canvas = await html2canvas(page, { scale: 1 })
 
       const thumbnail = canvas.toDataURL(`${data?.id}thumbnail/png`).replace(/^data:image\/\w+;base64,/, '');
 
@@ -62,7 +67,8 @@ export default function Dashboard() {
       const res = await upload.json();
       const url = res.data.display_url;
 
-      await UpdateThumbnail(params.id, url)
+      if (!session?.id) return;
+      await UpdateThumbnail(params.id, session.id, url)
 
       setIsSaving(false);
     } catch (e) {
@@ -74,13 +80,15 @@ export default function Dashboard() {
 
   const saveDoc = useCallback((editor: any) => {
     setIsSaving(true);
-    UpdateDocData(params.id, JSON.stringify(editor.getJSON()));
+    if (!session?.id) return;
+
+    UpdateDocData(params.id, session.id, JSON.stringify(editor.getJSON()));
     createDocThumbnail();
-  }, []);
+  }, [session]);
 
   const debouncedSaveDoc = useMemo(
     () => debounce((editor: any) => saveDoc(editor), 1000),
-    [saveDoc]
+    [saveDoc, session]
   );
 
   const editor = useEditor({

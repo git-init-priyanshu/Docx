@@ -3,17 +3,9 @@
 import prisma from "@/prisma/prismaClient";
 import { revalidatePath } from "next/cache";
 
-export const DeleteDocument = async (email: string, docId: any) => {
+export const DeleteDocument = async (docId: any, userId: string) => {
   try {
-    const user = await prisma.user.findFirst({ where: { email } });
-    if (!user) {
-      return {
-        success: false,
-        error: "Looks like you don't have an account",
-      };
-    }
-
-    const doc = await prisma.document.findFirst({ where: { id: docId } });
+    const doc = await prisma.document.findFirst({ where: { id: docId, userId } });
     if (!doc) {
       return {
         success: false,
@@ -21,7 +13,7 @@ export const DeleteDocument = async (email: string, docId: any) => {
       };
     }
 
-    await prisma.document.delete({ where: { id: docId } })
+    await prisma.document.delete({ where: { id: docId, userId } })
     revalidatePath("/");
 
     return { success: true, data: "Document successfully deleted" };
@@ -31,17 +23,9 @@ export const DeleteDocument = async (email: string, docId: any) => {
   }
 }
 
-export const RenameDocument = async (docId: any, email: string, newName: string) => {
+export const RenameDocument = async (docId: any, userId: string, newName: string) => {
   try {
-    const user = await prisma.user.findFirst({ where: { email } });
-    if (!user) {
-      return {
-        success: false,
-        error: "Looks like you don't have an account",
-      };
-    }
-
-    const doc = await prisma.document.findFirst({ where: { id: docId } });
+    const doc = await prisma.document.findFirst({ where: { id: docId, userId } });
     if (!doc) {
       return {
         success: false,
@@ -49,7 +33,10 @@ export const RenameDocument = async (docId: any, email: string, newName: string)
       };
     }
 
-    await prisma.document.update({ where: { id: docId }, data: { name: newName } })
+    await prisma.document.update({
+      where: { id: docId, userId },
+      data: { name: newName }
+    })
     revalidatePath("/");
 
     return { success: true, data: "Document successfully renamed" };

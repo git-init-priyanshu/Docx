@@ -27,10 +27,8 @@ export default function Header() {
   const createDocument = async () => {
     setIsLoading(true);
 
-    const email = session.email;
-    if(!email) return;
-
-    const response = await CreateNewDocument(email)
+    if (!session?.id) return;
+    const response = await CreateNewDocument(session.id);
     if (response.success) {
       setIsLoading(false);
       toast.success("Successfully created new document")
@@ -45,7 +43,7 @@ export default function Header() {
     const response = await LogoutAction();
     if (response.success) {
       toast.success("Successfully logged out")
-      router.push('/signup')
+      router.push('/api/auth/signin')
     } else {
       toast.error(response.error)
     }
