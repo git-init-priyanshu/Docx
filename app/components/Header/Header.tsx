@@ -41,6 +41,7 @@ export default function Header() {
 
   const logout = async () => {
     const response = await LogoutAction();
+    console.log(response);
     if (response.success) {
       toast.success("Successfully logged out")
       router.push('/api/auth/signin')

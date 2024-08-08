@@ -101,6 +101,7 @@ export default function Dashboard() {
   });
 
   useEffect(() => {
+    console.log(docData);
     if (editor && docData) {
       editor.commands.setContent(docData);
     }
