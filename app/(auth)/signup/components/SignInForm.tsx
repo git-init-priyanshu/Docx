@@ -1,23 +1,27 @@
 "use client"
 
+import { useState } from "react"
 import { useRouter } from "next/navigation"
 import { useForm } from 'react-hook-form'
 import { toast } from "sonner"
 
-import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { z } from 'zod'
 
 import { signupSchema } from '../../zodSchema'
 import { SignupAction } from '../../actions'
+import LoaderButton from "@/components/LoaderButton"
 
 export default function CredentialsForm() {
   const router = useRouter();
 
   const { register, handleSubmit } = useForm<z.infer<typeof signupSchema>>();
 
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
   const submitForm = async (data: z.infer<typeof signupSchema>) => {
+    setIsSubmitting(true);
     const parsedData = signupSchema.parse({
       name: data.name,
       username: data.username,
@@ -29,9 +33,11 @@ export default function CredentialsForm() {
     if (response.success) {
       toast.success("Signin completed")
       router.push('/')
+      setIsSubmitting(false);
     } else {
       console.log(response.error);
       toast.error(response.error);
+      setIsSubmitting(false);
     }
   };
   return (
@@ -67,9 +73,11 @@ export default function CredentialsForm() {
           {...register('password', { required: true })}
         />
       </div>
-      <Button type="submit" className="w-full bg-blue-500">
-        Sign up
-      </Button>
+      <LoaderButton
+        className="w-full bg-blue-500 hover:bg-blue-600"
+        isLoading={isSubmitting}
+        type="submit"
+      >Sign up</LoaderButton>
     </form>
   )
 }

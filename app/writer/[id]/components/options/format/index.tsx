@@ -53,7 +53,7 @@ export default function FormatOptions({ editor }: { editor: Editor | null }) {
     const matcher = val.split(" ")
     if (matcher[0] === "normal") return editor?.commands.setParagraph();
     // @ts-ignore
-    return editor?.chain().focus().setHeading({ level: Number(matcher[1]) }).run();
+    return editor?.commands.setHeading({ level: Number(matcher[1]) });
   }
 
   const setDefaultFontFamily = () => {
@@ -69,7 +69,7 @@ export default function FormatOptions({ editor }: { editor: Editor | null }) {
   return (
     <div className="w-fit hidden flex-col items-start gap-8 md:flex" x-chunk="dashboard-03-chunk-0">
       <form className="grid w-full items-start gap-6">
-        <fieldset className="grid gap-6 bg-white rounded-lg border p-4">
+        <fieldset className=" grid gap-6 bg-white rounded-lg border p-4">
           <legend className="-ml-1 px-1 text-sm font-medium">
             Style
           </legend>
@@ -94,11 +94,11 @@ export default function FormatOptions({ editor }: { editor: Editor | null }) {
           </div>
         </fieldset>
 
-        <fieldset className="grid gap-6 bg-white rounded-lg border p-4">
+        <fieldset className="grid max-w-fit gap-6 bg-white rounded-lg border p-4">
           <legend className="-ml-1 px-1 text-sm font-medium">
             Font
           </legend>
-          <div className="grid gap-3 grid-cols-3">
+          <div className="">
             <Select defaultValue={setDefaultFontFamily()} onValueChange={onFontFamilyChange}>
               <SelectTrigger
                 id="model"
@@ -113,7 +113,7 @@ export default function FormatOptions({ editor }: { editor: Editor | null }) {
               </SelectContent>
             </Select>
 
-            <div className="flex gap-4">            
+            <div className="w-full mt-3 flex justify-between gap-4">            
               <div className="flex cursor-pointer border rounded w-fit col-span-3">
               {formattingBtns.map(({ func, name, Icon }, i) => {
                 return (

@@ -1,6 +1,5 @@
 "use server"
 
-import prettifyDate from "@/helpers/prettifyDates"
 import prisma from "@/prisma/prismaClient"
 import { revalidatePath } from "next/cache"
 
