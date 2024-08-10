@@ -1,23 +1,19 @@
 'use client'
 
 import { Input } from "@/components/ui/input";
-import { useRef, useState } from "react"
+import { CircleCheck } from "lucide-react";
 
-type InputPropType = {
-  title: string;
-}
-
-export default function CardInput({title}:InputPropType) {
-  const inputRef = useRef<HTMLInputElement>(null);
-
-  const [name, setName] = useState(title)
-
+export default function CardInput({ title, value, ...props }: any) {
+  console.log(value)
   return (
-    <Input
-      ref={inputRef}
-      value={name}
-      className="w-full text-md border-none focus:outline-none"
-      onChange={(e) => setName(e.target.value)}
-    />
+    <div className="relative">
+      <Input
+        {...props}
+        value={value}
+      />
+      <CircleCheck
+        className={`size-4 text-slate-500 hover:cursor-pointer absolute right-3 top-1/2 transform -translate-y-1/2`}>
+      </CircleCheck>
+    </div>
   )
 }

@@ -1,23 +1,27 @@
-import Link from "next/link"
+import { useState } from "react"
 import { useRouter } from "next/navigation"
 import { useForm } from 'react-hook-form'
+import Link from "next/link"
 import { z } from 'zod'
 
-import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 
 import { SigninAction } from "../../actions"
 import { signinSchema } from '../../zodSchema'
 import { toast } from "sonner"
+import LoaderButton from "@/components/LoaderButton"
 
 
 export default function LogInForm() {
   const router = useRouter()
 
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
   const { register, handleSubmit } = useForm<z.infer<typeof signinSchema>>();
 
   const submitForm = async (data: z.infer<typeof signinSchema>) => {
+    setIsSubmitting(true);
     const parsedData = signinSchema.parse({
       email: data.email,
       password: data.password
@@ -26,8 +30,10 @@ export default function LogInForm() {
     if (response.success) {
       toast.success("login completed")
       router.push('/')
+      setIsSubmitting(false);
     } else {
       toast.error(response.error)
+      setIsSubmitting(false);
     }
   };
 
@@ -56,9 +62,11 @@ export default function LogInForm() {
           {...register('password', { required: true })}
         />
       </div>
-      <Button type="submit" className="w-full bg-blue-500">
-        Sign in
-      </Button>
+      <LoaderButton
+        className="w-full bg-blue-500 hover:bg-blue-600"
+        isLoading={isSubmitting}
+        type="submit"
+      >Sign in</LoaderButton>
     </form>
   )
 }

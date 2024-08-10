@@ -1,6 +1,12 @@
 "use client"
 
-import { useState, useMemo, useCallback, useEffect } from 'react'
+import {
+  useState,
+  useMemo,
+  useCallback,
+  useEffect,
+  useRef
+} from 'react'
 import { useParams } from 'next/navigation'
 import { useQuery } from '@tanstack/react-query'
 import { EditorContent } from '@tiptap/react'
@@ -28,6 +34,8 @@ export default function Dashboard() {
   const [isSaving, setIsSaving] = useState(false);
   const [docData, setDocData] = useState<string | JSX.Element | JSX.Element[] | undefined>(undefined);
 
+  const editorRef = useRef<HTMLDivElement>(null);
+
   const { data } = useQuery({
     queryKey: ["doc-details", params.id],
     queryFn: async () => {
@@ -41,8 +49,8 @@ export default function Dashboard() {
         return null;
       }
     },
-    retry: 5,
-    retryDelay: 100,
+    // retry: 5,
+    // retryDelay: 100,
   })
 
   const createDocThumbnail = async () => {
@@ -111,15 +119,15 @@ export default function Dashboard() {
   const [option, setOption] = useState(0)
 
   return (
-    <div className="h-screen overflow-hidden w-full">
+    <div className="h-screen overflow-y-hidden w-full">
       <Header editor={editor} name={data?.name || ""} isSaving={isSaving} />
       <div className="flex h-full">
         <Tabs option={option} setOption={setOption} />
-        <div className="flex gap-4 p-4">
+        <div className="w-full flex gap-4 p-4">
           {Options[option]}
-          <ScrollArea className="w-full mb-4">
+          <ScrollArea className="w-full mb-4 flex justify-center">
             {!data ? <Loading /> :
-              <EditorContent editor={editor} />
+              <EditorContent editor={editor} ref={editorRef} />
             }
           </ScrollArea>
         </div>

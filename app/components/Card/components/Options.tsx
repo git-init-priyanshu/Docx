@@ -25,6 +25,7 @@ import { Button } from "@/components/ui/button"
 
 import { DeleteDocument } from "../actions"
 import useClientSession from "@/lib/customHooks/useClientSession"
+import LoaderButton from "@/components/LoaderButton"
 
 type CardOptionsPropType = {
   docId: string,
@@ -43,8 +44,9 @@ export default function CardOptions({ docId, inputRef }: CardOptionsPropType) {
     { icon: Trash2, color: "#f94848", title: "Delete", onClick: () => deleteDocument() },
   ]
 
-  const [isOptionsOpen, setIsOptionsOpen] = useState(false)
-  const [isOpen, setIsOpen] = useState(false)
+  const [isOptionsOpen, setIsOptionsOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   const renameDocument = () => {
     if (!inputRef.current) return;
@@ -62,6 +64,7 @@ export default function CardOptions({ docId, inputRef }: CardOptionsPropType) {
   }
 
   const confirmDeleteDocument = async () => {
+    setIsDeleting(true);
     if (!session.id) return;
 
     const response = await DeleteDocument(docId, session.id);
@@ -70,6 +73,7 @@ export default function CardOptions({ docId, inputRef }: CardOptionsPropType) {
     } else {
       toast.error(response.error)
     }
+    setIsDeleting(false);
   }
   return (
     <>
@@ -108,13 +112,14 @@ export default function CardOptions({ docId, inputRef }: CardOptionsPropType) {
           </DialogHeader>
           <div className="flex gap-4">
             <Button variant="outline" onClick={() => setIsOpen(false)}>Cancel</Button>
-            <Button
+            <LoaderButton
               variant="outline"
-              onClick={confirmDeleteDocument}
+              onClickFunc={confirmDeleteDocument}
+              isLoading={isDeleting}
               className="border-red-200 bg-red-100 hover:bg-red-200"
             >
               Confirm
-            </Button>
+            </LoaderButton>
           </div>
         </DialogContent>
       </Dialog>
