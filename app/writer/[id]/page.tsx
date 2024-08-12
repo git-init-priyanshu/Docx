@@ -19,14 +19,12 @@ import { ScrollArea } from "@/components/ui/scroll-area"
 import { FormatOptions, InsertOptions } from "./components/options"
 import Header from "./components/Header/Header"
 import Tabs from "./components/Tabs"
-import DrawerResp from './components/OptionsResp'
 import Loading from './components/EditorLoading'
 
 import { extensions, props } from './editor/editorConfig'
 import { GetDocDetails, UpdateDocData, UpdateThumbnail } from './actions'
 import { toast } from 'sonner'
 import useClientSession from '@/lib/customHooks/useClientSession'
-import OptionsResp from './components/OptionsResp'
 
 export default function Dashboard() {
   const params = useParams()
@@ -119,8 +117,8 @@ export default function Dashboard() {
   }, [docData, editor]);
 
   const Options = [
-    <FormatOptions key={1} editor={editor} isOpen={isDrawerOpen} />,
-    <InsertOptions key={2} editor={editor} isOpen={isDrawerOpen} />
+    <FormatOptions key={1} editor={editor} />,
+    <InsertOptions key={2} editor={editor} />
   ]
   const [option, setOption] = useState(0)
 
@@ -130,14 +128,11 @@ export default function Dashboard() {
         editor={editor}
         name={data?.name || ""}
         isSaving={isSaving}
-        isDrawerOpen={isDrawerOpen}
-        setIsDrawerOpen={setIsDrawerOpen}
       />
       <div className="flex h-full">
-        <Tabs option={option} setOption={setOption} isOpen={isDrawerOpen} />
+        <Tabs option={option} setOption={setOption} />
         <div className="w-full flex gap-4 p-4">
           {Options[option]}
-          {/* <OptionsResp editor={editor} isOpen={isDrawerOpen} setIsOpen={setIsDrawerOpen} /> */}
           <ScrollArea className="w-full mb-4 flex justify-center">
             {!data ? <Loading /> :
               <EditorContent editor={editor} ref={editorRef} />
