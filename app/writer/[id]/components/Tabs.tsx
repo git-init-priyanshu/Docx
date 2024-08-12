@@ -18,7 +18,7 @@ type TabsPropType = {
 }
 export default function Tabs({ option, setOption }: TabsPropType) {
   return (
-    <aside className="bg-white flex h-[calac(100vh - 57px)] justify-between flex-col border-r">
+    <aside className="bg-white h-[calc(100vh - 57px)] justify-between border-r hidden lg:flex lg:flex-col">
       <nav className="grid gap-1 p-2">
         <TooltipProvider>
           <Tooltip>

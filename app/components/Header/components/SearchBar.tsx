@@ -1,6 +1,6 @@
 "use client"
 
-import { useCallback, useMemo, useState } from "react"
+import { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import Image from "next/image";
 import { Search, X } from "lucide-react"
 import { debounce } from 'lodash'
@@ -30,6 +30,8 @@ type SearchResponse = {
 export default function SearchBar() {
   const router = useRouter();
 
+  const searchedResponseRef = useRef<HTMLDivElement>(null);
+
   const [searchResponse, setSearchResponse] = useState<SearchResponse | undefined>(undefined);
   const [searchValue, setSearchValue] = useState("");
   const [isFocused, setIsFocused] = useState(false);
@@ -47,8 +49,25 @@ export default function SearchBar() {
     [search]
   );
 
+  const handleDocumentClick = (e: any) => {
+    if (
+      searchedResponseRef.current &&
+      !searchedResponseRef.current.contains(e.target)
+    ) {
+      setIsFocused(false);
+    }
+  };
+  useEffect(() => {
+    document.addEventListener('mousedown', handleDocumentClick);
+    return () => {
+      document.removeEventListener('mousedown', handleDocumentClick);
+    };
+  }, []);
+
   return (
-    <div className={`transform relative hidden md:block lg:w-[30rem] lg:translate-x-1/4`}>
+    <div
+      className={`transform relative hidden md:block lg:w-[30rem] lg:translate-x-1/4`}
+    >
       <div className="relative">
         <Input
           className={
@@ -57,19 +76,18 @@ export default function SearchBar() {
               : "rounded-full"} px-8 `
           }
           onFocus={() => setIsFocused(true)}
-          onBlur={() => setIsFocused(false)}
           value={searchValue}
           onChange={(e) => {
             setSearchValue(e.target.value);
             if (!e.target.value) return setSearchResponse(undefined);
-            debouncedSearch(e.target.value)
+            debouncedSearch(e.target.value);
           }}
           placeholder="Search documents..."
         />
         <Search size={20} className="absolute text-slate-500 top-1/2 transform -translate-y-1/2 ml-2" />
         <X
           size={20}
-          onClick={() => setSearchValue("")}
+          onClick={() => setSearchValue('')}
           className={
             `${!searchValue
               ? "hidden"
@@ -78,6 +96,7 @@ export default function SearchBar() {
       </div>
 
       <div
+        ref={searchedResponseRef}
         className={
           `${isFocused && searchResponse
             ? "block"
@@ -124,5 +143,5 @@ export default function SearchBar() {
         }
       </div>
     </div>
-  )
-}
+  );
+};

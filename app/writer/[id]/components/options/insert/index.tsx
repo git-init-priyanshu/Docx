@@ -1,5 +1,10 @@
 import { Editor } from "@tiptap/react";
 
-export default function InsertOptions({ editor }: { editor: Editor | null }) {
+
+type InsterOptionsPropTypes = {
+  editor: Editor | null,
+  isOpen: boolean
+};
+export default function InsertOptions({ editor, isOpen }: InsterOptionsPropTypes) {
   return <>Insert</>
 }
