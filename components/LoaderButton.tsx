@@ -1,5 +1,3 @@
-import { Plus } from "lucide-react";
-
 import { Button, ButtonProps } from "./ui/button";
 
 type LoaderButtonType = {
@@ -11,13 +9,13 @@ type LoaderButtonType = {
 } & ButtonProps;
 
 export default function LoaderButton({
-  title,
   onClickFunc,
   isLoading,
   className,
-  icon,
   children,
-  ...props }: LoaderButtonType) {
+  icon,
+  ...props
+}: LoaderButtonType) {
   return (
     <Button
       {...props}

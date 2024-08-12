@@ -59,9 +59,6 @@ export const authOptions: NextAuthOptions = {
       }
       return true;
     },
-    // jwt: ({ token }) => {
-    //   return token;
-    // },
     session: async ({ session }: any) => {
       if (session.user) {
         const user = await prisma.user.findFirst(

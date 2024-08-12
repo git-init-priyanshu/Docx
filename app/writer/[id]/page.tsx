@@ -17,7 +17,7 @@ import html2canvas from 'html2canvas'
 import { ScrollArea } from "@/components/ui/scroll-area"
 
 import { FormatOptions, InsertOptions } from "./components/options"
-import Header from "./components/Header"
+import Header from "./components/Header/Header"
 import Tabs from "./components/Tabs"
 import Loading from './components/EditorLoading'
 
@@ -32,6 +32,7 @@ export default function Dashboard() {
   const session = useClientSession();
 
   const [isSaving, setIsSaving] = useState(false);
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [docData, setDocData] = useState<string | JSX.Element | JSX.Element[] | undefined>(undefined);
 
   const editorRef = useRef<HTMLDivElement>(null);
@@ -115,12 +116,19 @@ export default function Dashboard() {
     }
   }, [docData, editor]);
 
-  const Options = [<FormatOptions key={1} editor={editor} />, <InsertOptions key={2} editor={editor} />]
+  const Options = [
+    <FormatOptions key={1} editor={editor} />,
+    <InsertOptions key={2} editor={editor} />
+  ]
   const [option, setOption] = useState(0)
 
   return (
     <div className="h-screen overflow-y-hidden w-full">
-      <Header editor={editor} name={data?.name || ""} isSaving={isSaving} />
+      <Header
+        editor={editor}
+        name={data?.name || ""}
+        isSaving={isSaving}
+      />
       <div className="flex h-full">
         <Tabs option={option} setOption={setOption} />
         <div className="w-full flex gap-4 p-4">

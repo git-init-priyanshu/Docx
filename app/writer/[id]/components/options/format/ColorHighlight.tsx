@@ -32,7 +32,7 @@ export default function ColorHighlight({ editor }: { editor: Editor | null }) {
   }
 
   return (
-    <div className="flex cursor-pointer border rounded w-fit">
+    <div className="flex cursor-pointer border rounded w-fit col-span-6 sm:col-span-4 lg:mb-0">
       <Baseline
         size={35}
         color={fontColor}
