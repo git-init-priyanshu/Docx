@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Editor } from "@tiptap/react";
 import {
   Baseline,

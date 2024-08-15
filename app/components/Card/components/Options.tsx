@@ -26,6 +26,7 @@ import { Button } from "@/components/ui/button"
 import { DeleteDocument } from "../actions"
 import useClientSession from "@/lib/customHooks/useClientSession"
 import LoaderButton from "@/components/LoaderButton"
+import { Jua } from "next/font/google"
 
 type CardOptionsPropType = {
   docId: string,
@@ -40,12 +41,12 @@ export default function CardOptions({ docId, inputRef }: CardOptionsPropType) {
   const docOptions = [
     { icon: Type, color: "#60b7c3", title: "Rename", onClick: () => renameDocument() },
     { icon: FilePenLine, color: "#48acf9", title: "Edit", onClick: () => editDocument() },
-    { icon: Share2, color: "#48f983", title: "Share", onClick: () => console.log("edit") },
+    { icon: Share2, color: "#48f983", title: "Share", onClick: () => shareDocument() },
     { icon: Trash2, color: "#f94848", title: "Delete", onClick: () => deleteDocument() },
   ]
 
   const [isOptionsOpen, setIsOptionsOpen] = useState(false);
-  const [isOpen, setIsOpen] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
 
   const renameDocument = () => {
@@ -58,9 +59,20 @@ export default function CardOptions({ docId, inputRef }: CardOptionsPropType) {
     router.push(`/writer/${docId}`)
   }
 
+  const shareDocument = () => {
+    navigator.clipboard.writeText(`${process.env.NEXT_PUBLIC_APP_URL}/writer/${docId}`).then(() => {
+      toast.success('Share link copied to clipboard');
+    }).catch(e => {
+      console.log(e)
+      toast.error(e);
+    }).finally(() => {
+      setIsOptionsOpen(false);
+    });
+  }
+
   const deleteDocument = async () => {
     setIsOptionsOpen(false);
-    setIsOpen(true);
+    setIsDeleteModalOpen(true);
   }
 
   const confirmDeleteDocument = async () => {
@@ -102,7 +114,7 @@ export default function CardOptions({ docId, inputRef }: CardOptionsPropType) {
         </PopoverContent>
       </Popover>
 
-      <Dialog open={isOpen}>
+      <Dialog open={isDeleteModalOpen}>
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Delete Document?</DialogTitle>
@@ -111,7 +123,7 @@ export default function CardOptions({ docId, inputRef }: CardOptionsPropType) {
             </DialogDescription>
           </DialogHeader>
           <div className="flex gap-4">
-            <Button variant="outline" onClick={() => setIsOpen(false)}>Cancel</Button>
+            <Button variant="outline" onClick={() => setIsDeleteModalOpen(false)}>Cancel</Button>
             <LoaderButton
               variant="outline"
               onClickFunc={confirmDeleteDocument}
