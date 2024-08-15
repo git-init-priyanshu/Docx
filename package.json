@@ -26,10 +26,11 @@
     "@radix-ui/react-tooltip": "^1.1.2",
     "@tanstack/react-query": "^5.50.1",
     "@tanstack/react-query-devtools": "^5.50.1",
+    "@tiptap/extension-collaboration": "^2.6.2",
+    "@tiptap/extension-collaboration-cursor": "^2.6.2",
     "@tiptap/extension-color": "^2.4.0",
     "@tiptap/extension-document": "^2.4.0",
     "@tiptap/extension-font-family": "^2.4.0",
-    "@tiptap/extension-heading": "^2.4.0",
     "@tiptap/extension-highlight": "^2.4.0",
     "@tiptap/extension-list-item": "^2.4.0",
     "@tiptap/extension-text-align": "^2.4.0",
@@ -60,6 +61,10 @@
     "tailwind-merge": "^2.3.0",
     "tailwindcss-animate": "^1.0.7",
     "vaul": "^0.9.1",
+    "y-prosemirror": "^1.2.12",
+    "y-webrtc": "^10.3.0",
+    "y-websocket": "^2.0.4",
+    "yjs": "^13.6.18",
     "zod": "^3.23.8"
   },
   "devDependencies": {

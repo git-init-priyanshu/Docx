@@ -30,10 +30,17 @@ type DocCardPropType = {
     }
   }[]
 }
-export default function DocCard({ docId, thumbnail, title, updatedAt, users }: DocCardPropType) {
+export default function DocCard({
+  docId,
+  thumbnail,
+  title,
+  updatedAt,
+  users
+}: DocCardPropType) {
   const router = useRouter();
 
   const session = useClientSession();
+  localStorage.setItem('name', session.name as string);
 
   const inputRef = useRef<HTMLInputElement>(null);
 
