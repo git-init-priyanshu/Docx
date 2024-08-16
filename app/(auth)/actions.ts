@@ -2,26 +2,12 @@
 
 import { cookies } from "next/headers"
 import { z } from 'zod';
-import { JWTPayload, SignJWT, importJWK } from 'jose';
 // @ts-ignore
 import bcrypt from 'bcryptjs';
 
 import prisma from "@/prisma/prismaClient";
 import { signinSchema, signupSchema } from './zodSchema';
-
-const generateJWT = async (payload: JWTPayload) => {
-  const secret = process.env.JWT_SECRET || 'secret';
-
-  const jwk = await importJWK({ k: secret, alg: 'HS256', kty: 'oct' });
-
-  const jwt = await new SignJWT(payload)
-    .setProtectedHeader({ alg: 'HS256' })
-    .setIssuedAt()
-    .setExpirationTime('365d')
-    .sign(jwk);
-
-  return jwt;
-};
+import { generateJWT } from "@/helpers/generateJWT";
 
 export const SignupAction = async (data: z.infer<typeof signupSchema>) => {
   try {
@@ -51,7 +37,7 @@ export const SignupAction = async (data: z.infer<typeof signupSchema>) => {
     await prisma.user.upsert({
       where: { email: data.email },
       update: {
-        password: hashedPassword 
+        password: hashedPassword
       },
       create: {
         name: data.name,

@@ -10,7 +10,6 @@ import TextStyle from '@tiptap/extension-text-style'
 import * as Y from 'yjs'
 
 import { cn } from '@/lib/utils'
-import getServerSession from '@/lib/customHooks/getServerSession'
 
 export const ydoc = new Y.Doc();
 
@@ -19,11 +18,13 @@ const room = `room.${new Date()
   .toString()
   .slice(-2)}${new Date().getMonth() + 1}${new Date().getDate()}`
 
-export const provider = new WebrtcProvider(room, ydoc);
-
-export const getSession = async () => {
-  return await getServerSession();
-}
+export const provider = new WebrtcProvider(
+  room,
+  ydoc,
+  {
+    signaling: [process.env.NEXT_PUBLIC_SIGNALLING_URL as string]
+  }
+);
 
 export const extensions = [
   StarterKit.configure({

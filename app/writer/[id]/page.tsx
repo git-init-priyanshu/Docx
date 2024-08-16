@@ -46,7 +46,7 @@ export default function Dashboard() {
   const { data } = useQuery({
     queryKey: ["doc-details", params.id],
     queryFn: async () => {
-      const response = await GetDocDetails(params.id, session.id!);
+      const response = await GetDocDetails(params.id);
       if (response.success) {
         if (response.data?.data) {
           setDocData(JSON.parse(response.data?.data));
@@ -127,15 +127,15 @@ export default function Dashboard() {
     editorProps: props,
     content: "",
     onUpdate({ editor }) {
-      debouncedSaveDoc(editor);
+      // debouncedSaveDoc(editor);
     },
   });
 
-  useEffect(() => {
-    if (editor && docData) {
-      editor.commands.setContent(docData);
-    }
-  }, [docData, editor]);
+  // useEffect(() => {
+  //   if (editor && docData) {
+  //     editor.commands.setContent(docData);
+  //   }
+  // }, [docData, editor]);
 
   const Options = [
     <FormatOptions key={1} editor={editor} />,
