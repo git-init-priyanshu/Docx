@@ -2,20 +2,20 @@
 
 import { useRef, useState } from "react"
 import { useRouter } from "next/navigation"
+import { CircleCheck } from "lucide-react"
 
 import {
   Card,
   CardContent,
   CardFooter,
 } from "@/components/ui/card"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Input } from "@/components/ui/input"
 
-import prettifyDate from '@/helpers/prettifyDates'
-import CardOptions from "./components/Options"
 import { RenameDocument } from "./actions"
+import AvatarList from '@/components/AvatarList'
+import CardOptions from "./components/Options"
+import prettifyDate from '@/helpers/prettifyDates'
 import useClientSession from "@/lib/customHooks/useClientSession"
-import { CircleCheck } from "lucide-react"
 
 type DocCardPropType = {
   docId: string;
@@ -46,13 +46,6 @@ export default function DocCard({
 
   const [name, setName] = useState(title)
 
-  const getInitials = (name: string) => {
-    let initials = name.split(" ");
-
-    if (initials.length > 2) return initials[0][0] + initials[1][0];
-    return initials[0][0];
-  }
-
   return (
     <Card className="hover:shadow-lg" >
       <CardContent
@@ -79,17 +72,7 @@ export default function DocCard({
         </div>
         <div className="flex items-center w-full justify-between">
           <div className="flex gap-2 items-center">
-            {users.map((e, index) => {
-              return (
-                <Avatar key={index} className="size-8">
-                  {
-                    e.user.picture
-                      ? <AvatarImage src={e.user.picture} />
-                      : <AvatarFallback>{getInitials(e.user.name)}</AvatarFallback>
-                  }
-                </Avatar>
-              )
-            })}
+            <AvatarList users={users} />
             <p className="text-neutral-600 cursor-default">
               {prettifyDate(String(updatedAt), {
                 year: "numeric",
