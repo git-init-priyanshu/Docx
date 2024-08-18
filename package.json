@@ -10,8 +10,8 @@
     "db:migrate": "npx prisma migrate",
     "db:generate": "npx prisma generate",
     "db:run": "npm run db:migrate && npm run db:generate",
-    "start:socket-server": "node ./socket-server/server.js",
-    "install:prod": "npm i && npm run db:run && start:socket-server"
+    "start:socket-server": "HOST=localhost node ./socket-server/server.js",
+    "install:prod": "npm i && npm run db:run && npm run start:socket-server"
  },
   "dependencies": {
     "@auth0/nextjs-auth0": "^3.5.0",
