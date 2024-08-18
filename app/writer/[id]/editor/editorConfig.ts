@@ -1,17 +1,17 @@
 import { Color } from '@tiptap/extension-color'
 // import { WebsocketProvider } from 'y-websocket'
-import Collaboration from '@tiptap/extension-collaboration'
+// import Collaboration from '@tiptap/extension-collaboration'
 import StarterKit from '@tiptap/starter-kit'
 import Highlight from '@tiptap/extension-highlight'
 import Underline from '@tiptap/extension-underline'
 import TextAlign from '@tiptap/extension-text-align'
 import FontFamily from '@tiptap/extension-font-family'
 import TextStyle from '@tiptap/extension-text-style'
-import * as Y from 'yjs'
+// import * as Y from 'yjs'
 
 import { cn } from '@/lib/utils'
 
-export const ydoc = new Y.Doc();
+// export const ydoc = new Y.Doc();
 
 // const room = `room.${new Date()
 //   .getFullYear()
@@ -39,9 +39,9 @@ export const extensions = [
   TextAlign.configure({
     types: ['heading', 'paragraph'],
   }),
-  Collaboration.configure({
-    document: ydoc,
-  }),
+  // Collaboration.configure({
+  //   document: ydoc,
+  // }),
 ]
 
 export const props = {
