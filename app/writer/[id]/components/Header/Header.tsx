@@ -56,25 +56,25 @@ export default function Header({
             : <div className='h-7 w-40 rounded hidden lg:block bg-neutral-100 animate-pulse mx-4'></div>}
 
           <Button
-            onClick={() => editor?.chain().focus().undo().run()}
+            onClick={() => editor?.commands.undo()}
             variant="ghost"
             className='px-3 rounded-md'
-            disabled={!editor?.can().chain().focus().undo().run()}
+            // disabled={!editor?.can().chain().focus().undo().run()}
           ><Undo size={15} /></Button>
           <Button
-            onClick={() => editor?.chain().focus().redo().run()}
+            onClick={() => editor?.commands.redo()}
             variant="ghost"
             className='px-3 rounded-md'
-            disabled={!editor?.can().chain().focus().redo().run()}
+            // disabled={!editor?.can().chain().focus().redo().run()}
           ><Redo size={15} /></Button>
 
           <Drawer>
             <DrawerTrigger asChild>
-              <Button variant="ghost" className='px-3 rounded-md'>
+              <Button variant="ghost" className='px-3 rounded-md block lg:hidden'>
                 <ALargeSmall size={15} />
               </Button>
             </DrawerTrigger>
-            <DrawerContent>
+            <DrawerContent className='block lg:hidden'>
               <DrawerHeader className='flex justify-between items-center sm:px-20'>
                 <DrawerTitle>Format</DrawerTitle>
                 <DrawerClose>

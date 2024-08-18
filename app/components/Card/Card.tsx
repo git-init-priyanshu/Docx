@@ -2,20 +2,21 @@
 
 import { useRef, useState } from "react"
 import { useRouter } from "next/navigation"
+import { CircleCheck } from "lucide-react"
 
 import {
   Card,
   CardContent,
   CardFooter,
 } from "@/components/ui/card"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Input } from "@/components/ui/input"
+import type { User } from "@prisma/client"
 
-import prettifyDate from '@/helpers/prettifyDates'
-import CardOptions from "./components/Options"
 import { RenameDocument } from "./actions"
+import AvatarList from '@/components/AvatarList'
+import CardOptions from "./components/Options"
+import prettifyDate from '@/helpers/prettifyDates'
 import useClientSession from "@/lib/customHooks/useClientSession"
-import { CircleCheck } from "lucide-react"
 
 type DocCardPropType = {
   docId: string;
@@ -23,28 +24,24 @@ type DocCardPropType = {
   title: string;
   updatedAt: Date
   users: {
-    user:
-    {
-      name: string,
-      picture: string | null
-    }
+    user: Pick<User, 'name' | 'picture'>
   }[]
 }
-export default function DocCard({ docId, thumbnail, title, updatedAt, users }: DocCardPropType) {
+export default function DocCard({
+  docId,
+  thumbnail,
+  title,
+  updatedAt,
+  users
+}: DocCardPropType) {
   const router = useRouter();
 
   const session = useClientSession();
+  localStorage.setItem('name', session.name as string);
 
   const inputRef = useRef<HTMLInputElement>(null);
 
   const [name, setName] = useState(title)
-
-  const getInitials = (name: string) => {
-    let initials = name.split(" ");
-
-    if (initials.length > 2) return initials[0][0] + initials[1][0];
-    return initials[0][0];
-  }
 
   return (
     <Card className="hover:shadow-lg" >
@@ -72,17 +69,7 @@ export default function DocCard({ docId, thumbnail, title, updatedAt, users }: D
         </div>
         <div className="flex items-center w-full justify-between">
           <div className="flex gap-2 items-center">
-            {users.map((e, index) => {
-              return (
-                <Avatar key={index} className="size-8">
-                  {
-                    e.user.picture
-                      ? <AvatarImage src={e.user.picture} />
-                      : <AvatarFallback>{getInitials(e.user.name)}</AvatarFallback>
-                  }
-                </Avatar>
-              )
-            })}
+            <AvatarList users={users} />
             <p className="text-neutral-600 cursor-default">
               {prettifyDate(String(updatedAt), {
                 year: "numeric",

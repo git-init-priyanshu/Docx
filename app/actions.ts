@@ -6,12 +6,21 @@ export const GetAllDocs = async (userId: string) => {
   try {
     const response = await prisma.document.findMany(
       {
-        where: { userId },
+        where: { 
+          users: {
+            some: {
+              user: {
+                id: userId
+              }
+            }
+          }
+        },
         select: {
           id: true,
           thumbnail: true,
           name: true,
           updatedAt: true,
+          createdBy: true,
           users: {
             select: {
               user: {

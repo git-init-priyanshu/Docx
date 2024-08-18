@@ -13,15 +13,21 @@ import { EditorContent } from '@tiptap/react'
 import { useEditor } from "@tiptap/react"
 import { debounce } from 'lodash'
 import html2canvas from 'html2canvas'
+import CollaborationCursor from '@tiptap/extension-collaboration-cursor'
 
 import { ScrollArea } from "@/components/ui/scroll-area"
+import { getRandomColor } from '@/helpers/getRandomColor'
 
 import { FormatOptions, InsertOptions } from "./components/options"
 import Header from "./components/Header/Header"
 import Tabs from "./components/Tabs"
 import Loading from './components/EditorLoading'
 
-import { extensions, props } from './editor/editorConfig'
+import {
+  provider,
+  extensions,
+  props
+} from './editor/editorConfig'
 import { GetDocDetails, UpdateDocData, UpdateThumbnail } from './actions'
 import { toast } from 'sonner'
 import useClientSession from '@/lib/customHooks/useClientSession'
@@ -31,8 +37,8 @@ export default function Dashboard() {
 
   const session = useClientSession();
 
+  const [option, setOption] = useState(0);
   const [isSaving, setIsSaving] = useState(false);
-  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [docData, setDocData] = useState<string | JSX.Element | JSX.Element[] | undefined>(undefined);
 
   const editorRef = useRef<HTMLDivElement>(null);
@@ -40,7 +46,7 @@ export default function Dashboard() {
   const { data } = useQuery({
     queryKey: ["doc-details", params.id],
     queryFn: async () => {
-      const response = await GetDocDetails(params.id, session.id!);
+      const response = await GetDocDetails(params.id);
       if (response.success) {
         if (response.data?.data) {
           setDocData(JSON.parse(response.data?.data));
@@ -101,7 +107,23 @@ export default function Dashboard() {
   );
 
   const editor = useEditor({
-    extensions: extensions,
+    onCreate: ({ editor: currentEditor }) => {
+      provider.on('synced', () => {
+        if (currentEditor.isEmpty) {
+          currentEditor.commands.setContent("")
+        }
+      })
+    },
+    extensions: [
+      ...extensions,
+      CollaborationCursor.configure({
+        provider,
+        user: {
+          name: localStorage.getItem('name'),
+          color: getRandomColor()
+        }
+      }),
+    ],
     editorProps: props,
     content: "",
     onUpdate({ editor }) {
@@ -110,7 +132,6 @@ export default function Dashboard() {
   });
 
   useEffect(() => {
-    console.log(docData);
     if (editor && docData) {
       editor.commands.setContent(docData);
     }
@@ -120,7 +141,6 @@ export default function Dashboard() {
     <FormatOptions key={1} editor={editor} />,
     <InsertOptions key={2} editor={editor} />
   ]
-  const [option, setOption] = useState(0)
 
   return (
     <div className="h-screen overflow-y-hidden w-full">

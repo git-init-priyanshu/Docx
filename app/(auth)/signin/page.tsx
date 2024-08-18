@@ -2,7 +2,7 @@
 
 import Link from "next/link"
 
-import LogInForm from "./components/LogInForm"
+import SignInForm from "./components/SignInForm"
 import GoogleAuthButton from "./components/GoogleAuthButton"
 
 export default function Login() {
@@ -16,7 +16,7 @@ export default function Login() {
         </p>
       </div>
       <div className="flex flex-col gap-2 mt-4 text-center text-sm">
-        <LogInForm />
+        <SignInForm />
         <p className="divider">OR</p>
         <GoogleAuthButton />
         <p>

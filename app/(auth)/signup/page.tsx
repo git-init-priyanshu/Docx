@@ -1,6 +1,6 @@
 import Link from "next/link"
 
-import SignInForm from "./components/SignInForm"
+import SignUpForm from "./components/SignUpForm"
 import GoogleAuthButton from "./components/GoogleAuthButton"
 
 export default function Signup() {
@@ -13,7 +13,7 @@ export default function Signup() {
         </p>
       </div>
       <div className="flex flex-col gap-2 mt-4 text-center text-sm">
-        <SignInForm />
+        <SignUpForm />
         <p className="divider">OR</p>
         <GoogleAuthButton />
         <p>
