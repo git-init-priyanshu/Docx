@@ -120,22 +120,22 @@ export default function Dashboard() {
         provider,
         user: {
           name: localStorage.getItem('name'),
-          color: getRandomColor
+          color: getRandomColor()
         }
       }),
     ],
     editorProps: props,
     content: "",
     onUpdate({ editor }) {
-      // debouncedSaveDoc(editor);
+      debouncedSaveDoc(editor);
     },
   });
 
-  // useEffect(() => {
-  //   if (editor && docData) {
-  //     editor.commands.setContent(docData);
-  //   }
-  // }, [docData, editor]);
+  useEffect(() => {
+    if (editor && docData) {
+      editor.commands.setContent(docData);
+    }
+  }, [docData, editor]);
 
   const Options = [
     <FormatOptions key={1} editor={editor} />,

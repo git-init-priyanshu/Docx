@@ -3,14 +3,11 @@ import {
   AvatarFallback,
   AvatarImage
 } from "@/components/ui/avatar"
+import type { User } from "@prisma/client"
 
 type AvatarListPropType = {
   users: {
-    user:
-    {
-      name: string,
-      picture: string | null
-    }
+    user: Pick<User, 'name' | 'picture'>
   }[]
 }
 

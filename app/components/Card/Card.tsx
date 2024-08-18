@@ -10,6 +10,7 @@ import {
   CardFooter,
 } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
+import type { User } from "@prisma/client"
 
 import { RenameDocument } from "./actions"
 import AvatarList from '@/components/AvatarList'
@@ -23,11 +24,7 @@ type DocCardPropType = {
   title: string;
   updatedAt: Date
   users: {
-    user:
-    {
-      name: string,
-      picture: string | null
-    }
+    user: Pick<User, 'name' | 'picture'>
   }[]
 }
 export default function DocCard({

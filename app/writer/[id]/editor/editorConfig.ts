@@ -1,5 +1,5 @@
 import { Color } from '@tiptap/extension-color'
-import { WebrtcProvider } from 'y-webrtc'
+import { WebsocketProvider } from 'y-websocket'
 import Collaboration from '@tiptap/extension-collaboration'
 import StarterKit from '@tiptap/starter-kit'
 import Highlight from '@tiptap/extension-highlight'
@@ -18,12 +18,10 @@ const room = `room.${new Date()
   .toString()
   .slice(-2)}${new Date().getMonth() + 1}${new Date().getDate()}`
 
-export const provider = new WebrtcProvider(
+export const provider = new WebsocketProvider(
+  process.env.NEXT_PUBLIC_SIGNALLING_URL as string,
   room,
-  ydoc,
-  {
-    signaling: [process.env.NEXT_PUBLIC_SIGNALLING_URL as string]
-  }
+  ydoc
 );
 
 export const extensions = [
