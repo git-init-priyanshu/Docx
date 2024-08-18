@@ -18,11 +18,11 @@ const room = `room.${new Date()
   .toString()
   .slice(-2)}${new Date().getMonth() + 1}${new Date().getDate()}`
 
-export const provider = new WebsocketProvider(
-  process.env.NEXT_PUBLIC_WEBSOCKET_URL as string,
-  room,
-  ydoc
-);
+// export const provider = new WebsocketProvider(
+//   process.env.NEXT_PUBLIC_WEBSOCKET_URL as string,
+//   room,
+//   ydoc
+// );
 
 export const extensions = [
   StarterKit.configure({

@@ -1,5 +1,4 @@
 "use client"
-
 import {
   useState,
   useMemo,
@@ -63,8 +62,7 @@ export default function Dashboard() {
   const createDocThumbnail = async () => {
     try {
       const page = document.getElementsByClassName("tiptap")[0];
-      if (!page) return;
-
+      if (!page) return setIsSaving(false);
       // @ts-ignore
       const canvas = await html2canvas(page, { scale: 1 })
 
@@ -82,7 +80,7 @@ export default function Dashboard() {
       const res = await upload.json();
       const url = res.data.display_url;
 
-      if (!session?.id) return;
+      if (!session?.id) return setIsSaving(false);
       await UpdateThumbnail(params.id, session.id, url)
 
       setIsSaving(false);
@@ -95,7 +93,7 @@ export default function Dashboard() {
 
   const saveDoc = useCallback((editor: any) => {
     setIsSaving(true);
-    if (!session?.id) return;
+    if (!session?.id) return setIsSaving(false);
 
     UpdateDocData(params.id, session.id, JSON.stringify(editor.getJSON()));
     createDocThumbnail();
@@ -107,26 +105,27 @@ export default function Dashboard() {
   );
 
   const editor = useEditor({
-    onCreate: ({ editor: currentEditor }) => {
-      provider.on('synced', () => {
-        if (currentEditor.isEmpty) {
-          currentEditor.commands.setContent("")
-        }
-      })
-    },
+    // onCreate: ({ editor: currentEditor }) => {
+    // provider.on('synced', () => {
+    //   if (currentEditor.isEmpty) {
+    //     currentEditor.commands.setContent("")
+    //   }
+    // })
+    // },
     extensions: [
       ...extensions,
-      CollaborationCursor.configure({
-        provider,
-        user: {
-          name: localStorage.getItem('name'),
-          color: getRandomColor()
-        }
-      }),
+      // CollaborationCursor.configure({
+      //   provider,
+      //   user: {
+      //     name: localStorage.getItem('name'),
+      //     color: getRandomColor()
+      //   }
+      // }),
     ],
     editorProps: props,
     content: "",
     onUpdate({ editor }) {
+      console.log("update")
       debouncedSaveDoc(editor);
     },
   });
