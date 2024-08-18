@@ -12,10 +12,10 @@ import { EditorContent } from '@tiptap/react'
 import { useEditor } from "@tiptap/react"
 import { debounce } from 'lodash'
 import html2canvas from 'html2canvas'
-// import CollaborationCursor from '@tiptap/extension-collaboration-cursor'
+import CollaborationCursor from '@tiptap/extension-collaboration-cursor'
 
 import { ScrollArea } from "@/components/ui/scroll-area"
-// import { getRandomColor } from '@/helpers/getRandomColor'
+import { getRandomColor } from '@/helpers/getRandomColor'
 
 import { FormatOptions, InsertOptions } from "./components/options"
 import Header from "./components/Header/Header"
@@ -23,7 +23,7 @@ import Tabs from "./components/Tabs"
 import Loading from './components/EditorLoading'
 
 import {
-  // provider,
+  provider,
   extensions,
   props
 } from './editor/editorConfig'
@@ -105,22 +105,22 @@ export default function Dashboard() {
   );
 
   const editor = useEditor({
-    // onCreate: ({ editor: currentEditor }) => {
-    // provider.on('synced', () => {
-    //   if (currentEditor.isEmpty) {
-    //     currentEditor.commands.setContent("")
-    //   }
-    // })
-    // },
+    onCreate: ({ editor: currentEditor }) => {
+    provider.on('synced', () => {
+      if (currentEditor.isEmpty) {
+        currentEditor.commands.setContent("")
+      }
+    })
+    },
     extensions: [
       ...extensions,
-      // CollaborationCursor.configure({
-      //   provider,
-      //   user: {
-      //     name: localStorage.getItem('name'),
-      //     color: getRandomColor()
-      //   }
-      // }),
+      CollaborationCursor.configure({
+        provider,
+        user: {
+          name: localStorage.getItem('name'),
+          color: getRandomColor()
+        }
+      }),
     ],
     editorProps: props,
     content: "",
