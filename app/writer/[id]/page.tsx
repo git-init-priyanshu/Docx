@@ -12,10 +12,11 @@ import { EditorContent } from '@tiptap/react'
 import { useEditor } from "@tiptap/react"
 import { debounce } from 'lodash'
 import html2canvas from 'html2canvas'
-// import CollaborationCursor from '@tiptap/extension-collaboration-cursor'
+import Collaboration from '@tiptap/extension-collaboration'
+import CollaborationCursor from '@tiptap/extension-collaboration-cursor'
 
 import { ScrollArea } from "@/components/ui/scroll-area"
-// import { getRandomColor } from '@/helpers/getRandomColor'
+import { getRandomColor } from '@/helpers/getRandomColor'
 
 import { FormatOptions, InsertOptions } from "./components/options"
 import Header from "./components/Header/Header"
@@ -23,7 +24,8 @@ import Tabs from "./components/Tabs"
 import Loading from './components/EditorLoading'
 
 import {
-  // provider,
+  ydoc,
+  provider,
   extensions,
   props
 } from './editor/editorConfig'
@@ -39,6 +41,8 @@ export default function Dashboard() {
   const [option, setOption] = useState(0);
   const [isSaving, setIsSaving] = useState(false);
   const [docData, setDocData] = useState<string | JSX.Element | JSX.Element[] | undefined>(undefined);
+  const [status, setStatus] = useState('connecting')
+  console.log(status);
 
   const editorRef = useRef<HTMLDivElement>(null);
 
@@ -91,12 +95,17 @@ export default function Dashboard() {
     }
   }
 
-  const saveDoc = useCallback((editor: any) => {
-    setIsSaving(true);
-    if (!session?.id) return setIsSaving(false);
+  const saveDoc = useCallback(async (editor: any) => {
+    if (!session?.id) return;
 
-    UpdateDocData(params.id, session.id, JSON.stringify(editor.getJSON()));
-    createDocThumbnail();
+    setIsSaving(true);
+
+    const response = await UpdateDocData(params.id, session.id, JSON.stringify(editor.getJSON()));
+    if (response.success) {
+      createDocThumbnail();
+    }
+    setIsSaving(false);
+    toast.error(response.error);
   }, [session]);
 
   const debouncedSaveDoc = useMemo(
@@ -105,30 +114,52 @@ export default function Dashboard() {
   );
 
   const editor = useEditor({
-    // onCreate: ({ editor: currentEditor }) => {
-    // provider.on('synced', () => {
-    //   if (currentEditor.isEmpty) {
-    //     currentEditor.commands.setContent("")
-    //   }
-    // })
-    // },
+    onCreate: ({ editor: currentEditor }) => {
+      provider.on('synced', () => {
+        if (currentEditor.isEmpty) {
+          currentEditor.commands.setContent("")
+        }
+      })
+    },
     extensions: [
       ...extensions,
-      // CollaborationCursor.configure({
-      //   provider,
-      //   user: {
-      //     name: localStorage.getItem('name'),
-      //     color: getRandomColor()
-      //   }
-      // }),
+      Collaboration.configure({
+        document: ydoc,
+      }),
+      CollaborationCursor.configure({
+        provider,
+        user: {
+          name: localStorage.getItem('name'),
+          color: getRandomColor()
+        }
+      }),
     ],
     editorProps: props,
     content: "",
     onUpdate({ editor }) {
-      console.log("update")
       debouncedSaveDoc(editor);
     },
   });
+
+  useEffect(() => {
+    // Update status changes
+    const statusHandler = (event: any) => {
+      setStatus(event.status)
+    }
+
+    provider.on('status', statusHandler)
+
+    return () => {
+      provider.off('status', statusHandler)
+    }
+  }, [provider])
+
+  // Save current user to localStorage and emit to editor
+  useEffect(() => {
+    if (editor) {
+      editor.chain().focus().updateUser({ name: localStorage.getItem('name') }).run()
+    }
+  }, [editor])
 
   useEffect(() => {
     if (editor && docData) {
