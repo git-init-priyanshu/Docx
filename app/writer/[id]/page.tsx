@@ -1,4 +1,5 @@
 "use client"
+
 import {
   useState,
   useMemo,
@@ -7,21 +8,18 @@ import {
   useRef
 } from 'react'
 import { useParams } from 'next/navigation'
-import { useQuery } from '@tanstack/react-query'
 import { EditorContent } from '@tiptap/react'
 import { useEditor } from "@tiptap/react"
 import { debounce } from 'lodash'
+import { toast } from 'sonner'
 import html2canvas from 'html2canvas'
 import Collaboration from '@tiptap/extension-collaboration'
 import CollaborationCursor from '@tiptap/extension-collaboration-cursor'
 
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { getRandomColor } from '@/helpers/getRandomColor'
-
-import { FormatOptions, InsertOptions } from "./components/options"
-import Header from "./components/Header/Header"
-import Tabs from "./components/Tabs"
-import Loading from './components/EditorLoading'
+import useClientSession from '@/lib/customHooks/useClientSession'
+import type { Document } from "@prisma/client"
 
 import {
   ydoc,
@@ -29,9 +27,11 @@ import {
   extensions,
   props
 } from './editor/editorConfig'
+import { FormatOptions, InsertOptions } from "./components/options"
 import { GetDocDetails, UpdateDocData, UpdateThumbnail } from './actions'
-import { toast } from 'sonner'
-import useClientSession from '@/lib/customHooks/useClientSession'
+import Header from "./components/Header/Header"
+import Tabs from "./components/Tabs"
+import Loading from './components/EditorLoading'
 
 export default function Dashboard() {
   const params = useParams()
@@ -40,28 +40,23 @@ export default function Dashboard() {
 
   const [option, setOption] = useState(0);
   const [isSaving, setIsSaving] = useState(false);
-  const [docData, setDocData] = useState<string | JSX.Element | JSX.Element[] | undefined>(undefined);
+  const [docData, setDocData] = useState<Document | undefined>(undefined);
   const [status, setStatus] = useState('connecting')
-  console.log(status);
+  // console.log(status);
 
   const editorRef = useRef<HTMLDivElement>(null);
 
-  const { data } = useQuery({
-    queryKey: ["doc-details", params.id],
-    queryFn: async () => {
+  // console.log(docData);
+  useEffect(() => {
+    (async () => {
       const response = await GetDocDetails(params.id);
       if (response.success) {
-        if (response.data?.data) {
-          setDocData(JSON.parse(response.data?.data));
-        }
-        return response.data;
+        setDocData(response.data);
       } else {
-        return null;
+        toast.error(response.error);
       }
-    },
-    // retry: 5,
-    // retryDelay: 100,
-  })
+    })();
+  }, [])
 
   const createDocThumbnail = async () => {
     try {
@@ -70,7 +65,7 @@ export default function Dashboard() {
       // @ts-ignore
       const canvas = await html2canvas(page, { scale: 1 })
 
-      const thumbnail = canvas.toDataURL(`${data?.id}thumbnail/png`).replace(/^data:image\/\w+;base64,/, '');
+      const thumbnail = canvas.toDataURL(`${docData?.id}thumbnail/png`).replace(/^data:image\/\w+;base64,/, '');
 
       const formData = new FormData();
       formData.append('image', thumbnail);
@@ -82,10 +77,15 @@ export default function Dashboard() {
           body: formData
         })
       const res = await upload.json();
-      const url = res.data.display_url;
+      if (!res.success) {
+        setIsSaving(false);
+        return toast.error("Couldn't save thumbnail")
+      }
 
-      if (!session?.id) return setIsSaving(false);
-      await UpdateThumbnail(params.id, session.id, url)
+      const url = res.data.display_url;
+      const deleteUrl = res.data.delete_url;
+
+      await UpdateThumbnail(params.id, url, deleteUrl)
 
       setIsSaving(false);
     } catch (e) {
@@ -96,13 +96,11 @@ export default function Dashboard() {
   }
 
   const saveDoc = useCallback(async (editor: any) => {
-    if (!session?.id) return;
-
     setIsSaving(true);
 
-    const response = await UpdateDocData(params.id, session.id, JSON.stringify(editor.getJSON()));
+    const response = await UpdateDocData(params.id, JSON.stringify(editor.getJSON()));
     if (response.success) {
-      createDocThumbnail();
+      return createDocThumbnail();
     }
     setIsSaving(false);
     toast.error(response.error);
@@ -161,11 +159,16 @@ export default function Dashboard() {
     }
   }, [editor])
 
+  // Set content of the doc
   useEffect(() => {
     if (editor && docData) {
-      editor.commands.setContent(docData);
+      editor.commands.setContent(
+        docData?.data
+          ? JSON.parse(docData?.data)
+          : ""
+      );
     }
-  }, [docData, editor]);
+  }, [editor, docData, docData?.data]);
 
   const Options = [
     <FormatOptions key={1} editor={editor} />,
@@ -176,7 +179,7 @@ export default function Dashboard() {
     <div className="h-screen overflow-y-hidden w-full">
       <Header
         editor={editor}
-        name={data?.name || ""}
+        name={docData?.name || ""}
         isSaving={isSaving}
       />
       <div className="flex h-full">
@@ -184,7 +187,7 @@ export default function Dashboard() {
         <div className="w-full flex gap-4 p-4">
           {Options[option]}
           <ScrollArea className="w-full mb-4 flex justify-center">
-            {!data ? <Loading /> :
+            {!docData ? <Loading /> :
               <EditorContent editor={editor} ref={editorRef} />
             }
           </ScrollArea>

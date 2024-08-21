@@ -77,9 +77,8 @@ export default function CardOptions({ docId, inputRef }: CardOptionsPropType) {
 
   const confirmDeleteDocument = async () => {
     setIsDeleting(true);
-    if (!session.id) return;
 
-    const response = await DeleteDocument(docId, session.id);
+    const response = await DeleteDocument(docId);
     if (response.success) {
       toast.success(response.data)
     } else {

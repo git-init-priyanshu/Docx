@@ -5,13 +5,8 @@ import { useEffect, useState } from 'react'
 import { useSession } from "next-auth/react"
 
 import { GetUserDetails } from './action';
+import { ReturnType } from './ReturnType';
 
-export type ReturnType = {
-  id: string | null | undefined,
-  name: string | null | undefined,
-  email: string | null | undefined,
-  image: string | null | undefined
-}
 export default function useClientSession(): ReturnType {
   const [user, setUser] = useState<ReturnType | null>(null);
 

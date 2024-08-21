@@ -1,8 +1,9 @@
 "use server"
 
-import getServerSession from "@/lib/customHooks/getServerSession"
-import prisma from "@/prisma/prismaClient"
 import { revalidatePath } from "next/cache"
+
+import prisma from "@/prisma/prismaClient"
+import getServerSession from "@/lib/customHooks/getServerSession"
 
 export const GetDocDetails = async (id: any) => {
   const session = await getServerSession();
@@ -13,14 +14,19 @@ export const GetDocDetails = async (id: any) => {
 
   try {
     const doc = await prisma.document.update({
-      where: { id },
+      where: {
+        id,
+        users: {
+          some: { userId: session.id }
+        }
+      },
       data: {
         users: {
           upsert: {
             where: {
               userId_documentId: {
-                userId: session.id,
                 documentId: id,
+                userId: session.id,
               },
             },
             update: {},
@@ -35,7 +41,6 @@ export const GetDocDetails = async (id: any) => {
         },
       }
     })
-
     if (!doc) return {
       success: false,
       error: "Document does not exist",
@@ -48,16 +53,34 @@ export const GetDocDetails = async (id: any) => {
   }
 }
 
-export const UpdateDocData = async (id: any, userId: string, data: string) => {
+export const UpdateDocData = async (id: any, data: string) => {
+  const session = await getServerSession();
+  if (!session.id) return {
+    success: false,
+    error: "User is not logged in",
+  }
+
   try {
-    const doc = await prisma.document.findFirst({ where: { id, userId } })
+    const doc = await prisma.document.findFirst({
+      where: {
+        id,
+        users: {
+          some: { userId: session.id }
+        }
+      }
+    })
     if (!doc) return {
       success: false,
       error: "Document does not exist",
     }
 
     await prisma.document.update({
-      where: { id, userId },
+      where: {
+        id,
+        users: {
+          some: { userId: session.id }
+        }
+      },
       data: {
         data: data,
         updatedAt: new Date(),
@@ -71,15 +94,49 @@ export const UpdateDocData = async (id: any, userId: string, data: string) => {
   }
 }
 
-export const UpdateThumbnail = async (id: any, userId: string, thumbnail: string) => {
+export const UpdateThumbnail = async (
+  id: any,
+  thumbnail: string,
+  deleteUrl: string
+) => {
   try {
-    const doc = await prisma.document.findFirst({ where: { id, userId } })
+    const session = await getServerSession();
+    if (!session.id) return {
+      success: false,
+      error: "User is not logged in",
+    }
+
+    const doc = await prisma.document.findFirst({
+      where: {
+        id,
+        users: {
+          some: { userId: session.id }
+        }
+      },
+    })
     if (!doc) return {
       success: false,
       error: "Document does not exist",
     }
 
-    await prisma.document.update({ where: { id, userId }, data: { thumbnail } })
+    // if(deleteUrl){
+    //   await fetch(deleteUrl, {
+    //     method: 'POST',
+    //   })
+    // }
+
+    await prisma.document.update({
+      where: {
+        id,
+        users: {
+          some: { userId: session.id }
+        }
+      },
+      data: {
+        thumbnail,
+        deleteUrl
+      }
+    })
     revalidatePath('/');
 
     return { success: true, data: "Internal server error" }
