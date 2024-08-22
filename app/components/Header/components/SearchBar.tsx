@@ -1,26 +1,35 @@
 "use client"
 
-import { useCallback, useEffect, useMemo, useRef, useState } from "react"
-import Image from "next/image";
+import {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState
+} from "react"
+import { useRouter } from "next/navigation";
 import { Search, X } from "lucide-react"
 import { debounce } from 'lodash'
+import Image from "next/image";
 
 import { Input } from "@/components/ui/input"
+import prettifyDate from "@/helpers/prettifyDates";
 import doc from '@/public/output-onlinepngtools.svg'
 
 import { SearchDocAction } from "../actions";
-import prettifyDate from "@/helpers/prettifyDates";
-import { useRouter } from "next/navigation";
 
 type SearchResultType = {
   id: string,
   name: string,
   updatedAt: Date,
-  users: {
-    userId: string,
-    documentId: string,
-    assignedAt: Date
-  }[]
+  createdBy: {
+    name: string
+  }
+  // users: {
+  //   userId: string,
+  //   documentId: string,
+  //   assignedAt: Date
+  // }[]
 }
 type SearchResponse = {
   success: boolean,
@@ -33,6 +42,7 @@ export default function SearchBar() {
   const searchedResponseRef = useRef<HTMLDivElement>(null);
 
   const [searchResponse, setSearchResponse] = useState<SearchResponse | undefined>(undefined);
+  console.log(searchResponse);
   const [searchValue, setSearchValue] = useState("");
   const [isFocused, setIsFocused] = useState(false);
   const [isSearching, setIsSearching] = useState(false);
@@ -131,7 +141,7 @@ export default function SearchBar() {
                     <Image className="w-6" src={doc} height={10} alt="doc" />
                     <div>
                       <p>{data.name}</p>
-                      <p className="text-neutral-500 text-sm">Name</p>
+                      <p className="text-neutral-500 text-sm">{data.createdBy.name}</p>
                     </div>
                   </div>
                   <p className="text-sm">

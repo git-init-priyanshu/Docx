@@ -19,13 +19,22 @@ export const SearchDocAction = async (value: string) => {
           contains: value,
           mode: 'insensitive'
         },
-        userId: session.id,
+        users: {
+          some: {
+            user: {
+              id: session?.id
+            }
+          }
+        }
       },
       select: {
         id: true,
         updatedAt: true,
+        createdBy: {
+          select: { name: true }
+        },
         name: true,
-        users: true
+        // users: true
       }
     });
 
