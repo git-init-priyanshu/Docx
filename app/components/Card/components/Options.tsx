@@ -6,7 +6,8 @@ import {
   FilePenLine,
   Share2,
   Trash2,
-  Type
+  Type,
+  X
 } from "lucide-react"
 
 import {
@@ -85,6 +86,7 @@ export default function CardOptions({ docId, inputRef }: CardOptionsPropType) {
       toast.error(response.error)
     }
     setIsDeleting(false);
+    setIsDeleteModalOpen(false);
   }
   return (
     <>
@@ -115,11 +117,18 @@ export default function CardOptions({ docId, inputRef }: CardOptionsPropType) {
 
       <Dialog open={isDeleteModalOpen}>
         <DialogContent>
-          <DialogHeader>
+          <DialogHeader className="relative">
             <DialogTitle>Delete Document?</DialogTitle>
             <DialogDescription>
               Are you sure you want to delete this document?
             </DialogDescription>
+            <Button
+              variant="ghost"
+              className="bg-white z-10 absolute -right-2 -top-6 px-2"
+              onClick={() => setIsDeleteModalOpen(false)}
+            >
+              <X size={15} />
+            </Button>
           </DialogHeader>
           <div className="flex gap-4">
             <Button variant="outline" onClick={() => setIsDeleteModalOpen(false)}>Cancel</Button>
