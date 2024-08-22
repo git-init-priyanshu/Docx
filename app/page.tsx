@@ -12,7 +12,7 @@ export default async function Home() {
 
   return (
     <main>
-      <Header name={session?.name} picture={session?.image} />
+      <Header name={session?.name} image={session?.image} />
       <div
         className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 my-8 max-w-[80vw] mx-auto"
       >

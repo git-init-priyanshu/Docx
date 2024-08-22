@@ -62,7 +62,7 @@ export default function DocCard({
           <CircleCheck
             onClick={async () => {
               if (!inputRef.current || !session?.id) return;
-              await RenameDocument(docId, session.id, inputRef.current.value);
+              await RenameDocument(docId, inputRef.current.value);
             }}
             className={`${title != name ? "" : "hidden"} size-4 text-slate-500 hover:cursor-pointer absolute right-3 top-1/2 transform -translate-y-1/2`}>
           </CircleCheck>
