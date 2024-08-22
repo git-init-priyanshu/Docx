@@ -18,8 +18,8 @@ import CollaborationCursor from '@tiptap/extension-collaboration-cursor'
 
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { getRandomColor } from '@/helpers/getRandomColor'
-import useClientSession from '@/lib/customHooks/useClientSession'
 import type { Document } from "@prisma/client"
+import useClientSession from '@/lib/customHooks/useClientSession'
 
 import {
   ydoc,
@@ -42,7 +42,7 @@ export default function Dashboard() {
   const [isSaving, setIsSaving] = useState(false);
   const [docData, setDocData] = useState<Document | undefined>(undefined);
   const [status, setStatus] = useState('connecting')
-  // console.log(status);
+  console.log(status);
 
   const editorRef = useRef<HTMLDivElement>(null);
 
