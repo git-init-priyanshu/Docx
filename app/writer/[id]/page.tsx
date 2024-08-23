@@ -104,11 +104,11 @@ export default function Dashboard() {
     }
     setIsSaving(false);
     toast.error(response.error);
-  }, [session]);
+  }, []);
 
   const debouncedSaveDoc = useMemo(
     () => debounce((editor: any) => saveDoc(editor), 1000),
-    [saveDoc, session]
+    [saveDoc]
   );
 
   const editor = useEditor({

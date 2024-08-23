@@ -27,7 +27,6 @@ import { Button } from "@/components/ui/button"
 import { DeleteDocument } from "../actions"
 import useClientSession from "@/lib/customHooks/useClientSession"
 import LoaderButton from "@/components/LoaderButton"
-import { Jua } from "next/font/google"
 
 type CardOptionsPropType = {
   docId: string,
@@ -36,8 +35,6 @@ type CardOptionsPropType = {
 
 export default function CardOptions({ docId, inputRef }: CardOptionsPropType) {
   const router = useRouter();
-
-  const session = useClientSession();
 
   const docOptions = [
     { icon: Type, color: "#60b7c3", title: "Rename", onClick: () => renameDocument() },

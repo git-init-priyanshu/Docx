@@ -6,19 +6,16 @@ import prisma from "@/prisma/prismaClient"
 import getServerSession from "@/lib/customHooks/getServerSession"
 
 export const GetDocDetails = async (id: any) => {
-  const session = await getServerSession();
-  if (!session.id) return {
-    success: false,
-    error: "User is not logged in",
-  }
-
   try {
+    const session = await getServerSession();
+    if (!session.id) return {
+      success: false,
+      error: "User is not logged in",
+    }
+
     const doc = await prisma.document.update({
       where: {
         id,
-        users: {
-          some: { userId: session.id }
-        }
       },
       data: {
         users: {
@@ -54,6 +51,7 @@ export const GetDocDetails = async (id: any) => {
 }
 
 export const UpdateDocData = async (id: any, data: string) => {
+  console.log(data);
   const session = await getServerSession();
   if (!session.id) return {
     success: false,
