@@ -1,11 +1,24 @@
 "use server"
 
-import prisma from "@/prisma/prismaClient";
 import { revalidatePath } from "next/cache";
 
-export const DeleteDocument = async (docId: any, userId: string) => {
+import getServerSession from "@/lib/customHooks/getServerSession";
+import prisma from "@/prisma/prismaClient";
+
+export const DeleteDocument = async (docId: any) => {
   try {
-    const doc = await prisma.document.findFirst({ where: { id: docId, userId } });
+    const session = await getServerSession();
+    if (!session.id) return {
+      success: false,
+      error: "User is not logged in",
+    }
+
+    const doc = await prisma.document.findFirst({
+      where: {
+        id: docId,
+        userId: session.id
+      }
+    });
     if (!doc) {
       return {
         success: false,
@@ -13,7 +26,12 @@ export const DeleteDocument = async (docId: any, userId: string) => {
       };
     }
 
-    await prisma.document.delete({ where: { id: docId, userId } })
+    await prisma.document.delete({
+      where: {
+        id: docId,
+        userId: session.id
+      }
+    })
     revalidatePath("/");
 
     return { success: true, data: "Document successfully deleted" };
@@ -23,9 +41,20 @@ export const DeleteDocument = async (docId: any, userId: string) => {
   }
 }
 
-export const RenameDocument = async (docId: any, userId: string, newName: string) => {
+export const RenameDocument = async (docId: any, newName: string) => {
   try {
-    const doc = await prisma.document.findFirst({ where: { id: docId, userId } });
+    const session = await getServerSession();
+    if (!session.id) return {
+      success: false,
+      error: "User is not logged in",
+    }
+
+    const doc = await prisma.document.findFirst({
+      where: {
+        id: docId,
+        userId: session.id
+      }
+    });
     if (!doc) {
       return {
         success: false,
@@ -34,7 +63,10 @@ export const RenameDocument = async (docId: any, userId: string, newName: string
     }
 
     await prisma.document.update({
-      where: { id: docId, userId },
+      where: {
+        id: docId,
+        userId: session.id
+      },
       data: { name: newName }
     })
     revalidatePath("/");

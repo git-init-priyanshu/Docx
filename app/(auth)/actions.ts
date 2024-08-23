@@ -69,6 +69,10 @@ export const SigninAction = async (data: z.infer<typeof signinSchema>) => {
       success: false,
       error: "Looks like you don't have an account",
     };
+    if (!user.password) return {
+      success: false,
+      error: "Invalid credentials",
+    };
 
     // Password validation
     const isCorrectPassword = await bcrypt.compare(data.password, user.password);

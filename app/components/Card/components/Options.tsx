@@ -6,7 +6,8 @@ import {
   FilePenLine,
   Share2,
   Trash2,
-  Type
+  Type,
+  X
 } from "lucide-react"
 
 import {
@@ -26,7 +27,6 @@ import { Button } from "@/components/ui/button"
 import { DeleteDocument } from "../actions"
 import useClientSession from "@/lib/customHooks/useClientSession"
 import LoaderButton from "@/components/LoaderButton"
-import { Jua } from "next/font/google"
 
 type CardOptionsPropType = {
   docId: string,
@@ -35,8 +35,6 @@ type CardOptionsPropType = {
 
 export default function CardOptions({ docId, inputRef }: CardOptionsPropType) {
   const router = useRouter();
-
-  const session = useClientSession();
 
   const docOptions = [
     { icon: Type, color: "#60b7c3", title: "Rename", onClick: () => renameDocument() },
@@ -77,15 +75,15 @@ export default function CardOptions({ docId, inputRef }: CardOptionsPropType) {
 
   const confirmDeleteDocument = async () => {
     setIsDeleting(true);
-    if (!session.id) return;
 
-    const response = await DeleteDocument(docId, session.id);
+    const response = await DeleteDocument(docId);
     if (response.success) {
       toast.success(response.data)
     } else {
       toast.error(response.error)
     }
     setIsDeleting(false);
+    setIsDeleteModalOpen(false);
   }
   return (
     <>
@@ -116,11 +114,18 @@ export default function CardOptions({ docId, inputRef }: CardOptionsPropType) {
 
       <Dialog open={isDeleteModalOpen}>
         <DialogContent>
-          <DialogHeader>
+          <DialogHeader className="relative">
             <DialogTitle>Delete Document?</DialogTitle>
             <DialogDescription>
               Are you sure you want to delete this document?
             </DialogDescription>
+            <Button
+              variant="ghost"
+              className="bg-white z-10 absolute -right-2 -top-6 px-2"
+              onClick={() => setIsDeleteModalOpen(false)}
+            >
+              <X size={15} />
+            </Button>
           </DialogHeader>
           <div className="flex gap-4">
             <Button variant="outline" onClick={() => setIsDeleteModalOpen(false)}>Cancel</Button>

@@ -25,7 +25,7 @@ export default function HeaderButtons() {
     setIsLoading(true);
 
     if (!session?.id) return;
-    const response = await CreateNewDocument(session.id);
+    const response = await CreateNewDocument();
     if (response.success) {
       setIsLoading(false);
       toast.success("Successfully created new document")

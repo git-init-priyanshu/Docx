@@ -4,7 +4,7 @@ import Header from "./components/Header/Header"
 export default function Loading() {
   return (
     <>
-      <Header />
+      <Header image={null} name={null} />
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 my-8 max-w-[80vw] mx-auto">
         {[1, 2, 3, 4].map((i) => {
           return (

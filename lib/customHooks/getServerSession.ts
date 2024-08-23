@@ -1,7 +1,7 @@
 // @ts-nocheck
 import { getServerSession as nextAuthSession } from "next-auth";
 
-import { ReturnType } from "./useClientSession";
+import { ReturnType } from "./ReturnType";
 import { GetUserDetails } from "./action";
 import { authOptions } from "../auth";
 

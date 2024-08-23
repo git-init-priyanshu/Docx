@@ -4,18 +4,12 @@ import {
   AvatarImage
 } from "@/components/ui/avatar"
 import type { User } from "@prisma/client"
+import getInitials from "@/helpers/getInitials"
 
 type AvatarListPropType = {
   users: {
     user: Pick<User, 'name' | 'picture'>
   }[]
-}
-
-const getInitials = (name: string) => {
-  let initials = name.split(" ");
-
-  if (initials.length > 2) return initials[0][0] + initials[1][0];
-  return initials[0][0];
 }
 
 export default function AvatarList({ users }: AvatarListPropType) {

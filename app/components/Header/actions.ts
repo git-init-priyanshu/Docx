@@ -7,7 +7,10 @@ import getServerSession from "@/lib/customHooks/getServerSession";
 
 export const SearchDocAction = async (value: string) => {
   const session = await getServerSession();
-  if (!session.id) return { success: false, error: "Session not found" };
+  if (!session.id) return {
+    success: false,
+    error: "User is not logged in",
+  }
 
   try {
     const searchResult = await prisma.document.findMany({
@@ -16,13 +19,22 @@ export const SearchDocAction = async (value: string) => {
           contains: value,
           mode: 'insensitive'
         },
-        userId: session.id,
+        users: {
+          some: {
+            user: {
+              id: session?.id
+            }
+          }
+        }
       },
       select: {
         id: true,
         updatedAt: true,
+        createdBy: {
+          select: { name: true }
+        },
         name: true,
-        users: true
+        // users: true
       }
     });
 
@@ -34,17 +46,24 @@ export const SearchDocAction = async (value: string) => {
   }
 }
 
-export const CreateNewDocument = async (userId: string) => {
+export const CreateNewDocument = async () => {
   try {
+    const session = await getServerSession();
+    if (!session.id) return {
+      success: false,
+      error: "User is not logged in",
+    }
+
     const doc = await prisma.document.create({
       data: {
         data: "",
-        userId,
+        // createdBy: session.id,
+        userId: session.id,
         users: {
           create: {
             user: {
               connect: {
-                id: userId
+                id: session.id
               }
             }
           },
@@ -63,8 +82,6 @@ export const LogoutAction = async () => {
   try {
     cookies().delete('token');
     cookies().delete('next-auth.session-token');
-    // signOut();
-    console.log("here");
 
     return { success: true, data: null };
   } catch (e) {
