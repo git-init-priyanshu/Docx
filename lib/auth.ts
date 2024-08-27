@@ -11,12 +11,12 @@ export const authOptions: NextAuthOptions = {
 
       authorization: {
         params: {
-          prompt: 'consent',
-          access_type: 'offline',
-          response_type: 'code',
-        }
+          prompt: "consent",
+          access_type: "offline",
+          response_type: "code",
+        },
       },
-    })
+    }),
   ],
   secret: process.env.NEXTAUTH_SECRET,
   callbacks: {
@@ -28,7 +28,7 @@ export const authOptions: NextAuthOptions = {
           picture,
           name,
           given_name,
-          family_name
+          family_name,
         } = profile;
 
         if (!email_verified) return false;
@@ -48,8 +48,8 @@ export const authOptions: NextAuthOptions = {
               password: null,
               picture,
               isVerified: true,
-            }
-          })
+            },
+          });
 
           return true;
         } catch (e) {
@@ -61,10 +61,9 @@ export const authOptions: NextAuthOptions = {
     },
     session: async ({ session }: any) => {
       if (session.user) {
-        const user = await prisma.user.findFirst(
-          {
-            where: { email: session.user.email }
-          });
+        const user = await prisma.user.findFirst({
+          where: { email: session.user.email },
+        });
         session.user.id = user?.id;
       }
       return session;
@@ -75,16 +74,16 @@ export const authOptions: NextAuthOptions = {
   },
   cookies: {
     sessionToken: {
-      name: 'next-auth.session-token',
+      name: "next-auth.session-token",
       options: {
         httpOnly: true,
-        sameSite: 'lax',
-        path: '/',
-        secure: true
-      }
-    }
+        sameSite: "lax",
+        path: "/",
+        secure: true,
+      },
+    },
   },
   pages: {
     signIn: "/signin",
   },
-} satisfies NextAuthOptions
+} satisfies NextAuthOptions;

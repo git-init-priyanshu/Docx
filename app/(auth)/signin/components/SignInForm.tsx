@@ -1,38 +1,40 @@
-import { useState } from "react"
-import { useRouter } from "next/navigation"
-import { useForm } from 'react-hook-form'
-import Link from "next/link"
-import { z } from 'zod'
+"use client";
 
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { useForm } from "react-hook-form";
+import { toast } from "sonner";
+import { Eye, EyeOff } from "lucide-react";
+import { z } from "zod";
 
-import { SigninAction } from "../../actions"
-import { signinSchema } from '../../zodSchema'
-import { toast } from "sonner"
-import LoaderButton from "@/components/LoaderButton"
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import LoaderButton from "@/components/LoaderButton";
 
+import { SigninAction } from "../../actions";
+import { signinSchema } from "../../zodSchema";
 
-export default function LogInForm() {
-  const router = useRouter()
-
-  const [isSubmitting, setIsSubmitting] = useState(false);
+export default function CredentialsForm() {
+  const router = useRouter();
 
   const { register, handleSubmit } = useForm<z.infer<typeof signinSchema>>();
+
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isPasswordVisible, setIsPasswordVisible] = useState(false);
 
   const submitForm = async (data: z.infer<typeof signinSchema>) => {
     setIsSubmitting(true);
     const parsedData = signinSchema.parse({
       email: data.email,
-      password: data.password
-    })
+      password: data.password,
+    });
     const response = await SigninAction(parsedData);
     if (response.success) {
-      toast.success("login completed")
-      router.push('/')
+      toast.success("login completed");
+      router.push("/");
       setIsSubmitting(false);
     } else {
-      toast.error(response.error)
+      toast.error(response.error);
       setIsSubmitting(false);
     }
   };
@@ -44,29 +46,47 @@ export default function LogInForm() {
         <Input
           type="email"
           placeholder="johndoe@email.com"
-          {...register('email', { required: true })}
+          {...register("email", { required: true })}
         />
       </div>
       <div className="grid gap-2">
         <div className="flex items-center">
           <Label htmlFor="password">Password</Label>
-          <Link
-            href="/forgot-password"
-            className="ml-auto inline-block text-sm underline"
-          >
-            Forgot your password?
-          </Link>
+          {/* <Link */}
+          {/*   href="/forgot-password" */}
+          {/*   className="ml-auto inline-block text-sm underline" */}
+          {/* > */}
+          {/*   Forgot your password? */}
+          {/* </Link> */}
         </div>
-        <Input
-          type="password"
-          {...register('password', { required: true })}
-        />
+        <div>
+          <Input
+            type={isPasswordVisible ? "text" : "password"}
+            className="relative"
+            {...register("password", { required: true })}
+          />
+          {!isPasswordVisible ? (
+            <Eye
+              size={20}
+              onClick={() => setIsPasswordVisible(true)}
+              className="absolute transform -translate-y-[1.7rem] translate-x-80 cursor-pointer text-neutral-500 hover:text-black"
+            />
+          ) : (
+            <EyeOff
+              size={20}
+              onClick={() => setIsPasswordVisible(false)}
+              className="absolute transform -translate-y-[1.7rem] translate-x-80 cursor-pointer text-neutral-500 hover:text-black"
+            />
+          )}
+        </div>
       </div>
       <LoaderButton
         className="w-full bg-blue-500 hover:bg-blue-600"
         isLoading={isSubmitting}
         type="submit"
-      >Sign in</LoaderButton>
+      >
+        Sign in
+      </LoaderButton>
     </form>
-  )
+  );
 }

@@ -1,11 +1,11 @@
-import { useEditor } from "@tiptap/react"
+import { useEditor } from "@tiptap/react";
 
-import { extensions, props } from './editorConfig'
+import { extensions, props } from "./editorConfig";
 
 type EditorType = {
-  docData?: string,
-  debouncedSaveDoc: (editor: any) => void
-}
+  docData?: string;
+  debouncedSaveDoc: (editor: any) => void;
+};
 
 export const Editor = ({ docData, debouncedSaveDoc }: EditorType) => {
   return useEditor({

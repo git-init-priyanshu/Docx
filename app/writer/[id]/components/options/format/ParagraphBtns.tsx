@@ -1,4 +1,4 @@
-import { paragraphBtns } from "./textEditorOptions"
+import { paragraphBtns } from "./textEditorOptions";
 
 export default function ParagraphBtns({ editor }: any) {
   return (
@@ -9,14 +9,16 @@ export default function ParagraphBtns({ editor }: any) {
             key={align}
             size={35}
             onClick={() => editor?.chain().focus().setTextAlign(align).run()}
-            className={`${editor?.isActive({ textAlign: align })
-              ? 'bg-blue-500 text-white hover:bg-blue-500'
-              : 'hover:bg-slate-100 bg-white'} p-2 rounded ${i === paragraphBtns.length - 1
-                ? "border-none"
-                : "border-r"}`}
+            className={`${
+              editor?.isActive({ textAlign: align })
+                ? "bg-blue-500 text-white hover:bg-blue-500"
+                : "hover:bg-slate-100 bg-white"
+            } p-2 rounded ${
+              i === paragraphBtns.length - 1 ? "border-none" : "border-r"
+            }`}
           />
-        )
+        );
       })}
     </div>
-  )
+  );
 }

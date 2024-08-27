@@ -14,7 +14,7 @@ type OptionsType = {
 };
 
 const prettifyDate = (dateString: string | undefined, options: OptionsType) => {
-  if (!dateString) return ""
+  if (!dateString) return "";
   const date = new Date(dateString);
 
   return new Intl.DateTimeFormat("en-US", options).format(date);

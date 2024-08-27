@@ -2,7 +2,7 @@ import getServerSession from "@/lib/customHooks/getServerSession";
 
 import { GetAllDocs } from "./actions";
 import DocCard from "./components/Card/Card";
-import Header from "./components/Header/Header"
+import Header from "./components/Header/Header";
 
 export default async function Home() {
   const session = await getServerSession();
@@ -13,12 +13,9 @@ export default async function Home() {
   return (
     <main>
       <Header name={session?.name} image={session?.image} />
-      <div
-        className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 my-8 max-w-[80vw] mx-auto"
-      >
-        {data
-          && data.length > 0
-          ? data.map((doc, index) => {
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 my-8 max-w-[80vw] mx-auto">
+        {data && data.length > 0 ? (
+          data.map((doc, index) => {
             return (
               <DocCard
                 key={index}
@@ -28,9 +25,11 @@ export default async function Home() {
                 updatedAt={doc.updatedAt}
                 users={doc.users}
               />
-            )
+            );
           })
-          : <></>}
+        ) : (
+          <></>
+        )}
       </div>
     </main>
   );

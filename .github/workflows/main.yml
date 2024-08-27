@@ -5,7 +5,7 @@ on:
     branches:
       - main
     paths-ignore:
-      - 'README.md'
+      - "README.md"
 
 permissions:
   id-token: write
@@ -20,12 +20,13 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Lint code
-        run: echo "Linting repository"
-        # You can add actual linting commands here to check code quality.
+        run: npm run lint
+
+      - name: Format code
+        run: npm run format
 
       - name: Run unit tests
         run: echo "Running unit tests"
-        # Add the commands to run your unit tests here.
 
   # build-and-push-ecr-image:
   #   name: Build and Push to ECR

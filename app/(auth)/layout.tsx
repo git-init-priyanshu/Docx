@@ -1,14 +1,16 @@
 import Image from "next/image";
 
-import SignInImage from '@/public/signin.webp'
+import SignInImage from "@/public/signin.webp";
 
-export default function AuthLayout({ children }: { children: React.ReactNode }) {
+export default function AuthLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return (
     <div className="w-full h-dvh lg:grid lg:grid-cols-2 overflow-hidden">
       <div className="flex items-center justify-center py-12">
-        <div className="mx-auto grid w-[350px] gap-6">
-          {children}
-        </div>
+        <div className="mx-auto grid w-[350px] gap-6">{children}</div>
       </div>
       <div className="hidden bg-muted lg:block">
         <Image
@@ -18,5 +20,5 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
         />
       </div>
     </div>
-  )
+  );
 }

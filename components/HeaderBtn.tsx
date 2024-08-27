@@ -1,8 +1,8 @@
-import { Button, ButtonProps } from "./ui/button"
+import { Button, ButtonProps } from "./ui/button";
 
 type HeaderBtnPropType = {
-  icon?: React.ReactNode,
-  size?: number,
+  icon?: React.ReactNode;
+  size?: number;
 } & ButtonProps;
 
 export default function HeaderBtn({
@@ -11,11 +11,5 @@ export default function HeaderBtn({
   children,
   ...props
 }: HeaderBtnPropType) {
-  return (
-    <Button
-      {...props}
-    >
-      {children}
-    </Button>
-  )
+  return <Button {...props}>{children}</Button>;
 }

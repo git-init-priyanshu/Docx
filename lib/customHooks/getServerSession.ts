@@ -8,12 +8,13 @@ import { authOptions } from "../auth";
 export default async function getServerSession(): Promise<ReturnType> {
   const session = await nextAuthSession(authOptions);
 
-  if (session) return {
-    id: session.user?.id,
-    name: session.user?.name,
-    email: session.user?.email,
-    image: session.user?.image
-  };
+  if (session)
+    return {
+      id: session.user?.id,
+      name: session.user?.name,
+      email: session.user?.email,
+      image: session.user?.image,
+    };
 
   const userDetails = await GetUserDetails();
   return {
@@ -22,5 +23,4 @@ export default async function getServerSession(): Promise<ReturnType> {
     email: userDetails?.email,
     image: userDetails?.picture,
   };
-
 }

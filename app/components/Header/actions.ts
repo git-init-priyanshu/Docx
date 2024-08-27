@@ -1,4 +1,4 @@
-"use server"
+"use server";
 
 import { cookies } from "next/headers";
 
@@ -7,35 +7,36 @@ import getServerSession from "@/lib/customHooks/getServerSession";
 
 export const SearchDocAction = async (value: string) => {
   const session = await getServerSession();
-  if (!session.id) return {
-    success: false,
-    error: "User is not logged in",
-  }
+  if (!session.id)
+    return {
+      success: false,
+      error: "User is not logged in",
+    };
 
   try {
     const searchResult = await prisma.document.findMany({
       where: {
         name: {
           contains: value,
-          mode: 'insensitive'
+          mode: "insensitive",
         },
         users: {
           some: {
             user: {
-              id: session?.id
-            }
-          }
-        }
+              id: session?.id,
+            },
+          },
+        },
       },
       select: {
         id: true,
         updatedAt: true,
         createdBy: {
-          select: { name: true }
+          select: { name: true },
         },
         name: true,
         // users: true
-      }
+      },
     });
 
     if (searchResult.length > 0) return { success: true, data: searchResult };
@@ -44,15 +45,16 @@ export const SearchDocAction = async (value: string) => {
     console.error(e);
     return { success: false, error: "Couldn't find document" };
   }
-}
+};
 
 export const CreateNewDocument = async () => {
   try {
     const session = await getServerSession();
-    if (!session.id) return {
-      success: false,
-      error: "User is not logged in",
-    }
+    if (!session.id)
+      return {
+        success: false,
+        error: "User is not logged in",
+      };
 
     const doc = await prisma.document.create({
       data: {
@@ -63,12 +65,12 @@ export const CreateNewDocument = async () => {
           create: {
             user: {
               connect: {
-                id: session.id
-              }
-            }
+                id: session.id,
+              },
+            },
           },
         },
-      }
+      },
     });
 
     return { success: true, data: doc };
@@ -76,16 +78,16 @@ export const CreateNewDocument = async () => {
     console.error(e);
     return { success: false, error: "Internal server error" };
   }
-}
+};
 
 export const LogoutAction = async () => {
   try {
-    cookies().delete('token');
-    cookies().delete('next-auth.session-token');
+    cookies().delete("token");
+    cookies().delete("next-auth.session-token");
 
     return { success: true, data: null };
   } catch (e) {
     console.error(e);
     return { success: false, error: "Internal server error" };
   }
-}
+};

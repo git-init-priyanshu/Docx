@@ -1,5 +1,5 @@
-import { Card, CardFooter } from "@/components/ui/card"
-import Header from "./components/Header/Header"
+import { Card, CardFooter } from "@/components/ui/card";
+import Header from "./components/Header/Header";
 
 export default function Loading() {
   return (
@@ -23,9 +23,9 @@ export default function Loading() {
                 </div>
               </CardFooter>
             </Card>
-          )
+          );
         })}
-      </div >
+      </div>
     </>
-  )
+  );
 }

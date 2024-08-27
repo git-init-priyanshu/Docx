@@ -4,18 +4,15 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select"
+} from "@/components/ui/select";
 
-import {
-  setDefaultStyleValue,
-  onFontStyleChange,
-} from './functions'
+import { setDefaultStyleValue, onFontStyleChange } from "./functions";
 
 export default function Heading({ editor }: any) {
   return (
     <Select
       value={setDefaultStyleValue(editor)}
-      onValueChange={value => onFontStyleChange(editor, value)}
+      onValueChange={(value) => onFontStyleChange(editor, value)}
     >
       <SelectTrigger
         id="model"
@@ -33,5 +30,5 @@ export default function Heading({ editor }: any) {
         <SelectItem value="heading 6">Heading 6</SelectItem>
       </SelectContent>
     </Select>
-  )
+  );
 }
