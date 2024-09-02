@@ -1,5 +1,5 @@
 import { useRouter } from "next/navigation";
-import { ALargeSmall, Redo, Triangle, Undo, X } from "lucide-react";
+import { ALargeSmall, Redo, Undo, X } from "lucide-react";
 import { Editor } from "@tiptap/react";
 
 import {
@@ -11,12 +11,14 @@ import {
   DrawerTrigger,
 } from "@/components/ui/drawer";
 import { Button } from "@/components/ui/button";
+import logo from "@/public/logo.svg"
 
 import Heading from "../options/format/Heading";
 import Font from "../options/format/Font";
 import FormattingBtns from "../options/format/FormattingBtns";
 import ColorHighlight from "../options/format/ColorHighlight";
 import ParagraphBtns from "../options/format/ParagraphBtns";
+import Image from "next/image";
 
 type HeaderPropType = {
   editor: Editor | null;
@@ -31,7 +33,8 @@ export default function Header({ editor, name, isSaving }: HeaderPropType) {
     <header className="flex h-[57px] items-center gap-1 border-b bg-background">
       <div className="p-2 lg:border-r">
         <Button variant="outline" size="icon" onClick={() => router.push("/")}>
-          <Triangle className="size-5 fill-foreground" />
+          {/* <Triangle className="size-5 fill-foreground" /> */}
+          <Image src={logo} width={25} alt="logo" />
         </Button>
       </div>
 
@@ -49,7 +52,7 @@ export default function Header({ editor, name, isSaving }: HeaderPropType) {
             onClick={() => editor?.commands.undo()}
             variant="ghost"
             className="px-3 rounded-md"
-            // disabled={!editor?.can().chain().focus().undo().run()}
+          // disabled={!editor?.can().chain().focus().undo().run()}
           >
             <Undo size={15} />
           </Button>
@@ -57,7 +60,7 @@ export default function Header({ editor, name, isSaving }: HeaderPropType) {
             onClick={() => editor?.commands.redo()}
             variant="ghost"
             className="px-3 rounded-md"
-            // disabled={!editor?.can().chain().focus().redo().run()}
+          // disabled={!editor?.can().chain().focus().redo().run()}
           >
             <Redo size={15} />
           </Button>
