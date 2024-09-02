@@ -5,7 +5,7 @@ import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { cn } from "@/lib/utils";
 import { Toaster } from "@/components/ui/sonner";
 
-import { NextAuthProvider } from './NextAuthProvider';
+import { NextAuthProvider } from "./NextAuthProvider";
 import ReactQueryProvider from "./ReactQueryProvider";
 import "./globals.css";
 
@@ -13,7 +13,8 @@ const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "Docx",
-  description: "An open-source alternative to Google Docs, that lets you write and customize your docs collaboratively with others",
+  description:
+    "An open-source alternative to Google Docs, that lets you write and customize your docs collaboratively with others",
 };
 
 export default function RootLayout({
@@ -25,10 +26,12 @@ export default function RootLayout({
     <ReactQueryProvider>
       <html lang="en">
         <NextAuthProvider>
-          <body className={cn(
-            "min-h-screen bg-slate-50 font-sans antialiased",
-            inter.className
-          )}>
+          <body
+            className={cn(
+              "min-h-screen bg-slate-50 font-sans antialiased",
+              inter.className,
+            )}
+          >
             <Toaster />
             {children}
             <ReactQueryDevtools initialIsOpen={false} />

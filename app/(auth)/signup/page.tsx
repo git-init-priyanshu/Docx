@@ -1,7 +1,7 @@
-import Link from "next/link"
+import Link from "next/link";
 
-import SignUpForm from "./components/SignUpForm"
-import GoogleAuthButton from "./components/GoogleAuthButton"
+import SignUpForm from "./components/SignUpForm";
+import GoogleAuthButton from "./components/GoogleAuthButton";
 
 export default function Signup() {
   return (
@@ -24,5 +24,5 @@ export default function Signup() {
         </p>
       </div>
     </>
-  )
+  );
 }

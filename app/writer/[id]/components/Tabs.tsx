@@ -1,21 +1,16 @@
-import {
-  ALargeSmall,
-  Bot,
-  LifeBuoy,
-  SquareUser,
-} from "lucide-react"
+import { ALargeSmall, Bot, LifeBuoy, SquareUser } from "lucide-react";
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from "@/components/ui/tooltip"
-import { Button } from "@/components/ui/button"
+} from "@/components/ui/tooltip";
+import { Button } from "@/components/ui/button";
 
 type TabsPropType = {
   option: number;
-  setOption: React.Dispatch<React.SetStateAction<number>>
-}
+  setOption: React.Dispatch<React.SetStateAction<number>>;
+};
 export default function Tabs({ option, setOption }: TabsPropType) {
   return (
     <aside className="bg-white h-[calc(100vh - 57px)] justify-between border-r hidden lg:flex lg:flex-col">
@@ -94,5 +89,5 @@ export default function Tabs({ option, setOption }: TabsPropType) {
         </TooltipProvider>
       </nav>
     </aside>
-  )
+  );
 }

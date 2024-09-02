@@ -1,12 +1,9 @@
-"use client"
+import Link from "next/link";
 
-import Link from "next/link"
-
-import SignInForm from "./components/SignInForm"
-import GoogleAuthButton from "./components/GoogleAuthButton"
+import SignInForm from "./components/SignInForm";
+import GoogleAuthButton from "./components/GoogleAuthButton";
 
 export default function Login() {
-
   return (
     <>
       <div className="grid gap-2 text-center">
@@ -27,5 +24,5 @@ export default function Login() {
         </p>
       </div>
     </>
-  )
+  );
 }

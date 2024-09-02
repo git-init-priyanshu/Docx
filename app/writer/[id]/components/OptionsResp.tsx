@@ -4,7 +4,7 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select"
+} from "@/components/ui/select";
 
 import {
   Drawer,
@@ -13,46 +13,46 @@ import {
   DrawerFooter,
   DrawerHeader,
   DrawerTitle,
-} from "@/components/ui/drawer"
-import {
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-} from "@/components/ui/tabs"
+} from "@/components/ui/drawer";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 
 import {
   setDefaultStyleValue,
   onFontStyleChange,
   setDefaultFontFamily,
-  onFontFamilyChange
-} from './options/format/functions'
+  onFontFamilyChange,
+} from "./options/format/functions";
 import {
   formattingBtns,
   paragraphBtns,
-  fontFamily
-} from './options/format/textEditorOptions'
+  fontFamily,
+} from "./options/format/textEditorOptions";
 import ColorHighlight from "./options/format/ColorHighlight";
 
 type DrawerRespPropType = {
-  editor: any,
-  isOpen: boolean,
-  setIsOpen: React.Dispatch<React.SetStateAction<boolean>>,
-}
-export default function OptionsResp({ editor, isOpen, setIsOpen }: DrawerRespPropType) {
+  editor: any;
+  isOpen: boolean;
+  setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
+};
+export default function OptionsResp({
+  editor,
+  isOpen,
+  setIsOpen,
+}: DrawerRespPropType) {
   return (
     <>
-      <div className={`${isOpen ? "flex-col" : "hidden"} absolute z-10 bg-red-300 w-fit items-start gap-8`} x-chunk="dashboard-03-chunk-0">
+      <div
+        className={`${isOpen ? "flex-col" : "hidden"} absolute z-10 bg-red-300 w-fit items-start gap-8`}
+        x-chunk="dashboard-03-chunk-0"
+      >
         <form className="grid w-full items-start gap-6">
           <fieldset className=" grid gap-6 bg-white rounded-lg border p-4">
-            <legend className="-ml-1 px-1 text-sm font-medium">
-              Style
-            </legend>
+            <legend className="-ml-1 px-1 text-sm font-medium">Style</legend>
             <div className="grid gap-3">
               <Select
                 value={setDefaultStyleValue(editor)}
-                onValueChange={value => onFontStyleChange(editor, value)}
+                onValueChange={(value) => onFontStyleChange(editor, value)}
               >
                 <SelectTrigger
                   id="model"
@@ -74,13 +74,11 @@ export default function OptionsResp({ editor, isOpen, setIsOpen }: DrawerRespPro
           </fieldset>
 
           <fieldset className="grid max-w-fit gap-6 bg-white rounded-lg border p-4">
-            <legend className="-ml-1 px-1 text-sm font-medium">
-              Font
-            </legend>
+            <legend className="-ml-1 px-1 text-sm font-medium">Font</legend>
             <div className="">
               <Select
                 defaultValue={setDefaultFontFamily(editor)}
-                onValueChange={value => onFontFamilyChange(editor, value)}
+                onValueChange={(value) => onFontFamilyChange(editor, value)}
               >
                 <SelectTrigger
                   id="model"
@@ -90,7 +88,11 @@ export default function OptionsResp({ editor, isOpen, setIsOpen }: DrawerRespPro
                 </SelectTrigger>
                 <SelectContent>
                   {fontFamily.map((item) => {
-                    return <SelectItem key={item.title} value={item.font}>{item.title}</SelectItem>
+                    return (
+                      <SelectItem key={item.title} value={item.font}>
+                        {item.title}
+                      </SelectItem>
+                    );
                   })}
                 </SelectContent>
               </Select>
@@ -104,18 +106,21 @@ export default function OptionsResp({ editor, isOpen, setIsOpen }: DrawerRespPro
                         size={35}
                         // @ts-ignore
                         onClick={() => editor?.chain().focus()[func]().run()}
-                        className={`${editor?.isActive(name)
-                          ? 'bg-blue-500 text-white hover:bg-blue-500'
-                          : 'hover:bg-slate-100 bg-white'} p-2 rounded ${i === formattingBtns.length - 1
+                        className={`${
+                          editor?.isActive(name)
+                            ? "bg-blue-500 text-white hover:bg-blue-500"
+                            : "hover:bg-slate-100 bg-white"
+                        } p-2 rounded ${
+                          i === formattingBtns.length - 1
                             ? "border-none"
-                            : "border-r"}`}
+                            : "border-r"
+                        }`}
                       />
-                    )
+                    );
                   })}
                 </div>
                 <ColorHighlight editor={editor} />
               </div>
-
             </div>
           </fieldset>
           <fieldset className="grid gap-6 bg-white rounded-lg border p-4">
@@ -129,14 +134,20 @@ export default function OptionsResp({ editor, isOpen, setIsOpen }: DrawerRespPro
                     <Icon
                       key={align}
                       size={35}
-                      onClick={() => editor?.chain().focus().setTextAlign(align).run()}
-                      className={`${editor?.isActive({ textAlign: align })
-                        ? 'bg-blue-500 text-white hover:bg-blue-500'
-                        : 'hover:bg-slate-100 bg-white'} p-2 rounded ${i === paragraphBtns.length - 1
+                      onClick={() =>
+                        editor?.chain().focus().setTextAlign(align).run()
+                      }
+                      className={`${
+                        editor?.isActive({ textAlign: align })
+                          ? "bg-blue-500 text-white hover:bg-blue-500"
+                          : "hover:bg-slate-100 bg-white"
+                      } p-2 rounded ${
+                        i === paragraphBtns.length - 1
                           ? "border-none"
-                          : "border-r"}`}
+                          : "border-r"
+                      }`}
                     />
-                  )
+                  );
                 })}
               </div>
             </div>
@@ -144,5 +155,5 @@ export default function OptionsResp({ editor, isOpen, setIsOpen }: DrawerRespPro
         </form>
       </div>
     </>
-  )
+  );
 }

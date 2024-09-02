@@ -1,17 +1,18 @@
-"use server"
+"use server";
 
-import { revalidatePath } from "next/cache"
+import { revalidatePath } from "next/cache";
 
-import prisma from "@/prisma/prismaClient"
-import getServerSession from "@/lib/customHooks/getServerSession"
+import prisma from "@/prisma/prismaClient";
+import getServerSession from "@/lib/customHooks/getServerSession";
 
 export const GetDocDetails = async (id: any) => {
   try {
     const session = await getServerSession();
-    if (!session.id) return {
-      success: false,
-      error: "User is not logged in",
-    }
+    if (!session.id)
+      return {
+        success: false,
+        error: "User is not logged in",
+      };
 
     const doc = await prisma.document.update({
       where: {
@@ -30,116 +31,95 @@ export const GetDocDetails = async (id: any) => {
             create: {
               user: {
                 connect: {
-                  id: session.id
-                }
-              }
-            }
+                  id: session.id,
+                },
+              },
+            },
           },
         },
-      }
-    })
-    if (!doc) return {
-      success: false,
-      error: "Document does not exist",
-    }
+      },
+    });
+    if (!doc)
+      return {
+        success: false,
+        error: "Document does not exist",
+      };
 
-    return { success: true, data: doc }
+    return { success: true, data: doc };
   } catch (e) {
-    console.log(e)
-    return { success: false, error: "Internal server error" }
+    console.log(e);
+    return { success: false, error: "Internal server error" };
   }
-}
+};
 
 export const UpdateDocData = async (id: any, data: string) => {
-  console.log(data);
   const session = await getServerSession();
-  if (!session.id) return {
-    success: false,
-    error: "User is not logged in",
-  }
+  if (!session.id)
+    return {
+      success: false,
+      error: "User is not logged in",
+    };
 
   try {
     const doc = await prisma.document.findFirst({
       where: {
         id,
         users: {
-          some: { userId: session.id }
-        }
-      }
-    })
-    if (!doc) return {
-      success: false,
-      error: "Document does not exist",
-    }
+          some: { userId: session.id },
+        },
+      },
+    });
+    if (!doc)
+      return {
+        success: false,
+        error: "Document does not exist",
+      };
 
     await prisma.document.update({
       where: {
         id,
         users: {
-          some: { userId: session.id }
-        }
+          some: { userId: session.id },
+        },
       },
       data: {
         data: data,
         updatedAt: new Date(),
-      }
-    })
+      },
+    });
 
-    return { success: true, data: "Saved" }
+    return { success: true, data: "Saved" };
   } catch (e) {
-    console.log(e)
-    return { success: false, error: "Internal server error" }
+    console.log(e);
+    return { success: false, error: "Internal server error" };
   }
-}
+};
 
-export const UpdateThumbnail = async (
-  id: any,
-  thumbnail: string,
-  deleteUrl: string
-) => {
+export const UpdateThumbnail = async (id: any, thumbnail: string) => {
   try {
     const session = await getServerSession();
-    if (!session.id) return {
-      success: false,
-      error: "User is not logged in",
-    }
+    if (!session.id)
+      return {
+        success: false,
+        error: "User is not logged in",
+      };
 
-    const doc = await prisma.document.findFirst({
-      where: {
-        id,
-        users: {
-          some: { userId: session.id }
-        }
+    const response = await fetch(`${process.env.BACKEND_SERVER_URL}/push-to-quque`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
       },
-    })
-    if (!doc) return {
-      success: false,
-      error: "Document does not exist",
-    }
-
-    // if(deleteUrl){
-    //   await fetch(deleteUrl, {
-    //     method: 'POST',
-    //   })
-    // }
-
-    await prisma.document.update({
-      where: {
-        id,
-        users: {
-          some: { userId: session.id }
-        }
-      },
-      data: {
+      body: JSON.stringify({
+        docId: id,
         thumbnail,
-        deleteUrl
-      }
-    })
-    revalidatePath('/');
+        userId: session.id,
+      }),
+    });
+    revalidatePath("/");
 
-    return { success: true, data: "Internal server error" }
+    return await response.json();
   } catch (e) {
-    console.log(e)
-    return { success: false, error: "Internal server error" }
+    console.log(e);
+    return { success: false, error: "Internal server error" };
   }
-}
+};

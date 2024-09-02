@@ -1,18 +1,14 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { useRouter } from "next/navigation"
-import { toast } from "sonner"
-import {
-  CloudUpload,
-  LogOut,
-  PlusIcon,
-} from "lucide-react"
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { toast } from "sonner";
+import { CloudUpload, LogOut, PlusIcon } from "lucide-react";
 
-import { Button } from "@/components/ui/button"
-import { CreateNewDocument, LogoutAction } from "../actions"
-import useClientSession from "@/lib/customHooks/useClientSession"
-import LoaderButton from "@/components/LoaderButton"
+import { Button } from "@/components/ui/button";
+import { CreateNewDocument, LogoutAction } from "../actions";
+import useClientSession from "@/lib/customHooks/useClientSession";
+import LoaderButton from "@/components/LoaderButton";
 
 export default function HeaderButtons() {
   const router = useRouter();
@@ -28,24 +24,24 @@ export default function HeaderButtons() {
     const response = await CreateNewDocument();
     if (response.success) {
       setIsLoading(false);
-      toast.success("Successfully created new document")
-      router.push(`/writer/${response.data?.id}`)
+      toast.success("Successfully created new document");
+      router.push(`/writer/${response.data?.id}`);
     } else {
       setIsLoading(false);
-      toast.error(response.error)
+      toast.error(response.error);
     }
-  }
+  };
 
   const logout = async () => {
     const response = await LogoutAction();
     console.log(response);
     if (response.success) {
-      toast.success("Successfully logged out")
-      router.push('/api/auth/signin')
+      toast.success("Successfully logged out");
+      router.push("/api/auth/signin");
     } else {
-      toast.error(response.error)
+      toast.error(response.error);
     }
-  }
+  };
   return (
     <div className="flex gap-4">
       <div className="flex md:gap-4">
@@ -73,5 +69,5 @@ export default function HeaderButtons() {
         <LogOut size={15} />
       </Button>
     </div>
-  )
+  );
 }

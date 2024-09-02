@@ -1,11 +1,11 @@
 // @ts-nocheck
-"use client"
+"use client";
 
-import { useEffect, useState } from 'react'
-import { useSession } from "next-auth/react"
+import { useEffect, useState } from "react";
+import { useSession } from "next-auth/react";
 
-import { GetUserDetails } from './action';
-import { ReturnType } from './ReturnType';
+import { GetUserDetails } from "./action";
+import { ReturnType } from "./ReturnType";
 
 export default function useClientSession(): ReturnType {
   const [user, setUser] = useState<ReturnType | null>(null);
@@ -22,16 +22,17 @@ export default function useClientSession(): ReturnType {
           email: userDetails?.email,
           image: userDetails?.picture,
         });
-      };
+      }
     })();
-  }, [session])
+  }, [session]);
 
-  if (session) return {
-    id: session.user?.id,
-    name: session.user?.name,
-    email: session.user?.email,
-    image: session.user?.image
-  };
+  if (session)
+    return {
+      id: session.user?.id,
+      name: session.user?.name,
+      email: session.user?.email,
+      image: session.user?.image,
+    };
 
   return {
     id: user?.id,

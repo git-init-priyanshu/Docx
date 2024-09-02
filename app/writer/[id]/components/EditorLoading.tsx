@@ -20,5 +20,5 @@ export default function Loading() {
       <div className="h-8 w-[400px] rounded bg-neutral-100 animate-pulse mb-4"></div>
       <div className="h-8 w-[500px] rounded bg-neutral-100 animate-pulse mb-4"></div>
     </div>
-  )
+  );
 }

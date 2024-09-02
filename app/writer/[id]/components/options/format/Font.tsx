@@ -4,19 +4,16 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select"
+} from "@/components/ui/select";
 
-import {
-  setDefaultFontFamily,
-  onFontFamilyChange
-} from './functions'
-import { fontFamily } from './textEditorOptions'
+import { setDefaultFontFamily, onFontFamilyChange } from "./functions";
+import { fontFamily } from "./textEditorOptions";
 
 export default function Font({ editor }: any) {
   return (
     <Select
       defaultValue={setDefaultFontFamily(editor)}
-      onValueChange={value => onFontFamilyChange(editor, value)}
+      onValueChange={(value) => onFontFamilyChange(editor, value)}
     >
       <SelectTrigger
         id="model"
@@ -26,9 +23,13 @@ export default function Font({ editor }: any) {
       </SelectTrigger>
       <SelectContent>
         {fontFamily.map((item) => {
-          return <SelectItem key={item.title} value={item.font}>{item.title}</SelectItem>
+          return (
+            <SelectItem key={item.title} value={item.font}>
+              {item.title}
+            </SelectItem>
+          );
         })}
       </SelectContent>
     </Select>
-  )
+  );
 }
