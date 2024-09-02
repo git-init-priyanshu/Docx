@@ -104,7 +104,7 @@ export const UpdateThumbnail = async (id: any, thumbnail: string) => {
         error: "User is not logged in",
       };
 
-    const response = await fetch("http://localhost:8000/push-to-quque", {
+    const response = await fetch(`${process.env.BACKEND_SERVER_URL}/push-to-quque`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
