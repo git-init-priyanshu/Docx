@@ -12,7 +12,7 @@ import "./globals.css";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Docx",
+  title: "DocX",
   description:
     "An open-source alternative to Google Docs, that lets you write and customize your docs collaboratively with others",
 };

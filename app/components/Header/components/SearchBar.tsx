@@ -1,14 +1,14 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Search, X } from "lucide-react";
-import { debounce } from "lodash";
 import Image from "next/image";
 
 import { Input } from "@/components/ui/input";
 import prettifyDate from "@/helpers/prettifyDates";
 import doc from "@/public/output-onlinepngtools.svg";
+import useDebounce from "@/lib/customHooks/useDebounce";
 
 import { SearchDocAction } from "../actions";
 
@@ -28,6 +28,14 @@ type SearchResponse = {
 export default function SearchBar() {
   const router = useRouter();
 
+  const debounce = useDebounce(
+    async (value: string) => {
+      if (!searchValue) return;
+      setIsSearching(true);
+      setSearchResponse(await SearchDocAction(value));
+      setIsSearching(false);
+    }, 500);
+
   const searchedResponseRef = useRef<HTMLDivElement>(null);
 
   const [searchResponse, setSearchResponse] = useState<
@@ -36,21 +44,6 @@ export default function SearchBar() {
   const [searchValue, setSearchValue] = useState("");
   const [isFocused, setIsFocused] = useState(false);
   const [isSearching, setIsSearching] = useState(false);
-
-  const search = useCallback(
-    async (value: string) => {
-      if (!searchValue) return;
-      setIsSearching(true);
-      setSearchResponse(await SearchDocAction(value));
-      setIsSearching(false);
-    },
-    [searchValue],
-  );
-
-  const debouncedSearch = useMemo(
-    () => debounce((value: string) => search(value), 500),
-    [search],
-  );
 
   const handleDocumentClick = (e: any) => {
     if (
@@ -73,17 +66,17 @@ export default function SearchBar() {
     >
       <div className="relative">
         <Input
-          className={`${
-            isFocused && searchResponse
-              ? "rounded-t-3xl rounded-b-none"
-              : "rounded-full"
-          } px-8 `}
+          className={`${isFocused && searchResponse
+            ? "rounded-t-3xl rounded-b-none"
+            : "rounded-full"
+            } px-8 `}
           onFocus={() => setIsFocused(true)}
           value={searchValue}
           onChange={(e) => {
             setSearchValue(e.target.value);
             if (!e.target.value) return setSearchResponse(undefined);
-            debouncedSearch(e.target.value);
+            // debouncedSearch(e.target.value);
+            debounce(e.target.value);
           }}
           placeholder="Search documents..."
         />
@@ -94,17 +87,15 @@ export default function SearchBar() {
         <X
           size={20}
           onClick={() => setSearchValue("")}
-          className={`${
-            !searchValue ? "hidden" : "block"
-          } absolute text-slate-500 right-0 top-1/2 transform -translate-y-1/2 mr-2 cursor-pointer`}
+          className={`${!searchValue ? "hidden" : "block"
+            } absolute text-slate-500 right-0 top-1/2 transform -translate-y-1/2 mr-2 cursor-pointer`}
         />
       </div>
 
       <div
         ref={searchedResponseRef}
-        className={`${
-          isFocused && searchResponse ? "block" : "hidden"
-        } absolute shadow-md overflow-hidden border border-t-0 bg-white w-full rounded-b-3xl`}
+        className={`${isFocused && searchResponse ? "block" : "hidden"
+          } absolute shadow-md overflow-hidden border border-t-0 bg-white w-full rounded-b-3xl`}
       >
         {isSearching ? (
           <div className="p-3 flex items-center gap-2 justify-center text-center text-neutral-500">
