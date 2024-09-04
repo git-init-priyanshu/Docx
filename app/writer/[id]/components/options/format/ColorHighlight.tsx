@@ -13,6 +13,11 @@ import {
 import { Input } from "@/components/ui/input";
 
 export default function ColorHighlight({ editor }: { editor: Editor | null }) {
+  const colorPopoverRef = useRef<HTMLDivElement>(null);
+  const bgPopoverRef = useRef<HTMLDivElement>(null);
+
+  const [isColorPopoverOpen, setIsColorPopoverOpen] = useState(false);
+  const [isBgPopoverOpen, setIsBgPopoverOpen] = useState(false);
   const [fontColor, setFontColor] = useState("#000000");
   const [highlightColor, setHighlightColor] = useState("#fdfb7a");
 
@@ -27,6 +32,25 @@ export default function ColorHighlight({ editor }: { editor: Editor | null }) {
     editor.chain().focus().toggleHighlight({ color: hex }).run();
   };
 
+  const handleDocumentClick = (e: any) => {
+    if (
+      (colorPopoverRef.current &&
+        !colorPopoverRef.current.contains(e.target))
+      ||
+      (bgPopoverRef.current &&
+        !bgPopoverRef.current.contains(e.target))
+    ) {
+      setIsColorPopoverOpen(false);
+      setIsBgPopoverOpen(false);
+    }
+  };
+  useEffect(() => {
+    document.addEventListener("mousedown", handleDocumentClick);
+    return () => {
+      document.removeEventListener("mousedown", handleDocumentClick);
+    };
+  }, []);
+
   return (
     <div className="flex cursor-pointer border rounded w-fit col-span-6 sm:col-span-4 lg:mb-0">
       <Baseline
@@ -35,8 +59,8 @@ export default function ColorHighlight({ editor }: { editor: Editor | null }) {
         onClick={() => editor?.chain().focus().setColor(fontColor).run()}
         className="hover:bg-slate-100 p-2 rounded border-r"
       />
-      <Popover>
-        <PopoverTrigger className="py-2 hover:bg-slate-100 border-r">
+      <Popover open={isColorPopoverOpen}>
+        <PopoverTrigger className="py-2 hover:bg-slate-100 border-r" onClick={() => setIsColorPopoverOpen(!isColorPopoverOpen)}>
           <ChevronDown size={15} />
         </PopoverTrigger>
         <PopoverContent
@@ -44,16 +68,18 @@ export default function ColorHighlight({ editor }: { editor: Editor | null }) {
           avoidCollisions
           collisionPadding={{ left: 30 }}
         >
-          <Input
-            value={fontColor}
-            onChange={(e) => setFontColor(e.target.value)}
-            className="mb-4"
-          />
-          <HexColorPicker
-            color={fontColor}
-            onChange={onFontColorChange}
-            className="mx-auto"
-          />
+          <div ref={colorPopoverRef}>
+            <Input
+              value={fontColor}
+              onChange={(e) => setFontColor(e.target.value)}
+              className="mb-4"
+            />
+            <HexColorPicker
+              color={fontColor}
+              onChange={onFontColorChange}
+              className="mx-auto"
+            />
+          </div>
         </PopoverContent>
       </Popover>
       <Highlighter
@@ -68,8 +94,8 @@ export default function ColorHighlight({ editor }: { editor: Editor | null }) {
         }
         className="hover:bg-slate-100 p-2 rounded border-r"
       />
-      <Popover>
-        <PopoverTrigger className="py-2 hover:bg-slate-100">
+      <Popover open={isBgPopoverOpen}>
+        <PopoverTrigger className="py-2 hover:bg-slate-100" onClick={() => setIsBgPopoverOpen(!isBgPopoverOpen)}>
           <ChevronDown size={15} />
         </PopoverTrigger>
         <PopoverContent
@@ -77,16 +103,18 @@ export default function ColorHighlight({ editor }: { editor: Editor | null }) {
           avoidCollisions
           collisionPadding={{ left: 30 }}
         >
-          <Input
-            value={highlightColor}
-            onChange={(e) => setHighlightColor(e.target.value)}
-            className="mb-4"
-          />
-          <HexColorPicker
-            color={highlightColor}
-            onChange={onHighlightColorChange}
-            className="mx-auto"
-          />
+          <div ref={bgPopoverRef}>
+            <Input
+              value={highlightColor}
+              onChange={(e) => setHighlightColor(e.target.value)}
+              className="mb-4"
+            />
+            <HexColorPicker
+              color={highlightColor}
+              onChange={onHighlightColorChange}
+              className="mx-auto"
+            />
+          </div>
         </PopoverContent>
       </Popover>
     </div>

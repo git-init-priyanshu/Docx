@@ -25,7 +25,6 @@ import {
 import { Button } from "@/components/ui/button";
 
 import { DeleteDocument } from "../actions";
-import useClientSession from "@/lib/customHooks/useClientSession";
 import LoaderButton from "@/components/LoaderButton";
 
 type CardOptionsPropType = {

@@ -1,10 +1,9 @@
 "use client";
 
-import { useState, useMemo, useCallback, useEffect, useRef } from "react";
+import { useState, useCallback, useEffect, useRef } from "react";
 import { useParams } from "next/navigation";
 import { EditorContent } from "@tiptap/react";
 import { useEditor } from "@tiptap/react";
-import { debounce } from "lodash";
 import { toast } from "sonner";
 import html2canvas from "html2canvas";
 import Collaboration from "@tiptap/extension-collaboration";
@@ -13,6 +12,7 @@ import CollaborationCursor from "@tiptap/extension-collaboration-cursor";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { getRandomColor } from "@/helpers/getRandomColor";
 import type { Document } from "@prisma/client";
+import useDebounce from "@/lib/customHooks/useDebounce";
 
 import { ydoc, provider, extensions, props } from "./editor/editorConfig";
 import { FormatOptions, InsertOptions } from "./components/options";
@@ -24,14 +24,22 @@ import Loading from "./components/EditorLoading";
 export default function Dashboard() {
   const params = useParams();
 
+  const editorRef = useRef<HTMLDivElement>(null);
+
+  const [isFirstLoad, setIsFirstLoad] = useState(true);
+  const [name, setName] = useState("");
   const [option, setOption] = useState(0);
   const [isSaving, setIsSaving] = useState(false);
   const [docData, setDocData] = useState<Document | undefined>(undefined);
   const [status, setStatus] = useState("connecting");
-  console.log(status);
+  // console.log(status);
 
-  const editorRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    setName(localStorage.getItem("name") || "");
+    setIsFirstLoad(false);
+  }, [])
 
+  // Doc data fetching
   useEffect(() => {
     (async () => {
       const response = await GetDocDetails(params.id);
@@ -61,7 +69,7 @@ export default function Dashboard() {
     }
   }, [docData?.id, params.id]);
 
-  const saveDoc = useCallback(async (editor: any) => {
+  const debounce = useDebounce(async (editor: any) => {
     setIsSaving(true);
 
     const response = await UpdateDocData(
@@ -74,12 +82,7 @@ export default function Dashboard() {
     }
     setIsSaving(false);
     toast.error(response.error);
-  }, [params.id, createDocThumbnail]);
-
-  const debouncedSaveDoc = useMemo(
-    () => debounce((editor: any) => saveDoc(editor), 1000),
-    [saveDoc],
-  );
+  }, 1000);
 
   const editor = useEditor({
     onCreate: ({ editor: currentEditor }) => {
@@ -97,7 +100,7 @@ export default function Dashboard() {
       CollaborationCursor.configure({
         provider,
         user: {
-          name: localStorage.getItem("name"),
+          name,
           color: getRandomColor(),
         },
       }),
@@ -105,7 +108,9 @@ export default function Dashboard() {
     editorProps: props,
     content: "",
     onUpdate({ editor }) {
-      debouncedSaveDoc(editor);
+      if (!isFirstLoad) {
+        debounce(editor);
+      }
     },
   });
 
@@ -128,10 +133,10 @@ export default function Dashboard() {
       editor
         .chain()
         .focus()
-        .updateUser({ name: localStorage.getItem("name") })
+        .updateUser({ name })
         .run();
     }
-  }, [editor]);
+  }, [editor, name]);
 
   // Set content of the doc
   useEffect(() => {
