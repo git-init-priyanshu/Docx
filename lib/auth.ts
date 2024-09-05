@@ -69,7 +69,7 @@ export const authOptions: NextAuthOptions = {
       return session;
     },
     redirect({ baseUrl }) {
-      return baseUrl;
+      return `${baseUrl}/document`;
     },
   },
   cookies: {

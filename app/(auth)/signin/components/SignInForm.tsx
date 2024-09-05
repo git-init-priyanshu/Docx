@@ -31,7 +31,7 @@ export default function CredentialsForm() {
     const response = await SigninAction(parsedData);
     if (response.success) {
       toast.success("login completed");
-      router.push("/");
+      router.push("/document");
       setIsSubmitting(false);
     } else {
       toast.error(response.error);
