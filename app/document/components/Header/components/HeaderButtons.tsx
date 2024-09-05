@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { CloudUpload, LogOut, PlusIcon } from "lucide-react";
 
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import { CreateNewDocument, LogoutAction } from "../actions";
 import { Button } from "@/components/ui/button";
 import { SessionReturnType } from "@/lib/customHooks/ReturnType";

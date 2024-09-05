@@ -7,7 +7,10 @@ export default function Signup() {
   return (
     <>
       <div className="grid gap-2 text-center">
-        <h1 className="text-3xl font-bold text-blue-500">Sign up</h1>
+        <h1 className="text-3xl font-bold">
+          <span className="text-black">Sign&nbsp;</span>
+          <span className=" text-blue-500">up</span>
+        </h1>
         <p className="text-balance text-muted-foreground">
           Enter your credentials below to login to your account
         </p>
