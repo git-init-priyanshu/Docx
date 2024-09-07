@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 
 import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
+import Link from "next/link";
 
 type Direction = "TOP" | "LEFT" | "BOTTOM" | "RIGHT";
 
@@ -78,9 +79,9 @@ export function FancyBtn({
           className
         )}
       >
-        <button onClick={() => router.push(link)}>
+        <Link href={link}>
           <span className="text-neutral-700 text-sm">{title}</span>
-        </button>
+        </Link>
       </div>
       <motion.div
         className={cn(
