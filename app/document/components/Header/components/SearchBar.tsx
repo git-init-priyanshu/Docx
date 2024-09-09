@@ -125,18 +125,18 @@ export default function SearchBar() {
               <div
                 key={data.id}
                 onClick={() => router.push(`writer/${data.id}`)}
-                className="flex cursor-pointer justify-between p-2 border-l-2 border-white hover:bg-neutral-100 hover:border-blue-500 "
+                className="z-50 flex cursor-pointer justify-between p-2 border-l-2 border-white hover:bg-neutral-100 hover:border-blue-500 "
               >
                 <div className="flex gap-2 items-center">
                   <Image className="w-6" src={doc} height={10} alt="doc" />
-                  <div>
-                    <p>{data.name}</p>
-                    <p className="text-neutral-500 text-sm">
+                  <div className="overflow-hidden">
+                    <p className="truncate">{data.name}</p>
+                    <p className="truncate text-neutral-500 text-sm">
                       {data.createdBy.name}
                     </p>
                   </div>
                 </div>
-                <p className="text-sm">
+                <p className="ml-2 text-sm">
                   {prettifyDate(String(data.updatedAt), {
                     month: "short",
                     day: "2-digit",
