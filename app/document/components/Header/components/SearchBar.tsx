@@ -62,7 +62,7 @@ export default function SearchBar() {
 
   return (
     <div
-      className={`transform relative hidden md:block lg:w-[30rem] lg:translate-x-1/4`}
+      className={`transform relative w-full md:w-fit lg:w-[30rem] translate-x-0 xl:translate-x-1/4`}
     >
       <div className="relative">
         <Input
@@ -87,7 +87,7 @@ export default function SearchBar() {
         <X
           size={20}
           onClick={() => setSearchValue("")}
-          className={`${!searchValue ? "hidden" : "block"
+          className={`${!searchValue ? "hidden" : ""
             } absolute text-slate-500 right-0 top-1/2 transform -translate-y-1/2 mr-2 cursor-pointer`}
         />
       </div>
@@ -95,7 +95,7 @@ export default function SearchBar() {
       <div
         ref={searchedResponseRef}
         className={`${isFocused && searchResponse ? "block" : "hidden"
-          } absolute shadow-md overflow-hidden border border-t-0 bg-white w-full rounded-b-3xl`}
+          } absolute shadow-md overflow-hidden border border-t-0 bg-white w-full md:w-full rounded-b-3xl`}
       >
         {isSearching ? (
           <div className="p-3 flex items-center gap-2 justify-center text-center text-neutral-500">

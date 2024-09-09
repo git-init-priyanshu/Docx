@@ -1,3 +1,5 @@
+"use client"
+
 import { useRouter } from "next/navigation";
 import { ALargeSmall, Redo, Undo, X } from "lucide-react";
 import { Editor } from "@tiptap/react";
