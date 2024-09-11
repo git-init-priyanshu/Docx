@@ -17,6 +17,8 @@ export default function Dashboard() {
 
   const { editor, docData } = Editor({ setIsSaving })
 
+  const asdf = 1;
+
   const Options = [
     <FormatOptions key={1} editor={editor} />,
     <InsertOptions key={2} editor={editor} />,
