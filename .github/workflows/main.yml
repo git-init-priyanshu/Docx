@@ -1,9 +1,9 @@
 name: CI/CD Pipeline
 
 on:
-  push:
+  pull_request: 
     branches:
-      - main
+      - '**'
     paths-ignore:
       - "README.md"
 
@@ -12,18 +12,21 @@ permissions:
   contents: read
 
 jobs:
-  integration:
-    name: Continuous Integration
+  Continuous_Integration:
+    name: Check for Linting and Formatting
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
+
+      - name: Install dependancies
+        run: npm install
 
       - name: Lint code
-        run: npm run lint
+        run: npm run lint:chec
 
-      - name: Format code
-        run: npm run format
+      - name: Check Formatting
+        run: npm run format:check
 
       - name: Run unit tests
         run: echo "Running unit tests"
