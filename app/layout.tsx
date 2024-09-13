@@ -1,3 +1,4 @@
+import { Analytics } from "@vercel/analytics/react"
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
@@ -33,6 +34,7 @@ export default function RootLayout({
             )}
           >
             <Toaster />
+            <Analytics />
             {children}
             <ReactQueryDevtools initialIsOpen={false} />
           </body>
