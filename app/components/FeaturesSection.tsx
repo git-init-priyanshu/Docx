@@ -1,23 +1,32 @@
 import { cn } from "@/lib/utils";
 import {
   BadgeCheck,
+  BadgeIndianRupee,
+  Cloud,
   Github,
+  LogIn,
   SquarePen,
-  Users
+  Users,
+  Zap
 } from "lucide-react";
 
 export default function FeaturesSection() {
   const features = [
     {
-      title: "Open source alternative to Google Docs",
+      title: "Open source",
       description:
         "Our product is open source, ensuring transparency and prioritizing customer satisfaction.",
       icon: <Github />,
     },
     {
+      title: "Free to use",
+      description: "Available at no cost, providing full access without any hidden fees or charges.",
+      icon: <BadgeIndianRupee />,
+    },
+    {
       title: "Ease of use",
       description:
-        "It's as easy as using an Apple, and as expensive as buying one.",
+        "Simple and intuitive design that makes it effortless to navigate and use, even for beginners.",
       icon: <SquarePen />,
     },
     {
@@ -31,28 +40,21 @@ export default function FeaturesSection() {
       description: "We just cannot be taken down by anyone.",
       icon: <BadgeCheck />,
     },
-    // {
-    //   title: "Multi-tenant Architecture",
-    //   description: "You can simply share passwords instead of buying new seats",
-    //   icon: <BotIcon />,
-    // },
-    // {
-    //   title: "24/7 Customer Support",
-    //   description:
-    //     "We are available a 100% of the time. Atleast our AI Agents are.",
-    //   icon: <BotIcon />,
-    // },
-    // {
-    //   title: "Money back guarantee",
-    //   description:
-    //     "If you donot like EveryAI, we will convince you to like us.",
-    //   icon: <BotIcon />,
-    // },
-    // {
-    //   title: "And everything else",
-    //   description: "I just ran out of copy ideas. Accept my sincere apologies",
-    //   icon: <BotIcon />,
-    // },
+    {
+      title: "Easy onboarding",
+      description: "A streamlined and hassle-free setup process that gets you started quickly and smoothly.",
+      icon: <LogIn />,
+    },
+    {
+      title: "Lightning fast delivery",
+      description: "We deliver new features very rapidly",
+      icon: <Zap />,
+    },
+    {
+      title: "Highly scalable",
+      description: "Adapts effortlessly to growth, maintaining performance as needs expand.",
+      icon: <Cloud />,
+    },
   ];
   return (
     <section id="features" className="w-full py-12 md:py-24 lg:py-32 border-t bg-slate-50">

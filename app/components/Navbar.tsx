@@ -8,19 +8,19 @@ import { FancyBtn } from "@/components/FancyBtn";
 const navItems = [
   {
     name: "Features",
-    link: "features"
+    link: "#features"
   },
   {
     name: "About",
-    link: "about"
+    link: "#about"
   },
   {
     name: "Contact",
-    link: "contact"
+    link: "#contact"
   },
   {
     name: "Signin",
-    link: "signin"
+    link: "#signin"
   }
 ]
 export default function Navbar({ className }: { className?: string }) {

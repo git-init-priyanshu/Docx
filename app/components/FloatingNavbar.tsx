@@ -9,25 +9,24 @@ import {
 } from "framer-motion";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { FancyBtn } from "@/components/FancyBtn";
 
 const navItems = [
   {
     name: "Features",
-    link: "features"
+    link: "#features"
   },
   {
     name: "About",
-    link: "about"
+    link: "#about"
   },
   {
     name: "Contact",
-    link: "contact"
+    link: "#contact"
   },
   {
     name: "Signin",
-    link: "signin"
+    link: "#signin"
   }
 ]
 export default function FloatingNavbar({ className }: { className?: string }) {
