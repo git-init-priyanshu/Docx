@@ -16,7 +16,7 @@ export default function HeroSection() {
     <>
       <div className="glow"></div>
       <nav className="absolute top-5 flex w-full justify-between items-center px-4 md:px-6 lg:px-6 2xl:px-20">
-        <div className="flex gap-2 items-end justify-center">
+        <div className="flex z-10 gap-2 items-end justify-center">
           <Image src={logo} width={45} alt="logo" />
           <p className={`${roboto.className} hidden sm:block text-lg text-neutral-600`}>DocX</p>
         </div>
