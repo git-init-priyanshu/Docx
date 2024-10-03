@@ -123,3 +123,19 @@
   user-select: none;
   white-space: nowrap;
 }
+
+.glow {
+  position: absolute;
+  top: -18%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  height: 200px;
+  background: radial-gradient(
+    circle,
+    rgba(0, 102, 255, 0.3) 70%,
+    transparent 80%
+  );
+  filter: blur(100px);
+  z-index: 1;
+}

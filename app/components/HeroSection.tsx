@@ -14,6 +14,7 @@ const roboto = Montserrat({
 export default function HeroSection() {
   return (
     <>
+      <div className="glow"></div>
       <nav className="absolute top-5 flex w-full justify-between items-center px-4 md:px-6 lg:px-6 2xl:px-20">
         <div className="flex gap-2 items-end justify-center">
           <Image src={logo} width={45} alt="logo" />
@@ -36,8 +37,8 @@ export default function HeroSection() {
           </Link>
         </div>
       </nav>
-      <section className="relative w-full bg-background p-40">
-        <div className="container flex items-center justify-center text-center w-full px-4 md:mt-40 md:px-6 lg:mt-0 mb-[15rem]">
+      <section className="relative w-full bg-background p-40 px-4 md:px-6 lg:px-6 2xl:px-20">
+        <div className="container flex items-center justify-center text-center w-full px-4 md:mt-40 md:px-6 lg:mt-0 md:mb-[10rem] lg:mb-[15rem] xl:mb-[20rem] 2xl:mb-[25rem] 3xl:mb-[30rem]">
           <div className="relative flex flex-col justify-center space-y-4">
             <div className="space-y-2">
               <h1 className="text-3xl pt-4 font-bold tracking-tighter sm:text-5xl xl:text-6xl/none text-transparent bg-clip-text bg-gradient-to-br from-neutral-500 to-neutral-800">
@@ -72,11 +73,11 @@ export default function HeroSection() {
             </div>
           </div>
         </div>
-        <div className="absolute mx-auto grid place-items-center transform -translate-y-[10rem]">
+        <div className="absolute hidden mx-auto md:grid place-items-center transform md:-translate-y-[2rem] lg:-translate-y-[6rem] xl:-translate-y-[12rem] 2xl:-translate-y-[18rem] 3xl:-translate-y-[20rem]">
           <Image
             src={editor}
             alt="screenshots"
-            className="w-[70%] border rounded-lg shadow-lg -translate-x-[20%]"
+            className="w-[70%] border rounded-lg shadow-lg md:-translate-x-[10%]"
           />
           <Image
             src={documents}
