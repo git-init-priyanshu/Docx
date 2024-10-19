@@ -6,6 +6,8 @@ import { z } from "zod";
 import bcrypt from "bcryptjs";
 
 import prisma from "@/prisma/prismaClient";
+import EmailVerificationMailTemplate from "@/lib/mail/EmailVerificationMailTemplate";
+import { SendMail } from "@/lib/mail/sendMail";
 import { signinSchema, signupSchema } from "./zodSchema";
 import { generateJWT } from "@/helpers/generateJWT";
 
@@ -35,6 +37,7 @@ export const SignupAction = async (data: z.infer<typeof signupSchema>) => {
     };
     const authToken = await generateJWT(jwtPayload);
 
+    // Adding unverified users to the DB
     await prisma.user.upsert({
       where: { email: data.email },
       update: {
@@ -47,6 +50,13 @@ export const SignupAction = async (data: z.infer<typeof signupSchema>) => {
         password: hashedPassword,
       },
     });
+
+    // Send mail for email verification
+    await SendMail(
+      'bartwalpriyanshu00@gmail.com',
+      'DocX | OTP verification',
+      EmailVerificationMailTemplate({ validationCode: "1234" })
+    );
 
     // Setting the cookie
     cookies().set("token", authToken, { httpOnly: true });

@@ -24,21 +24,27 @@ export default function CredentialsForm() {
 
   const submitForm = async (data: z.infer<typeof signupSchema>) => {
     setIsSubmitting(true);
-    const parsedData = signupSchema.parse({
-      name: data.name,
-      username: data.username,
-      email: data.email,
-      password: data.password,
-    });
+    try {
+      const parsedData = signupSchema.parse({
+        name: data.name,
+        username: data.username,
+        email: data.email,
+        password: data.password,
+      });
 
-    const response = await SignupAction(parsedData);
-    if (response.success) {
-      toast.success("Signin completed");
-      router.push("/document");
-      setIsSubmitting(false);
-    } else {
-      console.log(response.error);
-      toast.error(response.error);
+      const response = await SignupAction(parsedData);
+      if (response.success) {
+        toast.success("Signin completed");
+        // router.push("/document");
+        router.push("/signup/otp")
+        setIsSubmitting(false);
+      } else {
+        console.log(response.error);
+        toast.error(response.error);
+        setIsSubmitting(false);
+      }
+    } catch (e) {
+      console.log(e);
       setIsSubmitting(false);
     }
   };
@@ -94,7 +100,7 @@ export default function CredentialsForm() {
       <LoaderButton
         className="w-full bg-blue-500 hover:bg-blue-600"
         isLoading={isSubmitting}
-        type="submit"
+      // type="submit"
       >
         Sign up
       </LoaderButton>
