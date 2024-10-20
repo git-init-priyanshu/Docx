@@ -2,12 +2,12 @@
 
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
+import { toast } from "sonner";
 import { MailCheck } from "lucide-react";
 
 import LoaderButton from "@/components/LoaderButton";
 import { Input } from "@/components/ui/input";
 import { resendVerifyCode, verifyEmail } from "../../actions";
-import { toast } from "sonner";
 
 export default function OTP() {
   const params = useParams();

@@ -13,6 +13,7 @@ import { SendMail } from "@/lib/mail/sendMail";
 import { signinSchema, signupSchema } from "./zodSchema";
 import { generateJWT } from "@/helpers/generateJWT";
 import type { User } from "@prisma/client";
+import PasswordResetMailTemplate from "@/lib/mail/resetPasswordMailTemplate";
 
 export const SignupAction = async (data: z.infer<typeof signupSchema>) => {
   try {
@@ -225,6 +226,43 @@ export const resendVerifyCode = async (userEmail: string) => {
       return { success: true, data: "Verification code sent to the mail." }
     }
     return { success: false, error: errorMsg }
+  } catch (e) {
+    console.log(e);
+    return { success: false, error: "Internal server error" };
+  }
+}
+
+export const sendResetPasswordMail = async (userEmail: string) => {
+  try {
+    const user = await prisma.user.findFirst({
+      where: {
+        email: userEmail,
+      },
+    });
+    if (!user)
+      return {
+        success: false,
+        error: "Looks like you don't have an account",
+      };
+
+    const mail = await SendMail(
+      userEmail,
+      'DocX | Reset Password',
+      PasswordResetMailTemplate({ resetPasswordLink: `http://localhost:3000/reset-password/${user.id}` })
+    );
+    if (!mail.success) return { success: false, error: mail.error }
+
+    return { success: true, data: "Reset password link sent to the mail." };
+  } catch (e) {
+    console.log(e);
+    return { success: false, error: "Internal server error" };
+  }
+}
+
+export const resetPassword = async (userId: any, newPassword: string) => {
+  try {
+
+    return { success: true, data: "Password reset successfully." };
   } catch (e) {
     console.log(e);
     return { success: false, error: "Internal server error" };

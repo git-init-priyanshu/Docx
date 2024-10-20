@@ -70,7 +70,7 @@ export default function CredentialsForm() {
         <Label htmlFor="email">Email</Label>
         <Input
           type="email"
-          placeholder="m@example.com"
+          placeholder="you@example.com"
           {...register("email", { required: true })}
         />
       </div>

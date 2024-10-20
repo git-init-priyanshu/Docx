@@ -52,12 +52,12 @@ export default function CredentialsForm() {
       <div className="grid gap-2">
         <div className="flex items-center">
           <Label htmlFor="password">Password</Label>
-          {/* <Link */}
-          {/*   href="/forgot-password" */}
-          {/*   className="ml-auto inline-block text-sm underline" */}
-          {/* > */}
-          {/*   Forgot your password? */}
-          {/* </Link> */}
+          <button
+            className="ml-auto inline-block text-sm text-blue-500 hover:underline"
+            onClick={() => router.push("/forget-password")}
+          >
+            Forgot your password?
+          </button>
         </div>
         <div>
           <Input
