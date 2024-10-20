@@ -34,12 +34,12 @@ export default function CredentialsForm() {
 
       const response = await SignupAction(parsedData);
       if (response.success) {
-        toast.success("Signin completed");
-        // router.push("/document");
-        router.push("/signup/otp")
+        toast.success("User registerd successfully. Please verify your email.");
+        router.push(`/otp/${data.email}`)
         setIsSubmitting(false);
       } else {
         console.log(response.error);
+        console.log("here")
         toast.error(response.error);
         setIsSubmitting(false);
       }
@@ -100,7 +100,6 @@ export default function CredentialsForm() {
       <LoaderButton
         className="w-full bg-blue-500 hover:bg-blue-600"
         isLoading={isSubmitting}
-      // type="submit"
       >
         Sign up
       </LoaderButton>

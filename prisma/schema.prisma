@@ -14,15 +14,17 @@ datasource db {
 }
 
 model User {
-  id          String     @id @default(uuid())
-  username    String
-  email       String     @unique
-  name        String
-  password    String?
-  picture     String?
-  isVerified  Boolean    @default(false)
-  joinedAt    DateTime   @default(now())
-  createdDocs Document[] @relation("CreatedDocuments")
+  id               String     @id @default(uuid())
+  username         String
+  email            String     @unique
+  name             String
+  password         String?
+  picture          String?
+  isVerified       Boolean    @default(false)
+  verifyCode       String?
+  verifyCodeExpiry DateTime?
+  joinedAt         DateTime   @default(now())
+  createdDocs      Document[] @relation("CreatedDocuments")
 
   documents UserOnDocument[]
 }
@@ -51,3 +53,10 @@ model UserOnDocument {
 
   @@id([userId, documentId])
 }
+
+// model OTP {
+//   id         String   @id @default(uuid())
+//   email      String
+//   otp        String
+//   expiryDate DateTime
+// }

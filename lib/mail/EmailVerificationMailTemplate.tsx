@@ -15,7 +15,7 @@ import {
 import * as React from "react";
 
 interface EmailVerificationMailTemplatePropType {
-  validationCode?: string;
+  verifyCode?: string;
 }
 
 const baseUrl = process.env.VERCEL_URL
@@ -23,7 +23,7 @@ const baseUrl = process.env.VERCEL_URL
   : "http://localhost:3000";
 
 export const EmailVerificationMailTemplate = ({
-  validationCode,
+  verifyCode,
 }: EmailVerificationMailTemplatePropType) => (
   <Html>
     <Head />
@@ -45,7 +45,7 @@ export const EmailVerificationMailTemplate = ({
         </Text>
 
         <Section style={codeBox}>
-          <Text style={confirmationCodeText}>{validationCode}</Text>
+          <Text style={confirmationCodeText}>{verifyCode}</Text>
         </Section>
 
         <Text style={text}>
