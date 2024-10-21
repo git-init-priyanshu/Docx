@@ -1,10 +1,11 @@
-import { Editor } from "@tiptap/react";
+import type { Editor } from "@tiptap/react";
 
 import Heading from "./Heading";
 import Font from "./Font";
 import FormattingBtns from "./FormattingBtns";
 import ColorHighlight from "./ColorHighlight";
 import ParagraphBtns from "./ParagraphBtns";
+import BulletListBtns from "./BulletListBtns";
 
 export default function FormatOptions({ editor }: { editor: Editor | null }) {
   return (
@@ -24,15 +25,16 @@ export default function FormatOptions({ editor }: { editor: Editor | null }) {
           <div className="">
             <Font editor={editor} />
             <div className="w-full mt-3 flex justify-between gap-4">
-              <FormattingBtns editor={editor} />
-              <ColorHighlight editor={editor} />
+              <FormattingBtns editor={editor} isBubbleMenuBtn={false} />
+              <ColorHighlight editor={editor} isBubbleMenuBtn={false} />
             </div>
           </div>
         </fieldset>
         <fieldset className="grid gap-6 bg-white rounded-lg border p-4">
           <legend className="-ml-1 px-1 text-sm font-medium">Paragraph</legend>
-          <div className="grid gap-3">
+          <div className="flex gap-4">
             <ParagraphBtns editor={editor} />
+            <BulletListBtns editor={editor} />
           </div>
         </fieldset>
       </form>

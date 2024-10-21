@@ -10,6 +10,7 @@ import { FormatOptions, InsertOptions } from "./components/options";
 import Header from "./components/Header/Header";
 import Tabs from "./components/Tabs";
 import Loading from "./components/EditorLoading";
+import BubbleMenuComp from "./components/BubbleMenuComp";
 
 export default function Dashboard() {
   const [option, setOption] = useState(0);
@@ -33,7 +34,10 @@ export default function Dashboard() {
             {!docData ? (
               <Loading />
             ) : (
-              <EditorContent editor={editor} />
+              <>
+                <BubbleMenuComp editor={editor} />
+                <EditorContent editor={editor} />
+              </>
             )}
           </ScrollArea>
         </div>

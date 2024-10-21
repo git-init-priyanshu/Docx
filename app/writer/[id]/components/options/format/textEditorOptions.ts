@@ -5,6 +5,8 @@ import {
   AlignRight,
   Bold,
   Italic,
+  List,
+  ListOrdered,
   Strikethrough,
   Underline,
 } from "lucide-react";
@@ -21,6 +23,10 @@ export const paragraphBtns = [
   { Icon: AlignRight, align: "right" },
   { Icon: AlignJustify, align: "justify" },
 ];
+export const BulletBtns = [
+  { Icon: List, align: "left" },
+  { Icon: ListOrdered, align: "left" },
+]
 export const fontFamily = [
   { title: "Inter", font: "Inter" },
   { title: "Comic Sans", font: "Comic Sans MS, Comic Sans" },

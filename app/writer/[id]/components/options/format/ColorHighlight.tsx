@@ -12,7 +12,11 @@ import {
 } from "@/components/ui/popover";
 import { Input } from "@/components/ui/input";
 
-export default function ColorHighlight({ editor }: { editor: Editor | null }) {
+type ColorHighlightPropType = {
+  editor: Editor | null;
+  isBubbleMenuBtn: boolean
+}
+export default function ColorHighlight({ editor, isBubbleMenuBtn }: ColorHighlightPropType) {
   const colorPopoverRef = useRef<HTMLDivElement>(null);
   const bgPopoverRef = useRef<HTMLDivElement>(null);
 
@@ -52,15 +56,18 @@ export default function ColorHighlight({ editor }: { editor: Editor | null }) {
   }, []);
 
   return (
-    <div className="flex cursor-pointer border rounded w-fit col-span-6 sm:col-span-4 lg:mb-0">
+    <div className={`flex items-center cursor-pointer rounded w-fit ${isBubbleMenuBtn ? "gap-1" : "border col-span-6 sm:col-span-4 lg:mb-0"}`}>
       <Baseline
         size={35}
         color={fontColor}
         onClick={() => editor?.chain().focus().setColor(fontColor).run()}
-        className="hover:bg-slate-100 p-2 rounded border-r"
+        className={`hover:bg-slate-100 p-2 rounded ${isBubbleMenuBtn ? "" : "border-r"}`}
       />
       <Popover open={isColorPopoverOpen}>
-        <PopoverTrigger className="py-2 hover:bg-slate-100 border-r" onClick={() => setIsColorPopoverOpen(!isColorPopoverOpen)}>
+        <PopoverTrigger
+          className={`py-2 hover:bg-slate-100 ${isBubbleMenuBtn ? "" : "border-r"}`}
+          onClick={() => setIsColorPopoverOpen(!isColorPopoverOpen)}
+        >
           <ChevronDown size={15} />
         </PopoverTrigger>
         <PopoverContent
@@ -92,10 +99,13 @@ export default function ColorHighlight({ editor }: { editor: Editor | null }) {
             .toggleHighlight({ color: highlightColor })
             .run()
         }
-        className="hover:bg-slate-100 p-2 rounded border-r"
+        className={`hover:bg-slate-100 p-2 rounded ${isBubbleMenuBtn ? "" : "border-r"}`}
       />
       <Popover open={isBgPopoverOpen}>
-        <PopoverTrigger className="py-2 hover:bg-slate-100" onClick={() => setIsBgPopoverOpen(!isBgPopoverOpen)}>
+        <PopoverTrigger
+          className="py-2 hover:bg-slate-100"
+          onClick={() => setIsBgPopoverOpen(!isBgPopoverOpen)}
+        >
           <ChevronDown size={15} />
         </PopoverTrigger>
         <PopoverContent

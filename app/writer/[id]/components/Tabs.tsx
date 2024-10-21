@@ -1,4 +1,4 @@
-import { ALargeSmall, Bot, LifeBuoy, SquareUser } from "lucide-react";
+import { ALargeSmall, FileInput, LifeBuoy, SquareUser } from "lucide-react";
 import {
   Tooltip,
   TooltipContent,
@@ -43,11 +43,11 @@ export default function Tabs({ option, setOption }: TabsPropType) {
                 aria-label="Insert"
                 onClick={() => setOption(1)}
               >
-                <Bot className="size-5" />
+                <FileInput className="size-5" />
               </Button>
             </TooltipTrigger>
             <TooltipContent side="right" sideOffset={5}>
-              Inster
+              Insert
             </TooltipContent>
           </Tooltip>
         </TooltipProvider>
