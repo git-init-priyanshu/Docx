@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { KeyRound, Regex } from "lucide-react";
+import { KeyRound } from "lucide-react";
 
 import LoaderButton from "@/components/LoaderButton";
 import { Input } from "@/components/ui/input";

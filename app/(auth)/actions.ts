@@ -245,10 +245,11 @@ export const sendResetPasswordMail = async (userEmail: string) => {
         error: "Looks like you don't have an account",
       };
 
+    const baseURL = process.env.APP_URL;
     const mail = await SendMail(
       userEmail,
       'DocX | Reset Password',
-      PasswordResetMailTemplate({ resetPasswordLink: `http://localhost:3000/reset-password/${user.id}` })
+      PasswordResetMailTemplate({ resetPasswordLink: `${baseURL}/reset-password/${user.id}` })
     );
     if (!mail.success) return { success: false, error: mail.error }
 
@@ -261,6 +262,25 @@ export const sendResetPasswordMail = async (userEmail: string) => {
 
 export const resetPassword = async (userId: any, newPassword: string) => {
   try {
+    const user = await prisma.user.findFirst({
+      where: {
+        id: userId,
+      },
+    });
+    if (!user)
+      return {
+        success: false,
+        error: "Looks like you don't have an account",
+      };
+
+    // Hashing password
+    const salt = await bcrypt.genSalt(Number(process.env.SALT) || 10);
+    const hashedPassword = await bcrypt.hash(newPassword, salt);
+
+    await prisma.user.update({
+      where: { id: userId },
+      data: { password: hashedPassword }
+    })
 
     return { success: true, data: "Password reset successfully." };
   } catch (e) {
