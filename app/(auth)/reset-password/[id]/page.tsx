@@ -18,13 +18,16 @@ export default function ResetPassword() {
   const [newPassword, setNewPassword] = useState("");
   const [confirmNewPassword, setConfirmNewPassword] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isRegexError, setIsRegexError] = useState(false);
 
   const changePassword = async () => {
     setIsSubmitting(true);
     try {
       if (passwordValidation.test(newPassword)) {
-        if (newPassword !== confirmNewPassword)
+        if (newPassword !== confirmNewPassword) {
+          setIsSubmitting(false);
           return toast.error("New password and confirm password do not match.")
+        }
 
         const response = await resetPassword(params.id, newPassword);
         if (response.success) {
@@ -36,6 +39,9 @@ export default function ResetPassword() {
           toast.error(response.error);
           setIsSubmitting(false);
         }
+      } else {
+        setIsRegexError(true);
+        setIsSubmitting(false);
       }
     } catch (e) {
       console.log(e);
@@ -62,6 +68,12 @@ export default function ResetPassword() {
           type="password"
           onChange={(e) => setNewPassword(e.target.value)}
         />
+        {isRegexError
+          ? <p className="text-red-400">
+            Password must include at least one uppercase, one lowercase, one digit, one special character, and be at least 8 characters long.
+          </p>
+          : <></>
+        }
 
         <Label htmlFor="new-password">Confirm new password</Label>
         <Input

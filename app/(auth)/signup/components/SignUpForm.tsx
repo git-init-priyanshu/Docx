@@ -4,8 +4,8 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
+import { z, ZodError } from "zod";
 import { Eye, EyeOff } from "lucide-react";
-import { z } from "zod";
 
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -21,18 +21,25 @@ export default function CredentialsForm() {
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
+  const [isRegexError, setIsRegexError] = useState(false);
 
   const submitForm = async (data: z.infer<typeof signupSchema>) => {
     setIsSubmitting(true);
     try {
-      const parsedData = signupSchema.parse({
+      const parsedData = signupSchema.safeParse({
         name: data.name,
         username: data.username,
         email: data.email,
         password: data.password,
       });
+      if (!parsedData.success) {
+        if (parsedData.error.issues[0].code === "invalid_string") setIsRegexError(true);
+        setIsSubmitting(false);
+      };
 
-      const response = await SignupAction(parsedData);
+      if (!parsedData.data) return;
+
+      const response = await SignupAction(parsedData.data);
       if (response.success) {
         toast.success("User registerd successfully. Please verify your email.");
         router.push(`/otp/${data.email}`)
@@ -43,7 +50,7 @@ export default function CredentialsForm() {
         toast.error(response.error);
         setIsSubmitting(false);
       }
-    } catch (e) {
+    } catch (e: ZodError | any) {
       console.log(e);
       setIsSubmitting(false);
     }
@@ -95,6 +102,12 @@ export default function CredentialsForm() {
               className="absolute transform -translate-y-[1.7rem] translate-x-80 cursor-pointer text-neutral-500 hover:text-black"
             />
           )}
+          {isRegexError
+            ? <p className="text-red-400">
+              Password must include at least one uppercase, one lowercase, one digit, one special character, and be at least 8 characters long.
+            </p>
+            : <></>
+          }
         </div>
       </div>
       <LoaderButton
