@@ -1,9 +1,14 @@
-import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger } from "@/components/ui/dropdown";
 import { Sparkles } from "lucide-react";
+
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuTrigger
+} from "@/components/ui/dropdown";
 
 export default function AskAI() {
   return (
-    <DropdownMenu>
+    <DropdownMenu >
       <DropdownMenuTrigger>
         <div className="flex cursor-pointer rounded gap-1 p-2 w-fit items-center hover:bg-slate-100">
           <Sparkles size={20} />

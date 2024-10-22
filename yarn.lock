@@ -932,7 +932,7 @@
   resolved "https://registry.npmjs.org/@tiptap/extension-bold/-/extension-bold-2.4.0.tgz"
   integrity sha512-csnW6hMDEHoRfxcPRLSqeJn+j35Lgtt1YRiOwn7DlS66sAECGRuoGfCvQSPij0TCDp4VCR9if5Sf8EymhnQumQ==
 
-"@tiptap/extension-bubble-menu@^2.4.0", "@tiptap/extension-bubble-menu@^2.8.0":
+"@tiptap/extension-bubble-menu@^2.4.0":
   version "2.8.0"
   resolved "https://registry.npmjs.org/@tiptap/extension-bubble-menu/-/extension-bubble-menu-2.8.0.tgz"
   integrity sha512-swg+myJPN60LduQvLMF4hVBqP5LOIN01INZBzBI8egz8QufqtSyRCgXl7Xcma0RT5xIXnZSG9XOqNFf2rtkjKA==
