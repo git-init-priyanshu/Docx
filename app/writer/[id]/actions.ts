@@ -124,3 +124,4 @@ export const UpdateThumbnail = async (id: any, thumbnail: string) => {
     return { success: false, error: "Internal server error" };
   }
 };
+

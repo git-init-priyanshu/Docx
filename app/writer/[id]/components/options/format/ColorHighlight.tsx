@@ -39,7 +39,7 @@ export default function ColorHighlight({ editor, isBubbleMenuBtn }: ColorHighlig
   const handleDocumentClick = (e: any) => {
     if (
       (colorPopoverRef.current &&
-        !colorPopoverRef.current.contains(e.target))||
+        !colorPopoverRef.current.contains(e.target)) ||
       (bgPopoverRef.current &&
         !bgPopoverRef.current.contains(e.target))
     ) {
