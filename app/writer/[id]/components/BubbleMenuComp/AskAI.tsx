@@ -1,4 +1,3 @@
-import { useState } from "react"
 import { toast } from "sonner"
 import {
   Check,
@@ -27,22 +26,29 @@ import {
 
 import generateText, { generateTextOptions } from "./generateText"
 
-export default function AskAI() {
-  const [generativeTextResult, setGenerativeTextResult] = useState("");
-
+type AskAIPropType = {
+  setIsAiActive: React.Dispatch<React.SetStateAction<boolean>>,
+  setIsGeneratingText: React.Dispatch<React.SetStateAction<boolean>>,
+  setGenerativeTextResult: React.Dispatch<React.SetStateAction<string>>
+}
+export default function AskAI({ setIsAiActive, setIsGeneratingText, setGenerativeTextResult }: AskAIPropType) {
   const getAITextGeneration = async (options: generateTextOptions) => {
+    setIsAiActive(true);
+    setIsGeneratingText(true);
     const selectedText = window.getSelection();
-    if (!selectedText) return;
+    if (!selectedText) return setIsGeneratingText(false);
 
     const result = await generateText(options, selectedText.toString());
-    if (!result.success) return toast.error(result.error);
-    console.log(result.data);
+    if (!result.success) {
+      setIsGeneratingText(false);
+      return toast.error(result.error);
+    }
 
-    setGenerativeTextResult(result.data || "");
+    setGenerativeTextResult(result.data || "No result.");
+    setIsGeneratingText(false);
   }
   return (
     <>
-      {generativeTextResult ? <p>generativeTextResult</p> : <></>}
       <DropdownMenu >
         <DropdownMenuTrigger>
           <Button

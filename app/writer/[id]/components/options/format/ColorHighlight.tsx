@@ -11,6 +11,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { Input } from "@/components/ui/input";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger } from "@/components/ui/dropdown";
 
 type ColorHighlightPropType = {
   editor: Editor | null;
@@ -62,14 +63,14 @@ export default function ColorHighlight({ editor, isBubbleMenuBtn }: ColorHighlig
         onClick={() => editor?.chain().focus().setColor(fontColor).run()}
         className={`hover:bg-slate-100 p-2 rounded ${isBubbleMenuBtn ? "" : "border-r"}`}
       />
-      <Popover open={isColorPopoverOpen}>
-        <PopoverTrigger
+      <DropdownMenu open={isColorPopoverOpen}>
+        <DropdownMenuTrigger
           className={`py-2 hover:bg-slate-100 ${isBubbleMenuBtn ? "" : "border-r"}`}
           onClick={() => setIsColorPopoverOpen(!isColorPopoverOpen)}
         >
           <ChevronDown size={15} />
-        </PopoverTrigger>
-        <PopoverContent
+        </DropdownMenuTrigger>
+        <DropdownMenuContent
           align="center"
           avoidCollisions
           collisionPadding={{ left: 30 }}
@@ -86,8 +87,8 @@ export default function ColorHighlight({ editor, isBubbleMenuBtn }: ColorHighlig
               className="mx-auto"
             />
           </div>
-        </PopoverContent>
-      </Popover>
+        </DropdownMenuContent>
+      </DropdownMenu>
       <Highlighter
         size={35}
         color={highlightColor}
@@ -100,14 +101,14 @@ export default function ColorHighlight({ editor, isBubbleMenuBtn }: ColorHighlig
         }
         className={`hover:bg-slate-100 p-2 rounded ${isBubbleMenuBtn ? "" : "border-r"}`}
       />
-      <Popover open={isBgPopoverOpen}>
-        <PopoverTrigger
+      <DropdownMenu open={isBgPopoverOpen}>
+        <DropdownMenuTrigger
           className="py-2 hover:bg-slate-100"
           onClick={() => setIsBgPopoverOpen(!isBgPopoverOpen)}
         >
           <ChevronDown size={15} />
-        </PopoverTrigger>
-        <PopoverContent
+        </DropdownMenuTrigger>
+        <DropdownMenuContent
           align="center"
           avoidCollisions
           collisionPadding={{ left: 30 }}
@@ -124,8 +125,8 @@ export default function ColorHighlight({ editor, isBubbleMenuBtn }: ColorHighlig
               className="mx-auto"
             />
           </div>
-        </PopoverContent>
-      </Popover>
+        </DropdownMenuContent>
+      </DropdownMenu>
     </div>
   );
 }

@@ -24,8 +24,8 @@ export const paragraphBtns = [
   { Icon: AlignJustify, align: "justify" },
 ];
 export const BulletBtns = [
-  { Icon: List, align: "left" },
-  { Icon: ListOrdered, align: "left" },
+  { Icon: List, key: "list" },
+  { Icon: ListOrdered, key: "ordered_list" },
 ]
 export const fontFamily = [
   { title: "Inter", font: "Inter" },

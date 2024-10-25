@@ -25,7 +25,7 @@ export const Editor = ({ setIsSaving }: EditorPropType) => {
   const [name, setName] = useState("");
   const [docData, setDocData] = useState<Document | undefined>(undefined);
   const [status, setStatus] = useState("connecting");
-  console.log(status);
+  // console.log(status);
 
   useEffect(() => {
     setName(localStorage.getItem("name") || "");

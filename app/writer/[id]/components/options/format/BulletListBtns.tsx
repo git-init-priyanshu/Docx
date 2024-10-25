@@ -5,10 +5,10 @@ import { BulletBtns } from "./textEditorOptions";
 export default function BulletListBtns({ editor }: any) {
   return (
     <div className="flex cursor-pointer border rounded w-fit col-span-6 sm:col-span-4">
-      {BulletBtns.map(({ align, Icon }, i) => {
+      {BulletBtns.map(({ Icon, key }, i) => {
         return (
           <Icon
-            key={align}
+            key={key}
             size={35}
             onClick={() => Icon === List
               ? editor?.chain()?.focus().toggleBulletList().run()

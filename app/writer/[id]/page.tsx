@@ -17,6 +17,7 @@ export default function Dashboard() {
   const [isSaving, setIsSaving] = useState(false);
   const [isHighlighted, setIsHighlighted] = useState(false);
   const [position, setPosition] = useState({ x: 0, y: 0 });
+  const [position2, setPosition2] = useState({ x: 0, y: 0, width: 0 });
 
   const { editor, docData } = Editor({ setIsSaving })
 
@@ -38,6 +39,11 @@ export default function Dashboard() {
       setPosition({
         x: selectionDimensions.left - editorDimensions.left + selectionDimensions.width / 2,
         y: selectionDimensions.top - editorDimensions.top - 60
+      })
+      setPosition2({
+        x: selectionDimensions.left - editorDimensions.left + selectionDimensions.width / 2,
+        y: selectionDimensions.top - editorDimensions.top + selectionDimensions.height + 20,
+        width: selectionDimensions.width
       })
     };
 
@@ -64,6 +70,7 @@ export default function Dashboard() {
                   editor={editor}
                   isHighlighted={isHighlighted}
                   bubblePosition={position}
+                  generativeTextBubblePosition={position2}
                 />
                 <EditorContent editor={editor} />
               </>
