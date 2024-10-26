@@ -82,15 +82,16 @@ export default function GeneratedText({
     >
       {isGeneratingText
         ? <div
-          className="flex gap-1 p-2 shadow-md bg-neutral-50 items-center"
+          className="flex gap-2 p-2 shadow-md bg-neutral-50 items-center"
         >
-          <Sparkles />
-          Generating ...
+          <Sparkles size={20} strokeWidth={1} />
+          Generating
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" style={{width: "20px", height: "20px"}}><circle fill="#3B82F6" stroke="#3B82F6" stroke-width="10" r="15" cx="40" cy="100" ><animate attributeName="opacity" calcMode="spline" dur="2" values="1;0;1;" keySplines=".5 0 .5 1;.5 0 .5 1" repeatCount="indefinite" begin="-.4"></animate></circle><circle fill="#3B82F6" stroke="#3B82F6" stroke-width="10" r="15" cx="100" cy="100"><animate attributeName="opacity" calcMode="spline" dur="2" values="1;0;1;" keySplines=".5 0 .5 1;.5 0 .5 1" repeatCount="indefinite" begin="-.2"></animate></circle><circle fill="#3B82F6" stroke="#3B82F6" stroke-width="10" r="15" cx="160" cy="100"><animate attributeName="opacity" calcMode="spline" dur="2" values="1;0;1;" keySplines=".5 0 .5 1;.5 0 .5 1" repeatCount="indefinite" begin="0"></animate></circle></svg>
         </div>
         : <DropdownMenu open={isHighlighted && isAiActive}>
           <DropdownMenuTrigger className="flex flex-col max-w-[30rem] text-left gap-2 p-4 shadow-md bg-neutral-50">
             <div className="flex items-center gap-2">
-              <Sparkles size={15} color="#737373" strokeWidth={1}/>
+              <Sparkles size={15} color="#737373" strokeWidth={1} />
               <p className="text-sm text-neutral-500">Generated Text</p>
             </div>
             {generativeTextResult}

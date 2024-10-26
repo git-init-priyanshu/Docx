@@ -21,7 +21,6 @@ export default function BubbleMenuComp({
   const [isAiActive, setIsAiActive] = useState(false);
   const [isGeneratingText, setIsGeneratingText] = useState(false);
   const [generativeTextResult, setGenerativeTextResult] = useState("");
-  console.log(isHighlighted, isAiActive, generativeTextResult)
 
   if (!editor) return;
   return (
