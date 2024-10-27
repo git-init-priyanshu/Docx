@@ -7,7 +7,6 @@ import {
   Wand,
 } from "lucide-react"
 
-import { Button } from "@/components/ui/button"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -21,8 +20,9 @@ import {
   DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown"
-
-import generateText, { generateTextOptions } from "./generateText"
+import { Button } from "@/components/ui/button"
+import { generateText } from "../../actions"
+import { generateTextOptions } from "./generateTextConfig"
 
 type AskAIPropType = {
   setIsAiActive: React.Dispatch<React.SetStateAction<boolean>>,

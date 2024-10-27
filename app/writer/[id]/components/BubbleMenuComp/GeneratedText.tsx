@@ -13,7 +13,8 @@ import {
   DropdownMenuContent,
   DropdownMenuItem
 } from "@/components/ui/dropdown";
-import generateText, { generateTextOptions } from "./generateText"
+import { generateText } from "../../actions"
+import { generateTextOptions } from "./generateTextConfig"
 
 type GeneratedTextPropType = {
   editor: Editor | null,

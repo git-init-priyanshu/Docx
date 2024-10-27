@@ -1,9 +1,11 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { GoogleGenerativeAI } from "@google/generative-ai";
 
 import prisma from "@/prisma/prismaClient";
 import getServerSession from "@/lib/customHooks/getServerSession";
+import { generateTextOptions, prompts } from "./components/BubbleMenuComp/generateTextConfig"
 
 export const GetDocDetails = async (id: any) => {
   try {
@@ -104,7 +106,7 @@ export const UpdateThumbnail = async (id: any, thumbnail: string) => {
         error: "User is not logged in",
       };
 
-      console.log(process.env.BACKEND_SERVER_URL)
+    console.log(process.env.BACKEND_SERVER_URL)
     const response = await fetch(`${process.env.BACKEND_SERVER_URL}/push-to-quque`, {
       method: "POST",
       headers: {
@@ -125,3 +127,26 @@ export const UpdateThumbnail = async (id: any, thumbnail: string) => {
   }
 };
 
+export const generateText = async (option: generateTextOptions, text: string, language?: string) => {
+  try {
+    const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || "");
+    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+
+    let prompt: string;
+    if (option === generateTextOptions.TRANSLATE) {
+      if (!language) return { success: false, error: "Undefined prompt" };
+      prompt = `Here is the text: ${text} and language: ${language}. ${prompts.find((e) => e.option === option)?.prompt}`;
+    } else {
+      prompt = `Here is the text: "${text}". ${prompts.find((e) => e.option === option)?.prompt}`
+    }
+    if (!prompt) return { success: false, error: "Undefined prompt" };
+
+    const note = "Note: Provide only the required text.";
+    const result = await model.generateContent(prompt + note);
+
+    return { success: true, data: result.response.text() };
+  } catch (e) {
+    console.log(e);
+    return { success: false, error: "Internal server error" };
+  }
+}
