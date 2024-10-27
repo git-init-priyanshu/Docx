@@ -33,20 +33,21 @@ export default function CredentialsForm() {
         password: data.password,
       });
       if (!parsedData.success) {
-        if (parsedData.error.issues[0].code === "invalid_string") setIsRegexError(true);
+        if (parsedData.error.issues[0].code === "invalid_string")
+          setIsRegexError(true);
         setIsSubmitting(false);
-      };
+      }
 
       if (!parsedData.data) return;
 
       const response = await SignupAction(parsedData.data);
       if (response.success) {
         toast.success("User registerd successfully. Please verify your email.");
-        router.push(`/otp/${data.email}`)
+        router.push(`/otp/${data.email}`);
         setIsSubmitting(false);
       } else {
         console.log(response.error);
-        console.log("here")
+        console.log("here");
         toast.error(response.error);
         setIsSubmitting(false);
       }
@@ -102,12 +103,14 @@ export default function CredentialsForm() {
               className="absolute transform -translate-y-[1.7rem] translate-x-80 cursor-pointer text-neutral-500 hover:text-black"
             />
           )}
-          {isRegexError
-            ? <p className="text-red-400">
-              Password must include at least one uppercase, one lowercase, one digit, one special character, and be at least 8 characters long.
+          {isRegexError ? (
+            <p className="text-red-400">
+              Password must include at least one uppercase, one lowercase, one
+              digit, one special character, and be at least 8 characters long.
             </p>
-            : <></>
-          }
+          ) : (
+            <></>
+          )}
         </div>
       </div>
       <LoaderButton

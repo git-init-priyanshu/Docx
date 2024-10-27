@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
@@ -8,7 +8,7 @@ import { KeyRound } from "lucide-react";
 import LoaderButton from "@/components/LoaderButton";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { sendResetPasswordMail} from "../actions";
+import { sendResetPasswordMail } from "../actions";
 
 export default function ForgetPassoword() {
   const router = useRouter();
@@ -22,7 +22,7 @@ export default function ForgetPassoword() {
       const response = await sendResetPasswordMail(inputEmail);
       if (response.success) {
         toast.success(response.data);
-        router.push(`/signin`)
+        router.push(`/signin`);
         setIsSubmitting(false);
       } else {
         console.log(response.error);
@@ -33,7 +33,7 @@ export default function ForgetPassoword() {
       console.log(e);
       setIsSubmitting(false);
     }
-  }
+  };
   return (
     <>
       <div className="flex flex-col gap-2 text-center items-center">
@@ -43,7 +43,8 @@ export default function ForgetPassoword() {
           <span className="text-blue-500">Password ?</span>
         </h1>
         <p className="text-muted-foreground ">
-          Enter the email address , and we&apos;ll send you a link to reset your password.
+          Enter the email address , and we&apos;ll send you a link to reset your
+          password.
         </p>
       </div>
       <div className="flex flex-col gap-2 mt-4 text-sm">
@@ -60,7 +61,7 @@ export default function ForgetPassoword() {
         >
           Send email
         </LoaderButton>
-      </div >
+      </div>
     </>
-  )
+  );
 }

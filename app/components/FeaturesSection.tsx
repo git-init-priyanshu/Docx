@@ -7,7 +7,7 @@ import {
   LogIn,
   SquarePen,
   Users,
-  Zap
+  Zap,
 } from "lucide-react";
 
 export default function FeaturesSection() {
@@ -20,7 +20,8 @@ export default function FeaturesSection() {
     },
     {
       title: "Free to use",
-      description: "Available at no cost, providing full access without any hidden fees or charges.",
+      description:
+        "Available at no cost, providing full access without any hidden fees or charges.",
       icon: <BadgeIndianRupee />,
     },
     {
@@ -42,7 +43,8 @@ export default function FeaturesSection() {
     },
     {
       title: "Easy onboarding",
-      description: "A streamlined and hassle-free setup process that gets you started quickly and smoothly.",
+      description:
+        "A streamlined and hassle-free setup process that gets you started quickly and smoothly.",
       icon: <LogIn />,
     },
     {
@@ -52,12 +54,16 @@ export default function FeaturesSection() {
     },
     {
       title: "Highly scalable",
-      description: "Adapts effortlessly to growth, maintaining performance as needs expand.",
+      description:
+        "Adapts effortlessly to growth, maintaining performance as needs expand.",
       icon: <Cloud />,
     },
   ];
   return (
-    <section id="features" className="w-full py-12 md:py-24 lg:py-32 border-t bg-slate-50">
+    <section
+      id="features"
+      className="w-full py-12 md:py-24 lg:py-32 border-t bg-slate-50"
+    >
       <div className="container px-4 mt-10 md:px-6 md:mt-52 ">
         <div className="flex flex-col items-center justify-center space-y-4 text-center">
           <div className="space-y-2">
@@ -66,8 +72,8 @@ export default function FeaturesSection() {
               <span className="text-blue-500">Features</span>
             </h2>
             <p className="max-w-[900px] text-muted-foreground md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
-              DocX empowers teams to work together seamlessly, with real-time editing, version control, and
-              intuitive commenting tools.
+              DocX empowers teams to work together seamlessly, with real-time
+              editing, version control, and intuitive commenting tools.
             </p>
           </div>
         </div>
@@ -98,7 +104,7 @@ const Feature = ({
         "flex flex-col lg:border-r py-10 relative group/feature dark:border-neutral-800 items-start md:items-start",
         (index === 0 || index === 4) && "lg:border-l dark:border-neutral-800",
         index < 4 && "lg:border-b dark:border-neutral-800",
-        index % 2 !== 1 ? "sm:items-start" : "sm:items-end"
+        index % 2 !== 1 ? "sm:items-start" : "sm:items-end",
       )}
     >
       {index < 4 && (

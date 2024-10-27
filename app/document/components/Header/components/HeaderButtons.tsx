@@ -29,25 +29,26 @@ export default function HeaderButtons() {
   };
 
   return (
-      <div className="fixed z-10 bottom-4 right-4 md:static flex gap-4">
-        {process.env.NODE_ENV === "development" ?
-          <Button
-            variant="outline"
-            className="flex gap-2 text-blue-500 hover:text-blue-500 hover:border-blue-200 rounded-lg md:rounded-full"
-          >
-            <CloudUpload size={15} />
-            <p className="hidden md:block">Upload</p>
-          </Button>
-          : <></>
-        }
-        <LoaderButton
-          className="bg-blue-500 text-white hover:bg-blue-600 rounded-lg md:rounded-full"
-          onClickFunc={createDocument}
-          isLoading={isLoading}
-          icon={<PlusIcon size={20} />}
+    <div className="fixed z-10 bottom-4 right-4 md:static flex gap-4">
+      {process.env.NODE_ENV === "development" ? (
+        <Button
+          variant="outline"
+          className="flex gap-2 text-blue-500 hover:text-blue-500 hover:border-blue-200 rounded-lg md:rounded-full"
         >
-          <p className="hidden md:block">Create New</p>
-        </LoaderButton>
-      </div>
+          <CloudUpload size={15} />
+          <p className="hidden md:block">Upload</p>
+        </Button>
+      ) : (
+        <></>
+      )}
+      <LoaderButton
+        className="bg-blue-500 text-white hover:bg-blue-600 rounded-lg md:rounded-full"
+        onClickFunc={createDocument}
+        isLoading={isLoading}
+        icon={<PlusIcon size={20} />}
+      >
+        <p className="hidden md:block">Create New</p>
+      </LoaderButton>
+    </div>
   );
 }

@@ -1,4 +1,4 @@
-'use client'
+"use client";
 
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
@@ -26,14 +26,15 @@ export default function OTP() {
         if (prev <= 1) {
           // clearInterval(interval);
           return 0;
-        } return prev - 1;
-      })
-    }, 1000)
+        }
+        return prev - 1;
+      });
+    }, 1000);
 
     return () => {
       clearInterval(interval);
-    }
-  }, [])
+    };
+  }, []);
 
   const verify = async () => {
     setIsSubmitting(true);
@@ -41,7 +42,7 @@ export default function OTP() {
       const response = await verifyEmail(inputValue, userEmail);
       if (response.success) {
         toast.success(response.data);
-        router.push(`/document`)
+        router.push(`/document`);
         setIsSubmitting(false);
       } else {
         console.log(response.error);
@@ -52,7 +53,7 @@ export default function OTP() {
       console.log(e);
       setIsSubmitting(false);
     }
-  }
+  };
 
   const resendCode = async () => {
     setIsResending(true);
@@ -71,7 +72,7 @@ export default function OTP() {
       console.log(e);
       setIsResending(false);
     }
-  }
+  };
   return (
     <>
       <div className="flex flex-col gap-2 text-center items-center">
@@ -97,14 +98,14 @@ export default function OTP() {
         >
           Verify
         </LoaderButton>
-        {timer === 0
-          ? <button
+        {timer === 0 ? (
+          <button
             className="text-blue-500 hover:underline cursor-pointer flex w-full justify-end"
             disabled={isResending}
             onClick={resendCode}
           >
-            {isResending ?
-              < svg
+            {isResending ? (
+              <svg
                 className="animate-spin lucide lucide-loader-circle mr-1"
                 xmlns="http://www.w3.org/2000/svg"
                 width="20"
@@ -118,19 +119,20 @@ export default function OTP() {
               >
                 <path d="M21 12a9 9 0 1 1-6.219-8.56" />
               </svg>
-              : <></>}
+            ) : (
+              <></>
+            )}
             Resend code
           </button>
-          : <p>
-            Resend code in:{" "}
-            {Math.floor(timer / 60)}:
+        ) : (
+          <p>
+            Resend code in: {Math.floor(timer / 60)}:
             {timer - Math.floor(timer / 60) * 60 < 10
               ? "0" + String(timer - Math.floor(timer / 60) * 60)
-              : timer - Math.floor(timer / 60) * 60
-            }
+              : timer - Math.floor(timer / 60) * 60}
           </p>
-        }
-      </div >
+        )}
+      </div>
     </>
   );
 }

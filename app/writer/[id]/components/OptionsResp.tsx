@@ -6,16 +6,16 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
-import {
-  Drawer,
-  DrawerClose,
-  DrawerContent,
-  DrawerFooter,
-  DrawerHeader,
-  DrawerTitle,
-} from "@/components/ui/drawer";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Button } from "@/components/ui/button";
+// import {
+//   Drawer,
+//   DrawerClose,
+//   DrawerContent,
+//   DrawerFooter,
+//   DrawerHeader,
+//   DrawerTitle,
+// } from "@/components/ui/drawer";
+// import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+// import { Button } from "@/components/ui/button";
 
 import {
   setDefaultStyleValue,
@@ -33,12 +33,12 @@ import ColorHighlight from "./options/format/ColorHighlight";
 type DrawerRespPropType = {
   editor: any;
   isOpen: boolean;
-  setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  // setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
 };
 export default function OptionsResp({
   editor,
   isOpen,
-  setIsOpen,
+  // setIsOpen,
 }: DrawerRespPropType) {
   return (
     <>
@@ -119,7 +119,7 @@ export default function OptionsResp({
                     );
                   })}
                 </div>
-                <ColorHighlight editor={editor} />
+                <ColorHighlight editor={editor} isBubbleMenuBtn={false} />
               </div>
             </div>
           </fieldset>

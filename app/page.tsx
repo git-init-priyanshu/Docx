@@ -1,8 +1,8 @@
-import FeaturesSection from "./components/FeaturesSection"
-import HeroSection from "./components/HeroSection"
-import AboutSection from "./components/AboutSection"
-import ContactSection from "./components/ContactSection"
-import Footer from "./components/Footer"
+import FeaturesSection from "./components/FeaturesSection";
+import HeroSection from "./components/HeroSection";
+import AboutSection from "./components/AboutSection";
+import ContactSection from "./components/ContactSection";
+import Footer from "./components/Footer";
 // import { ScrollCard } from "@/components/ScrollCard"
 
 export default function Component() {
@@ -16,6 +16,6 @@ export default function Component() {
         <ContactSection />
         <Footer />
       </main>
-    </div >
-  )
+    </div>
+  );
 }

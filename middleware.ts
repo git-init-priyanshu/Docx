@@ -7,12 +7,12 @@ export async function middleware(request: NextRequest) {
 
   const isAuthorized = token || nextAuthSession;
 
-  if (request.url.split("/")[3] === '') {
+  if (request.url.split("/")[3] === "") {
     if (isAuthorized) {
       return NextResponse.redirect(new URL("/document", request.url));
     }
     return NextResponse.next();
-  } else{
+  } else {
     if (!isAuthorized) {
       return NextResponse.redirect(new URL("/api/auth/signin", request.url));
     }

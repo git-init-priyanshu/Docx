@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { Montserrat_Alternates as Montserrat } from "next/font/google"
+import { Montserrat_Alternates as Montserrat } from "next/font/google";
 
 import { SessionReturnType } from "@/lib/customHooks/ReturnType";
 import logo from "@/public/logo.svg";
@@ -11,8 +11,8 @@ import ProfileBtn from "./components/ProfileBtn";
 const roboto = Montserrat({
   weight: "500",
   style: "normal",
-  subsets: ["cyrillic"]
-})
+  subsets: ["cyrillic"],
+});
 
 type HeaderPropType = Pick<SessionReturnType, "name" | "image">;
 export default function Header({ image, name }: HeaderPropType) {

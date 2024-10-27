@@ -23,9 +23,11 @@ export default function AvatarList({ users }: AvatarListPropType) {
               <Avatar className="size-8 absolute transform -translate-y-full">
                 <AvatarImage src={e.user.picture} />
               </Avatar>
-            ) : <></>}
+            ) : (
+              <></>
+            )}
           </div>
-        )
+        );
       })}
     </div>
   );

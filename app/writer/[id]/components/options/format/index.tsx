@@ -22,7 +22,7 @@ export default function FormatOptions({ editor }: { editor: Editor | null }) {
         </fieldset>
         <fieldset className="grid max-w-fit gap-6 bg-white rounded-lg border p-4">
           <legend className="-ml-1 px-1 text-sm font-medium">Font</legend>
-          <div >
+          <div>
             <Font editor={editor} />
             <div className="w-full mt-3 flex justify-between gap-4">
               <FormattingBtns editor={editor} isBubbleMenuBtn={false} />

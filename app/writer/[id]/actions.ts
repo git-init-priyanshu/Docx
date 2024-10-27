@@ -5,7 +5,10 @@ import { GoogleGenerativeAI } from "@google/generative-ai";
 
 import prisma from "@/prisma/prismaClient";
 import getServerSession from "@/lib/customHooks/getServerSession";
-import { generateTextOptions, prompts } from "./components/BubbleMenuComp/generateTextConfig"
+import {
+  generateTextOptions,
+  prompts,
+} from "./components/BubbleMenuComp/generateTextConfig";
 
 export const GetDocDetails = async (id: any) => {
   try {
@@ -106,18 +109,21 @@ export const UpdateThumbnail = async (id: any, thumbnail: string) => {
         error: "User is not logged in",
       };
 
-    console.log(process.env.BACKEND_SERVER_URL)
-    const response = await fetch(`${process.env.BACKEND_SERVER_URL}/push-to-quque`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
+    console.log(process.env.BACKEND_SERVER_URL);
+    const response = await fetch(
+      `${process.env.BACKEND_SERVER_URL}/push-to-quque`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          docId: id,
+          thumbnail,
+          userId: session.id,
+        }),
       },
-      body: JSON.stringify({
-        docId: id,
-        thumbnail,
-        userId: session.id,
-      }),
-    });
+    );
     revalidatePath("/");
 
     return await response.json();
@@ -127,7 +133,11 @@ export const UpdateThumbnail = async (id: any, thumbnail: string) => {
   }
 };
 
-export const generateText = async (option: generateTextOptions, text: string, language?: string) => {
+export const generateText = async (
+  option: generateTextOptions,
+  text: string,
+  language?: string,
+) => {
   try {
     const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || "");
     const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
@@ -137,7 +147,7 @@ export const generateText = async (option: generateTextOptions, text: string, la
       if (!language) return { success: false, error: "Undefined prompt" };
       prompt = `Here is the text: ${text} and language: ${language}. ${prompts.find((e) => e.option === option)?.prompt}`;
     } else {
-      prompt = `Here is the text: "${text}". ${prompts.find((e) => e.option === option)?.prompt}`
+      prompt = `Here is the text: "${text}". ${prompts.find((e) => e.option === option)?.prompt}`;
     }
     if (!prompt) return { success: false, error: "Undefined prompt" };
 
@@ -149,4 +159,4 @@ export const generateText = async (option: generateTextOptions, text: string, la
     console.log(e);
     return { success: false, error: "Internal server error" };
   }
-}
+};

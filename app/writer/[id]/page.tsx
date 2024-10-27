@@ -19,7 +19,7 @@ export default function Dashboard() {
   const [position, setPosition] = useState({ x: 0, y: 0 });
   const [position2, setPosition2] = useState({ x: 0, y: 0, width: 0 });
 
-  const { editor, docData } = Editor({ setIsSaving })
+  const { editor, docData } = Editor({ setIsSaving });
 
   const Options = [
     <FormatOptions key={1} editor={editor} />,
@@ -34,25 +34,39 @@ export default function Dashboard() {
 
       setIsHighlighted(selection && selection.toString().length > 0);
 
-      const editorDimensions = document.getElementsByClassName('tiptap')[0].getBoundingClientRect();
-      const selectionDimensions = selection.getRangeAt(0).getBoundingClientRect();
+      const editorDimensions = document
+        .getElementsByClassName("tiptap")[0]
+        .getBoundingClientRect();
+      const selectionDimensions = selection
+        .getRangeAt(0)
+        .getBoundingClientRect();
       setPosition({
-        x: selectionDimensions.left - editorDimensions.left + selectionDimensions.width / 2,
-        y: selectionDimensions.top - editorDimensions.top - 60
-      })
+        x:
+          selectionDimensions.left -
+          editorDimensions.left +
+          selectionDimensions.width / 2,
+        y: selectionDimensions.top - editorDimensions.top - 60,
+      });
       setPosition2({
-        x: selectionDimensions.left - editorDimensions.left + selectionDimensions.width / 2,
-        y: selectionDimensions.top - editorDimensions.top + selectionDimensions.height + 20,
-        width: selectionDimensions.width
-      })
+        x:
+          selectionDimensions.left -
+          editorDimensions.left +
+          selectionDimensions.width / 2,
+        y:
+          selectionDimensions.top -
+          editorDimensions.top +
+          selectionDimensions.height +
+          20,
+        width: selectionDimensions.width,
+      });
     };
 
-    document.addEventListener('selectionchange', handleSelectionChange);
+    document.addEventListener("selectionchange", handleSelectionChange);
 
     return () => {
-      document.removeEventListener('selectionchange', handleSelectionChange);
+      document.removeEventListener("selectionchange", handleSelectionChange);
     };
-  }, [])
+  }, []);
 
   return (
     <div className="h-screen overflow-y-hidden w-full">

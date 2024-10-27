@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 import { Resend } from "resend";
 
 export const SendMail = async (
@@ -6,23 +6,24 @@ export const SendMail = async (
   subject: string,
   Template: React.ReactNode,
 ) => {
-  const resend = new Resend(process.env.RESEND_API_KEY)
+  const resend = new Resend(process.env.RESEND_API_KEY);
   try {
     const { data, error } = await resend.emails.send({
-      from: 'docx@pbcreates.xyz',
+      from: "docx@pbcreates.xyz",
       to,
       subject,
-      react: Template
+      react: Template,
     });
 
-    if (error) return {
-      success: false,
-      error: error.message,
-    };
+    if (error)
+      return {
+        success: false,
+        error: error.message,
+      };
 
-    return { success: true, data }
+    return { success: true, data };
   } catch (e) {
     console.log(e);
     return { success: false, error: "Internal server error" };
   }
-}
+};

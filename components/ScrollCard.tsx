@@ -2,11 +2,7 @@
 import React, { useRef } from "react";
 import { useScroll, useTransform, motion, MotionValue } from "framer-motion";
 
-export const ScrollCard = ({
-  children,
-}: {
-  children: React.ReactNode;
-}) => {
+export const ScrollCard = ({ children }: { children: React.ReactNode }) => {
   const containerRef = useRef<any>(null);
   const { scrollYProgress } = useScroll({
     target: containerRef,
@@ -90,4 +86,3 @@ export const Card = ({
     </motion.div>
   );
 };
-

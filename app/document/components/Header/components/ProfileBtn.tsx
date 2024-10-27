@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
@@ -13,7 +13,7 @@ import getInitials from "@/helpers/getInitials";
 
 import { LogoutAction } from "../actions";
 
-type ProfileBtnPropType = Pick<SessionReturnType, "name" | "image">
+type ProfileBtnPropType = Pick<SessionReturnType, "name" | "image">;
 export default function ProfileBtn({ name, image }: ProfileBtnPropType) {
   const router = useRouter();
 
@@ -36,11 +36,11 @@ export default function ProfileBtn({ name, image }: ProfileBtnPropType) {
           <Avatar className="size-8 absolute transform -translate-y-full">
             <AvatarImage src={image} />
           </Avatar>
-        ) : (<></>)}
+        ) : (
+          <></>
+        )}
       </PopoverTrigger>
-      <PopoverContent
-        className="flex flex-col p-0 py-1 text-left w-min bg-white shadow-md"
-      >
+      <PopoverContent className="flex flex-col p-0 py-1 text-left w-min bg-white shadow-md">
         <Button
           // id={item.title}
           variant="ghost"
@@ -52,5 +52,5 @@ export default function ProfileBtn({ name, image }: ProfileBtnPropType) {
         </Button>
       </PopoverContent>
     </Popover>
-  )
+  );
 }

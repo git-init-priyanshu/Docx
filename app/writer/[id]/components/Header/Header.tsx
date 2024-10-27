@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import { useRouter } from "next/navigation";
 import { ALargeSmall, Redo, Undo, X } from "lucide-react";
@@ -13,7 +13,7 @@ import {
   DrawerTrigger,
 } from "@/components/ui/drawer";
 import { Button } from "@/components/ui/button";
-import logo from "@/public/logo.svg"
+import logo from "@/public/logo.svg";
 
 import Heading from "../options/format/Heading";
 import Font from "../options/format/Font";
@@ -54,7 +54,7 @@ export default function Header({ editor, name, isSaving }: HeaderPropType) {
             onClick={() => editor?.commands.undo()}
             variant="ghost"
             className="px-3 rounded-md"
-          // disabled={!editor?.can().chain().focus().undo().run()}
+            // disabled={!editor?.can().chain().focus().undo().run()}
           >
             <Undo size={15} />
           </Button>
@@ -62,7 +62,7 @@ export default function Header({ editor, name, isSaving }: HeaderPropType) {
             onClick={() => editor?.commands.redo()}
             variant="ghost"
             className="px-3 rounded-md"
-          // disabled={!editor?.can().chain().focus().redo().run()}
+            // disabled={!editor?.can().chain().focus().redo().run()}
           >
             <Redo size={15} />
           </Button>
@@ -88,8 +88,8 @@ export default function Header({ editor, name, isSaving }: HeaderPropType) {
               <div className="grid gap-4 grid-cols-12 p-4 sm:px-20">
                 <Heading editor={editor} />
                 <Font editor={editor} />
-                <FormattingBtns editor={editor} />
-                <ColorHighlight editor={editor} />
+                <FormattingBtns editor={editor} isBubbleMenuBtn={false} />
+                <ColorHighlight editor={editor} isBubbleMenuBtn={false} />
                 <ParagraphBtns editor={editor} />
               </div>
             </DrawerContent>

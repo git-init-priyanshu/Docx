@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import { useState } from "react";
 import { useParams, useRouter } from "next/navigation";
@@ -26,13 +26,13 @@ export default function ResetPassword() {
       if (passwordValidation.test(newPassword)) {
         if (newPassword !== confirmNewPassword) {
           setIsSubmitting(false);
-          return toast.error("New password and confirm password do not match.")
+          return toast.error("New password and confirm password do not match.");
         }
 
         const response = await resetPassword(params.id, newPassword);
         if (response.success) {
           toast.success(response.data);
-          router.push(`/signin`)
+          router.push(`/signin`);
           setIsSubmitting(false);
         } else {
           console.log(response.error);
@@ -47,7 +47,7 @@ export default function ResetPassword() {
       console.log(e);
       setIsSubmitting(false);
     }
-  }
+  };
   return (
     <>
       <div className="flex flex-col gap-2 text-center items-center">
@@ -57,23 +57,27 @@ export default function ResetPassword() {
           <span className="text-blue-500">Password</span>
         </h1>
       </div>
-      <form className="flex flex-col gap-2 mt-4 text-sm" onSubmit={(e) => {
-        e.preventDefault();
-        changePassword()
-      }
-      }>
+      <form
+        className="flex flex-col gap-2 mt-4 text-sm"
+        onSubmit={(e) => {
+          e.preventDefault();
+          changePassword();
+        }}
+      >
         <Label htmlFor="new-password">New password</Label>
         <Input
           value={newPassword}
           type="password"
           onChange={(e) => setNewPassword(e.target.value)}
         />
-        {isRegexError
-          ? <p className="text-red-400">
-            Password must include at least one uppercase, one lowercase, one digit, one special character, and be at least 8 characters long.
+        {isRegexError ? (
+          <p className="text-red-400">
+            Password must include at least one uppercase, one lowercase, one
+            digit, one special character, and be at least 8 characters long.
           </p>
-          : <></>
-        }
+        ) : (
+          <></>
+        )}
 
         <Label htmlFor="new-password">Confirm new password</Label>
         <Input
@@ -89,7 +93,7 @@ export default function ResetPassword() {
         >
           Change my password
         </LoaderButton>
-      </form >
+      </form>
     </>
-  )
+  );
 }

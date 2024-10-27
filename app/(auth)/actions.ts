@@ -5,7 +5,7 @@ import { z } from "zod";
 // @ts-ignore
 import bcrypt from "bcryptjs";
 // @ts-ignore
-import otpGenerator from 'otp-generator';
+import otpGenerator from "otp-generator";
 
 import prisma from "@/prisma/prismaClient";
 import EmailVerificationMailTemplate from "@/lib/mail/EmailVerificationMailTemplate";
@@ -41,7 +41,10 @@ export const SignupAction = async (data: z.infer<typeof signupSchema>) => {
     };
     const authToken = await generateJWT(jwtPayload);
 
-    const otp = otpGenerator.generate(6, { upperCaseAlphabets: false, specialChars: false });
+    const otp = otpGenerator.generate(6, {
+      upperCaseAlphabets: false,
+      specialChars: false,
+    });
     const expiryDate = new Date();
     expiryDate.setHours(expiryDate.getHours() + 24); // Setting expiry of 24 hours
 
@@ -66,10 +69,10 @@ export const SignupAction = async (data: z.infer<typeof signupSchema>) => {
     // Send mail for email verification
     const mail = await SendMail(
       data.email,
-      'DocX | OTP verification',
-      EmailVerificationMailTemplate({ verifyCode: otp })
+      "DocX | OTP verification",
+      EmailVerificationMailTemplate({ verifyCode: otp }),
     );
-    if (!mail.success) return { success: false, error: mail.error }
+    if (!mail.success) return { success: false, error: mail.error };
 
     return { success: true, data: authToken };
   } catch (e) {
@@ -127,41 +130,37 @@ export const SigninAction = async (data: z.infer<typeof signinSchema>) => {
 };
 
 const ExpireOtp = async (user: User, isVerified: boolean) => {
-  if (!user.verifyCodeExpiry) throw new Error;
+  if (!user.verifyCodeExpiry) throw new Error();
 
   const expiredDate = new Date();
-  expiredDate.setHours(user.verifyCodeExpiry.getHours() - 24)
+  expiredDate.setHours(user.verifyCodeExpiry.getHours() - 24);
 
   await prisma.user.update({
     where: { email: user.email },
     data: {
       isVerified,
-      verifyCodeExpiry: expiredDate
-    }
-  })
-}
+      verifyCodeExpiry: expiredDate,
+    },
+  });
+};
 
 export const verifyEmail = async (inputOtp: string, userEmail: string) => {
   let errorMsg = "";
 
   try {
-    const user = await prisma.user.findFirst({ where: { email: userEmail } })
+    const user = await prisma.user.findFirst({ where: { email: userEmail } });
     if (!user) {
       errorMsg = "User does not exist";
-    }
-    else if (user.isVerified) {
+    } else if (user.isVerified) {
       await ExpireOtp(user, false);
       errorMsg = "User already verified";
-    }
-    else if (!user.verifyCode || !user.verifyCodeExpiry) {
+    } else if (!user.verifyCode || !user.verifyCodeExpiry) {
       await ExpireOtp(user, false);
       errorMsg = "OTP not sent to the user's mail";
-    }
-    else if (user.verifyCodeExpiry < new Date()) {
+    } else if (user.verifyCodeExpiry < new Date()) {
       await ExpireOtp(user, false);
       errorMsg = "OTP expired";
-    }
-    else if (user.verifyCode === inputOtp) {
+    } else if (user.verifyCode === inputOtp) {
       await ExpireOtp(user, false);
 
       const jwtPayload = {
@@ -177,33 +176,34 @@ export const verifyEmail = async (inputOtp: string, userEmail: string) => {
       return { success: true, data: "Email successfully verified" };
     } else {
       await ExpireOtp(user, false);
-      errorMsg = "Wrong OTP"
+      errorMsg = "Wrong OTP";
     }
-    return { success: false, error: errorMsg }
+    return { success: false, error: errorMsg };
   } catch (e) {
     console.log(e);
     return { success: false, error: "Internal server error" };
   }
-}
+};
 
 export const resendVerifyCode = async (userEmail: string) => {
   let errorMsg = "";
 
   try {
-    const user = await prisma.user.findFirst({ where: { email: userEmail } })
+    const user = await prisma.user.findFirst({ where: { email: userEmail } });
     if (!user) {
       errorMsg = "User does not exist";
-    }
-    else if (user.isVerified) {
+    } else if (user.isVerified) {
       await ExpireOtp(user, false);
       errorMsg = "User already verified";
-    }
-    else {
+    } else {
       // Expire the previous otp
       await ExpireOtp(user, false);
 
       // Generate new otp
-      const otp = otpGenerator.generate(6, { upperCaseAlphabets: false, specialChars: false });
+      const otp = otpGenerator.generate(6, {
+        upperCaseAlphabets: false,
+        specialChars: false,
+      });
       const expiryDate = new Date();
       expiryDate.setHours(expiryDate.getHours() + 24); // Setting expiry of 24 hours
 
@@ -218,19 +218,19 @@ export const resendVerifyCode = async (userEmail: string) => {
       // Sending mail
       const mail = await SendMail(
         userEmail,
-        'DocX | OTP verification',
-        EmailVerificationMailTemplate({ verifyCode: otp })
+        "DocX | OTP verification",
+        EmailVerificationMailTemplate({ verifyCode: otp }),
       );
-      if (!mail.success) return { success: false, error: mail.error }
+      if (!mail.success) return { success: false, error: mail.error };
 
-      return { success: true, data: "Verification code sent to the mail." }
+      return { success: true, data: "Verification code sent to the mail." };
     }
-    return { success: false, error: errorMsg }
+    return { success: false, error: errorMsg };
   } catch (e) {
     console.log(e);
     return { success: false, error: "Internal server error" };
   }
-}
+};
 
 export const sendResetPasswordMail = async (userEmail: string) => {
   try {
@@ -248,17 +248,19 @@ export const sendResetPasswordMail = async (userEmail: string) => {
     const baseURL = process.env.APP_URL;
     const mail = await SendMail(
       userEmail,
-      'DocX | Reset Password',
-      PasswordResetMailTemplate({ resetPasswordLink: `${baseURL}/reset-password/${user.id}` })
+      "DocX | Reset Password",
+      PasswordResetMailTemplate({
+        resetPasswordLink: `${baseURL}/reset-password/${user.id}`,
+      }),
     );
-    if (!mail.success) return { success: false, error: mail.error }
+    if (!mail.success) return { success: false, error: mail.error };
 
     return { success: true, data: "Reset password link sent to the mail." };
   } catch (e) {
     console.log(e);
     return { success: false, error: "Internal server error" };
   }
-}
+};
 
 export const resetPassword = async (userId: any, newPassword: string) => {
   try {
@@ -279,12 +281,12 @@ export const resetPassword = async (userId: any, newPassword: string) => {
 
     await prisma.user.update({
       where: { id: userId },
-      data: { password: hashedPassword }
-    })
+      data: { password: hashedPassword },
+    });
 
     return { success: true, data: "Password reset successfully." };
   } catch (e) {
     console.log(e);
     return { success: false, error: "Internal server error" };
   }
-}
+};

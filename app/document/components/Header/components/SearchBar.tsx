@@ -28,13 +28,12 @@ type SearchResponse = {
 export default function SearchBar() {
   const router = useRouter();
 
-  const debounce = useDebounce(
-    async (value: string) => {
-      if (!searchValue) return;
-      setIsSearching(true);
-      setSearchResponse(await SearchDocAction(value));
-      setIsSearching(false);
-    }, 500);
+  const debounce = useDebounce(async (value: string) => {
+    if (!searchValue) return;
+    setIsSearching(true);
+    setSearchResponse(await SearchDocAction(value));
+    setIsSearching(false);
+  }, 500);
 
   const searchedResponseRef = useRef<HTMLDivElement>(null);
 
@@ -66,10 +65,11 @@ export default function SearchBar() {
     >
       <div className="relative">
         <Input
-          className={`${isFocused && searchResponse
-            ? "rounded-t-3xl rounded-b-none"
-            : "rounded-full"
-            } px-8 `}
+          className={`${
+            isFocused && searchResponse
+              ? "rounded-t-3xl rounded-b-none"
+              : "rounded-full"
+          } px-8 `}
           onFocus={() => setIsFocused(true)}
           value={searchValue}
           onChange={(e) => {
@@ -87,15 +87,17 @@ export default function SearchBar() {
         <X
           size={20}
           onClick={() => setSearchValue("")}
-          className={`${!searchValue ? "hidden" : ""
-            } absolute text-slate-500 right-0 top-1/2 transform -translate-y-1/2 mr-2 cursor-pointer`}
+          className={`${
+            !searchValue ? "hidden" : ""
+          } absolute text-slate-500 right-0 top-1/2 transform -translate-y-1/2 mr-2 cursor-pointer`}
         />
       </div>
 
       <div
         ref={searchedResponseRef}
-        className={`${isFocused && searchResponse ? "block" : "hidden"
-          } absolute shadow-md overflow-hidden border border-t-0 bg-white w-full md:w-full rounded-b-3xl`}
+        className={`${
+          isFocused && searchResponse ? "block" : "hidden"
+        } absolute shadow-md overflow-hidden border border-t-0 bg-white w-full md:w-full rounded-b-3xl`}
       >
         {isSearching ? (
           <div className="p-3 flex items-center gap-2 justify-center text-center text-neutral-500">

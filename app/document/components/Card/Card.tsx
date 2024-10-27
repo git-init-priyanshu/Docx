@@ -35,7 +35,7 @@ export default function DocCard({
   const debounce = useDebounce(async () => {
     if (!inputRef.current || !session?.id) return;
     await RenameDocument(docId, inputRef.current.value);
-  }, 1000)
+  }, 1000);
 
   const session = useClientSession();
   localStorage.setItem("name", session.name as string);

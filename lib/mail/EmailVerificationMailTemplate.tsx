@@ -42,8 +42,8 @@ export const EmailVerificationMailTemplate = ({
         </Section>
 
         <Text style={text}>
-          If you didn&apos;t request this email, there&apos;s nothing to worry about, you
-          can safely ignore it.
+          If you didn&apos;t request this email, there&apos;s nothing to worry
+          about, you can safely ignore it.
         </Text>
       </Container>
     </Body>

@@ -37,15 +37,15 @@ export const PasswordResetMailTemplate = ({
         <Heading style={h1}>Reset your Password.</Heading>
         <Text style={text}>Hi,</Text>
         <Text style={text}>
-          Someone recently requested a password change for your DocX
-          account. If this was you, you can set a new password here:
+          Someone recently requested a password change for your DocX account. If
+          this was you, you can set a new password here:
         </Text>
         <Button style={button} href={resetPasswordLink}>
           Reset password
         </Button>
         <Text style={text}>
-          If you didn&apos;t request this email, there&apos;s nothing to worry about, you
-          can safely ignore it.
+          If you didn&apos;t request this email, there&apos;s nothing to worry
+          about, you can safely ignore it.
         </Text>
       </Container>
     </Body>

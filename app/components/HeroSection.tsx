@@ -1,16 +1,16 @@
 import Link from "next/link";
 import Image from "next/image";
-import { Montserrat_Alternates as Montserrat } from "next/font/google"
+import { Montserrat_Alternates as Montserrat } from "next/font/google";
 
 import logo from "@/public/logo.svg";
-import editor from "@/public/editor.png"
-import documents from "@/public/documents.png"
+import editor from "@/public/editor.png";
+import documents from "@/public/documents.png";
 
 const roboto = Montserrat({
   weight: "500",
   style: "normal",
-  subsets: ["cyrillic"]
-})
+  subsets: ["cyrillic"],
+});
 export default function HeroSection() {
   return (
     <>
@@ -18,7 +18,11 @@ export default function HeroSection() {
       <nav className="absolute top-5 flex w-full justify-between items-center px-4 md:px-6 lg:px-6 2xl:px-20">
         <div className="flex z-10 gap-2 items-end justify-center">
           <Image src={logo} width={45} alt="logo" />
-          <p className={`${roboto.className} hidden sm:block text-lg text-neutral-600`}>DocX</p>
+          <p
+            className={`${roboto.className} hidden sm:block text-lg text-neutral-600`}
+          >
+            DocX
+          </p>
         </div>
         <div className="flex gap-4 z-10">
           <Link
@@ -44,15 +48,16 @@ export default function HeroSection() {
               <h1 className="text-3xl pt-4 font-bold tracking-tighter sm:text-5xl xl:text-6xl/none text-transparent bg-clip-text bg-gradient-to-br from-neutral-500 to-neutral-800">
                 <span className="flex justify-center">
                   <p>Unlock the&nbsp;</p>
-                  <p className="text-blue-500 relative">Power
+                  <p className="text-blue-500 relative">
+                    Power
                     <span className="absolute inset-x-0 w-3/2 mx-auto -bottom-px bg-gradient-to-r from-transparent via-blue-500 to-transparent  h-px" />
                   </p>
                 </span>
                 <p className="pt-2 pb-4">of Collaborative Editing</p>
               </h1>
               <p className="max-w-[600px] text-muted-foreground md:text-xl">
-                DocX is an open-source Google Docs alternative that empowers teams to create, edit, and share
-                documents seamlessly.
+                DocX is an open-source Google Docs alternative that empowers
+                teams to create, edit, and share documents seamlessly.
               </p>
             </div>
             <div className="flex justify-center flex-col gap-2 min-[400px]:flex-row">
@@ -87,5 +92,5 @@ export default function HeroSection() {
         </div>
       </section>
     </>
-  )
+  );
 }

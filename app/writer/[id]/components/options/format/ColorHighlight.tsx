@@ -11,13 +11,20 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { Input } from "@/components/ui/input";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger } from "@/components/ui/dropdown";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown";
 
 type ColorHighlightPropType = {
   editor: Editor | null;
-  isBubbleMenuBtn: boolean
-}
-export default function ColorHighlight({ editor, isBubbleMenuBtn }: ColorHighlightPropType) {
+  isBubbleMenuBtn: boolean;
+};
+export default function ColorHighlight({
+  editor,
+  isBubbleMenuBtn,
+}: ColorHighlightPropType) {
   const colorPopoverRef = useRef<HTMLDivElement>(null);
   const bgPopoverRef = useRef<HTMLDivElement>(null);
 
@@ -41,8 +48,7 @@ export default function ColorHighlight({ editor, isBubbleMenuBtn }: ColorHighlig
     if (
       (colorPopoverRef.current &&
         !colorPopoverRef.current.contains(e.target)) ||
-      (bgPopoverRef.current &&
-        !bgPopoverRef.current.contains(e.target))
+      (bgPopoverRef.current && !bgPopoverRef.current.contains(e.target))
     ) {
       setIsColorPopoverOpen(false);
       setIsBgPopoverOpen(false);
@@ -56,7 +62,9 @@ export default function ColorHighlight({ editor, isBubbleMenuBtn }: ColorHighlig
   }, []);
 
   return (
-    <div className={`flex items-center cursor-pointer rounded w-fit ${isBubbleMenuBtn ? "gap-1" : "border col-span-6 sm:col-span-4 lg:mb-0"}`}>
+    <div
+      className={`flex items-center cursor-pointer rounded w-fit ${isBubbleMenuBtn ? "gap-1" : "border col-span-6 sm:col-span-4 lg:mb-0"}`}
+    >
       <Baseline
         size={35}
         color={fontColor}

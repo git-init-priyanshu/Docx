@@ -26,7 +26,7 @@ export const paragraphBtns = [
 export const BulletBtns = [
   { Icon: List, key: "list" },
   { Icon: ListOrdered, key: "ordered_list" },
-]
+];
 export const fontFamily = [
   { title: "Inter", font: "Inter" },
   { title: "Comic Sans", font: "Comic Sans MS, Comic Sans" },

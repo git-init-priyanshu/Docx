@@ -9,11 +9,11 @@ export default function useDebounce<D>(
 
   useEffect(() => {
     callbackRef.current = callbackFunction;
-  }, [callbackFunction ]);
+  }, [callbackFunction]);
 
   const debounceFunc = useMemo(
     () => debounce((value: D) => callbackRef.current(value), debounceDelay),
-    [debounceDelay]
+    [debounceDelay],
   );
 
   return debounceFunc;

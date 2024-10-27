@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useState } from "react";
 import type { Editor } from "@tiptap/react";
 
 import AskAI from "./AskAI";
@@ -7,16 +7,16 @@ import ColorHighlight from "../options/format/ColorHighlight";
 import FormattingBtns from "../options/format/FormattingBtns";
 
 type BubbleMenuPropType = {
-  editor: Editor | null,
-  isHighlighted: boolean,
-  bubblePosition: { x: number, y: number }
-  generativeTextBubblePosition: { x: number, y: number, width: number }
+  editor: Editor | null;
+  isHighlighted: boolean;
+  bubblePosition: { x: number; y: number };
+  generativeTextBubblePosition: { x: number; y: number; width: number };
 };
 export default function BubbleMenuComp({
   editor,
   isHighlighted,
   bubblePosition,
-  generativeTextBubblePosition
+  generativeTextBubblePosition,
 }: BubbleMenuPropType) {
   const [isAiActive, setIsAiActive] = useState(false);
   const [isGeneratingText, setIsGeneratingText] = useState(false);
@@ -51,5 +51,5 @@ export default function BubbleMenuComp({
         position={generativeTextBubblePosition}
       />
     </>
-  )
+  );
 }

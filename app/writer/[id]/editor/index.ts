@@ -1,10 +1,10 @@
-"use client"
+"use client";
 
 import { useEffect, useState, useCallback } from "react";
 import { useParams } from "next/navigation";
 import { useEditor } from "@tiptap/react";
 import { toast } from "sonner";
-import type { Document} from "@prisma/client";
+import type { Document } from "@prisma/client";
 import html2canvas from "html2canvas";
 import Collaboration from "@tiptap/extension-collaboration";
 import CollaborationCursor from "@tiptap/extension-collaboration-cursor";
@@ -17,7 +17,7 @@ import { GetDocDetails, UpdateDocData, UpdateThumbnail } from "../actions";
 
 type EditorPropType = {
   setIsSaving: React.Dispatch<React.SetStateAction<boolean>>;
-}
+};
 export const Editor = ({ setIsSaving }: EditorPropType) => {
   const params = useParams();
 
@@ -30,7 +30,7 @@ export const Editor = ({ setIsSaving }: EditorPropType) => {
   useEffect(() => {
     setName(localStorage.getItem("name") || "");
     setIsFirstLoad(false);
-  }, [])
+  }, []);
 
   useEffect(() => {
     // Update status changes
@@ -124,11 +124,7 @@ export const Editor = ({ setIsSaving }: EditorPropType) => {
   // Save current user to localStorage and emit to editor
   useEffect(() => {
     if (editor) {
-      editor
-        .chain()
-        .focus()
-        .updateUser({ name })
-        .run();
+      editor.chain().focus().updateUser({ name }).run();
     }
   }, [editor, name]);
 
