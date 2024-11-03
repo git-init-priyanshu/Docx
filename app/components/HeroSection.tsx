@@ -1,10 +1,12 @@
 import Link from "next/link";
 import Image from "next/image";
 import { Montserrat_Alternates as Montserrat } from "next/font/google";
+import * as motion from "framer-motion/client";
 
 import logo from "@/public/logo.svg";
 import editor from "@/public/editor.png";
 import documents from "@/public/documents.png";
+import LoopWords from "@/components/LoopWords";
 
 const roboto = Montserrat({
   weight: "500",
@@ -16,15 +18,40 @@ export default function HeroSection() {
     <>
       <div className="glow"></div>
       <nav className="absolute top-5 flex w-full justify-between items-center px-4 md:px-6 lg:px-6 2xl:px-20">
-        <div className="flex z-10 gap-2 items-end justify-center">
+        <div
+          className="flex z-10 gap-2 items-end justify-center overflow-hidden"
+        >
           <Image src={logo} width={45} alt="logo" />
-          <p
-            className={`${roboto.className} hidden sm:block text-lg text-neutral-600`}
-          >
-            DocX
-          </p>
+          <div className="overflow-hidden">
+            <motion.p
+              initial={{
+                x: -100,
+                opacity: 0
+              }}
+              animate={{
+                x: 0,
+                opacity: 100
+              }}
+              transition={{
+                duration: 0.4,
+                ease: "easeInOut"
+              }}
+              className={`${roboto.className} hidden sm:block text-lg text-neutral-600 `}
+            >
+              DocX
+            </motion.p>
+          </div>
+
         </div>
-        <div className="flex gap-4 z-10">
+        <motion.div
+          className="flex gap-4 z-10"
+          initial={{
+            y: -100
+          }}
+          animate={{
+            y: 0
+          }}
+        >
           <Link
             href="/signin"
             className="z-10 inline-flex h-10 items-center justify-center rounded-md border border-input bg-background px-4 sm:px-8 text-sm font-medium shadow-sm transition-colors hover:bg-accent hover:text-accent-foreground hover:border-blue-200 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
@@ -39,8 +66,8 @@ export default function HeroSection() {
           >
             Signup
           </Link>
-        </div>
-      </nav>
+        </motion.div>
+      </nav >
       <section className="relative w-full bg-background p-40 px-4 md:px-6 lg:px-6 2xl:px-20">
         <div className="container flex items-center justify-center text-center w-full px-4 md:mt-40 md:px-6 lg:mt-0 md:mb-[10rem] lg:mb-[15rem] xl:mb-[20rem] 2xl:mb-[25rem] 3xl:mb-[30rem]">
           <div className="relative flex flex-col justify-center space-y-4">
@@ -48,15 +75,15 @@ export default function HeroSection() {
               <h1 className="text-3xl pt-4 font-bold tracking-tighter sm:text-5xl xl:text-6xl/none text-transparent bg-clip-text bg-gradient-to-br from-neutral-500 to-neutral-800">
                 <span className="flex justify-center">
                   <p>Unlock the&nbsp;</p>
-                  <p className="text-blue-500 relative">
-                    Power
-                    <span className="absolute inset-x-0 w-3/2 mx-auto -bottom-px bg-gradient-to-r from-transparent via-blue-500 to-transparent  h-px" />
-                  </p>
+                  <div className="text-blue-500 overflow-hidden w-40 sm:w-52 md:w-56 lg:w-60 xl:w-64 relative ">
+                    <LoopWords words={["Power", "Potential", "Magic" ]} />
+                    <span className="absolute inset-x-0 w-3/2 mx-auto bottom-[2px] bg-gradient-to-r from-transparent via-blue-500 to-transparent h-px" />
+                  </div>
                 </span>
-                <p className="pt-2 pb-4">of Collaborative Editing</p>
+                <p className="pt-2 pb-4">of AI-Driven Editing.</p>
               </h1>
-              <p className="max-w-[600px] text-muted-foreground md:text-xl">
-                DocX is an open-source Google Docs alternative that empowers
+              <p className="max-w-[650px] text-muted-foreground md:text-xl">
+                DocX is an open-source AI powered alternative to Google Docs that empowers
                 teams to create, edit, and share documents seamlessly.
               </p>
             </div>
