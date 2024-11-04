@@ -62,7 +62,7 @@ export default function FeaturesSection() {
   return (
     <section
       id="features"
-      className="w-full py-12 md:py-24 lg:py-32 border-t bg-slate-50"
+      className="w-full bg-slate-50"
     >
       <div className="container px-4 mt-10 md:px-6 md:mt-52 ">
         <div className="flex flex-col items-center justify-center space-y-4 text-center">
