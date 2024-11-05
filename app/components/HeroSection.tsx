@@ -92,7 +92,7 @@ export default function HeroSection() {
                 animate="visible"
                 transition={{
                   opacity: { duration: 0.2 },
-                  y: { duration: 1 }
+                  y: { duration: 1 },
                 }}
                 className="text-3xl pt-4 font-bold tracking-tighter sm:text-5xl xl:text-6xl/none text-transparent bg-clip-text bg-gradient-to-br from-neutral-500 to-neutral-800"
               >
