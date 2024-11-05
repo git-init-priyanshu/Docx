@@ -31,6 +31,8 @@ export default function BubbleMenuComp({
       >
         <div className="flex gap-1 p-2 shadow-md bg-neutral-50 ">
           <AskAI
+            isHighlighted={isHighlighted}
+            isAiActive={isAiActive}
             setIsAiActive={setIsAiActive}
             setIsGeneratingText={setIsGeneratingText}
             setGenerativeTextResult={setGenerativeTextResult}

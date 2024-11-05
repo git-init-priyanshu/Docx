@@ -149,7 +149,7 @@ export default function GeneratedText({
             </div>
             {generativeTextResult}
           </DropdownMenuTrigger>
-          <DropdownMenuContent className="bg-neutral-50 w-full mt-2 ">
+          <DropdownMenuContent className={`bg-neutral-50 w-full mt-2 ${isAiActive ? "block" : "hidden"}`}>
             <DropdownMenuItem className="flex gap-2 w-full justify-start items-center rounded-md text-sm hover:bg-slate-100 p-1 px-2 cursor-default">
               <Check size={15} />
               <span onClick={() => handleAiResponse("accept")}>Accept</span>
