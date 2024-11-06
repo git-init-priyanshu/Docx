@@ -1,4 +1,3 @@
-import { cn } from "@/lib/utils";
 import {
   BadgeCheck,
   BadgeIndianRupee,
@@ -9,6 +8,9 @@ import {
   Users,
   Zap,
 } from "lucide-react";
+import * as motion from "framer-motion/client";
+
+import { cn } from "@/lib/utils";
 
 export default function FeaturesSection() {
   const features = [
@@ -62,19 +64,33 @@ export default function FeaturesSection() {
   return (
     <section
       id="features"
-      className="w-full bg-slate-50"
+      className="w-full border-t bg-white"
     >
-      <div className="container px-4 mt-10 md:px-6 md:mt-52 ">
+      <div className="container px-4 md:px-6 md:mt-20 ">
         <div className="flex flex-col items-center justify-center space-y-4 text-center">
           <div className="space-y-2">
-            <h2 className="text-3xl font-bold tracking-tighter sm:text-5xl">
+            <motion.h2
+              initial="hidden"
+              whileInView="visible"
+              variants={FeaturesVariant}
+              transition={{ delay: 0.2, duration: 0.4 }}
+              viewport={{ once: true }}
+              className="text-3xl font-bold tracking-tighter sm:text-5xl"
+            >
               <span className="text-black">Key&nbsp;</span>
               <span className="text-blue-500">Features</span>
-            </h2>
-            <p className="max-w-[900px] text-muted-foreground md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
+            </motion.h2>
+            <motion.p
+              initial="hidden"
+              whileInView="visible"
+              variants={FeaturesVariant}
+              transition={{ delay: 0.2, duration: 0.4 }}
+              viewport={{ once: true }}
+              className="max-w-[900px] text-muted-foreground md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed"
+            >
               DocX empowers teams to work together seamlessly, with real-time
               editing, version control, and intuitive commenting tools.
-            </p>
+            </motion.p>
           </div>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 relative z-10 py-10 max-w-7xl mx-auto">
@@ -128,3 +144,15 @@ const Feature = ({
     </div>
   );
 };
+
+const FeaturesVariant = {
+  hidden: {
+    y: 20,
+    opacity: 0
+  }
+  ,
+  visible: {
+    y: 0,
+    opacity: 1
+  }
+}
