@@ -1,5 +1,6 @@
 "use client"
 
+import { useCallback, useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 import Image from "next/image";
 
@@ -18,10 +19,20 @@ const images = [
 ]
 export default function DynamicImage() {
   const url = usePathname();
-  const image = images.find((e) => e.path === url.split("/")[1])?.image || "";
+
+  const getImageFromRoute = useCallback(() => {
+    return images.find((e) => e.path === url.split("/")[1])?.image || ""
+  }, [url])
+
+  const [currentImage, setCurrentImage] = useState(getImageFromRoute());
+
+  useEffect(() => {
+    setCurrentImage(getImageFromRoute());
+  }, [getImageFromRoute, url])
+
   return (
     <Image
-      src={image}
+      src={currentImage}
       alt="Image"
       className="h-full w-full dark:brightness-[0.2] dark:grayscale bg-white"
     />

@@ -1,7 +1,7 @@
 "use client"
 
 import Image from "next/image";
-import { Suspense, useRef } from "react";
+import { useRef } from "react";
 import {
   motion,
   useScroll,
@@ -25,7 +25,7 @@ export default function HeroImage() {
   const videoProgress = useTransform(scrollYProgress, [0, 1], ["0%", "-40%"])
 
   return (
-    <div ref={containerRef} className="hidden sm:grid pt-20 place-items-center">
+    <div ref={containerRef} className="grid pt-20 place-items-center">
 
       <motion.h2
         className="text-xl sm:text-2xl md:text-3xl lg:text-4xl 2xl:text-5xl z-[-5] text-center font-bold text-neutral-600"
@@ -38,7 +38,7 @@ export default function HeroImage() {
 
       <motion.div
         style={{ y: videoProgress }}
-        className="w-[70%] sm:mt-36 md:mt-48 lg:mt-64 border rounded-lg shadow-lg "
+        className="w-[100%] sm:w-[82%] lg:w-[70%] mt-28 sm:mt-36 md:mt-48 lg:mt-64 border rounded-lg shadow-lg "
       >
         <motion.div
           className="shimmer absolute h-[1.5px] w-[20%] bg-white left-[30%] transform -translate-x-1/2 "
@@ -80,7 +80,7 @@ export default function HeroImage() {
             playsInline
             preload="auto"
             poster={Poster.src}
-            className="cursor-auto w-full h-full rounded-md shadow-lg z-10 "
+            className="cursor-auto w-full h-full rounded-md shadow-lg z-10"
           >
             <source src="https://utfs.io/f/LdDzZPI8fQBxuaJqilab6xNMD8AjkOU2RVI1zTuyBQLaHdP4" type="video/mp4" />
           </video>
@@ -98,7 +98,7 @@ export default function HeroImage() {
             <Image
               src={Toolbar}
               alt="Toolbar"
-              className="rounded-md"
+              className="hidden sm:block rounded-md"
             />
           </motion.div>
           <motion.div
@@ -114,7 +114,7 @@ export default function HeroImage() {
             <Image
               src={Mobile}
               alt="Mobile"
-              className="rounded-md"
+              className="hidden sm:block rounded-md"
             />
           </motion.div>
         </div>

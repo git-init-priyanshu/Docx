@@ -1,11 +1,11 @@
 import {
   BadgeCheck,
-  BadgeIndianRupee,
   Cloud,
   Github,
   LogIn,
   SquarePen,
   Users,
+  Wand,
   Zap,
 } from "lucide-react";
 import * as motion from "framer-motion/client";
@@ -21,22 +21,22 @@ export default function FeaturesSection() {
       icon: <Github />,
     },
     {
-      title: "Free to use",
+      title: "AI powered",
       description:
-        "Available at no cost, providing full access without any hidden fees or charges.",
-      icon: <BadgeIndianRupee />,
-    },
-    {
-      title: "Ease of use",
-      description:
-        "Simple and intuitive design that makes it effortless to navigate and use, even for beginners.",
-      icon: <SquarePen />,
+        "Leverage advanced AI capabilities, offering intelligent assistance and seamless automation without additional costs",
+      icon: <Wand />,
     },
     {
       title: "Real-Time Collaboration ",
       description:
         "Multiple users can edit the same document simultaneously, with changes syncing in real-time.",
       icon: <Users />,
+    },
+    {
+      title: "Ease of use",
+      description:
+        "Simple and intuitive design that makes it effortless to navigate and use, even for beginners.",
+      icon: <SquarePen />,
     },
     {
       title: "100% Uptime guarantee",
