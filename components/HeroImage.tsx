@@ -5,6 +5,7 @@ import { useRef } from "react";
 import {
   motion,
   useScroll,
+  useSpring,
   useTransform
 } from "framer-motion";
 
@@ -20,9 +21,18 @@ export default function HeroImage() {
     offset: ["0 1", "0.8 1"]
   });
 
-  const opacityProgress = useTransform(scrollYProgress, [0, 1], [0, 1]);
-  const textProgress = useTransform(scrollYProgress, [0, 1], ["0%", "-5%"])
-  const videoProgress = useTransform(scrollYProgress, [0, 1], ["0%", "-40%"])
+  const opacityProgress = useTransform(scrollYProgress, [0, 1], [0, 2]);
+  const textProgress = useTransform(scrollYProgress, [0, 1], ["50%", "-20%"])
+  const videoProgress = useTransform(scrollYProgress, [0, 1], ["0%", "-250%"])
+
+  const textSpringProgress = useSpring(textProgress, {
+    stiffness: 200,
+    damping: 60,
+  })
+  const videoSpringProgress = useSpring(videoProgress, {
+    stiffness: 100,
+    damping: 20,
+  })
 
   return (
     <div ref={containerRef} className="grid pt-20 place-items-center">
@@ -30,14 +40,14 @@ export default function HeroImage() {
       <motion.h2
         className="text-xl sm:text-2xl md:text-3xl lg:text-4xl 2xl:text-5xl z-[-5] text-center font-bold text-neutral-600"
         style={{
-          y: textProgress,
+          y: textSpringProgress,
           opacity: opacityProgress,
         }}
       >Seamless <span className="text-blue-500">Collaboration </span>with<br /> Intuitive Interface.
       </motion.h2>
 
       <motion.div
-        style={{ y: videoProgress }}
+        style={{ y: videoSpringProgress }}
         className="w-[100%] sm:w-[82%] lg:w-[70%] mt-28 sm:mt-36 md:mt-48 lg:mt-64 border rounded-lg shadow-lg "
       >
         <motion.div

@@ -10,8 +10,8 @@ export default function Component() {
       <main className="flex-1">
         <HeroSection />
         <FeaturesSection />
-        <AboutSection />
-        <ContactSection />
+        {/* <AboutSection /> */}
+        {/* <ContactSection /> */}
         <Footer />
       </main>
     </div>
