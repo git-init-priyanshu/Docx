@@ -19,8 +19,8 @@ import { generateText } from "../../actions";
 import { generateTextOptions } from "./generateTextConfig";
 
 type AskAIPropType = {
-  isHighlighted: boolean,
-  isAiActive: boolean,
+  isHighlighted: boolean;
+  isAiActive: boolean;
   setIsAiActive: React.Dispatch<React.SetStateAction<boolean>>;
   setIsGeneratingText: React.Dispatch<React.SetStateAction<boolean>>;
   setGenerativeTextResult: React.Dispatch<React.SetStateAction<string>>;
@@ -66,7 +66,9 @@ export default function AskAI({
             Ask AI
           </Button>
         </DropdownMenuTrigger>
-        <DropdownMenuContent className={`w-56 ${isHighlighted && !isAiActive ? "block" : "hidden"}`}>
+        <DropdownMenuContent
+          className={`w-56 ${isHighlighted && !isAiActive ? "block" : "hidden"}`}
+        >
           <DropdownMenuGroup>
             <DropdownMenuLabel className="font-medium text-neutral-400">
               Suggested

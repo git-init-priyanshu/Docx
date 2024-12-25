@@ -19,7 +19,8 @@ export default function Navbar() {
         transition={{ duration: 2 }}
         className="absolute w-full h-52 top-[-18%] left-[50%] transform -translate-x-[50%] blur-[100px] z-10"
         style={{
-          background: "radial-gradient(circle, rgba(0, 102, 255, 0.3) 70%, transparent 80%)"
+          background:
+            "radial-gradient(circle, rgba(0, 102, 255, 0.3) 70%, transparent 80%)",
         }}
       ></motion.div>
       <nav className="absolute top-5 flex w-full justify-between items-center px-4 md:px-6 lg:px-6 2xl:px-20">
@@ -35,31 +36,30 @@ export default function Navbar() {
             <motion.p
               initial={{
                 x: -100,
-                opacity: 0
+                opacity: 0,
               }}
               animate={{
                 x: 0,
-                opacity: 100
+                opacity: 100,
               }}
               transition={{
                 delay: 0.5,
                 duration: 0.4,
-                ease: "easeInOut"
+                ease: "easeInOut",
               }}
               className={`${roboto.className} hidden sm:block text-lg text-neutral-600 `}
             >
               DocX
             </motion.p>
           </div>
-
         </motion.div>
         <motion.div
           className="flex gap-4 z-10"
           initial={{
-            y: -100
+            y: -100,
           }}
           animate={{
-            y: 0
+            y: 0,
           }}
           transition={{ delay: 0.5 }}
         >
@@ -78,19 +78,18 @@ export default function Navbar() {
             Signup
           </Link>
         </motion.div>
-      </nav >
+      </nav>
     </>
-  )
+  );
 }
 
 const NavVariant = {
   hidden: {
     y: 10,
-    opacity: 0
-  }
-  ,
+    opacity: 0,
+  },
   visible: {
     y: 0,
-    opacity: 1
-  }
-}
+    opacity: 1,
+  },
+};

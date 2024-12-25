@@ -11,9 +11,7 @@ export default function HeroSection() {
     <>
       <Navbar />
 
-      <section 
-        className="flex items-center h-screen w-full bg-background border-b overflow-hidden"
-      >
+      <section className="flex items-center h-screen w-full bg-background border-b overflow-hidden">
         <GridBg />
         <div className="flex items-center justify-center text-center w-full px-4 md:mt-40 md:px-6 lg:mt-0 ">
           <div className="relative flex flex-col justify-center space-y-4">
@@ -44,12 +42,12 @@ export default function HeroSection() {
                 transition={{
                   delay: 1,
                   opacity: { duration: 0.2 },
-                  y: { duration: 1 }
+                  y: { duration: 1 },
                 }}
                 className="max-w-[650px] text-muted-foreground md:text-xl"
               >
-                DocX is an open-source AI powered alternative to Google Docs that empowers
-                teams to create, edit, and collaborate seamlessly.
+                DocX is an open-source AI powered alternative to Google Docs
+                that empowers teams to create, edit, and collaborate seamlessly.
               </motion.p>
             </div>
             <motion.div
@@ -59,7 +57,7 @@ export default function HeroSection() {
               transition={{
                 delay: 1,
                 opacity: { duration: 0.2 },
-                y: { duration: 1 }
+                y: { duration: 1 },
               }}
               className="flex justify-center flex-col gap-8 min-[400px]:flex-row"
             >
@@ -80,7 +78,7 @@ export default function HeroSection() {
             </motion.div>
           </div>
         </div>
-      </section >
+      </section>
 
       <HeroImage />
     </>
@@ -90,11 +88,10 @@ export default function HeroSection() {
 const HeroVariant = {
   hidden: {
     y: 10,
-    opacity: 0
-  }
-  ,
+    opacity: 0,
+  },
   visible: {
     y: 0,
-    opacity: 1
-  }
-}
+    opacity: 1,
+  },
+};

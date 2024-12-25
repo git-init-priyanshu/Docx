@@ -1,15 +1,10 @@
-"use client"
+"use client";
 
 import Image from "next/image";
 import { useRef } from "react";
 import { Montserrat_Alternates as Montserrat } from "next/font/google";
 import { Github, Star } from "lucide-react";
-import {
-  motion,
-  useScroll,
-  useSpring,
-  useTransform
-} from "framer-motion";
+import { motion, useScroll, useSpring, useTransform } from "framer-motion";
 
 import logo from "@/public/logo.svg";
 
@@ -23,10 +18,10 @@ export default function Footer() {
 
   const { scrollYProgress } = useScroll({
     target: footerRef,
-    offset: ["0 1", "1 1"]
+    offset: ["0 1", "1 1"],
   });
 
-  const footerProgress = useTransform(scrollYProgress, [0, 1], ["-100%", "0%"])
+  const footerProgress = useTransform(scrollYProgress, [0, 1], ["-100%", "0%"]);
 
   return (
     <motion.footer
@@ -37,7 +32,11 @@ export default function Footer() {
       <div>
         <div className="flex gap-2 items-end mb-2">
           <Image src={logo} alt="logo" width={40} />
-          <p className={`${roboto.className} hidden sm:block text-lg text-neutral-600 `}>DocX</p>
+          <p
+            className={`${roboto.className} hidden sm:block text-lg text-neutral-600 `}
+          >
+            DocX
+          </p>
         </div>
         <p className="text-sm text-muted-foreground">
           Copyright &copy; 2025 DocX. <br /> All rights reserved.
@@ -46,20 +45,58 @@ export default function Footer() {
 
       <div className="grid grid-cols-3 gap-10 items-start mt-10">
         <div className="flex justify-center space-y-4 flex-col">
-          <a href="#" className="text-sm text-muted-foreground hover:text-black no-underline">Home</a>
-          <a href="#features" className="text-sm text-muted-foreground hover:text-black no-underline">Features</a>
-          <a href="https://github.com/git-init-priyanshu/Docx" target="_blank" className="text-sm text-muted-foreground hover:text-black no-underline">Open Source</a>
+          <a
+            href="#"
+            className="text-sm text-muted-foreground hover:text-black no-underline"
+          >
+            Home
+          </a>
+          <a
+            href="#features"
+            className="text-sm text-muted-foreground hover:text-black no-underline"
+          >
+            Features
+          </a>
+          <a
+            href="https://github.com/git-init-priyanshu/Docx"
+            target="_blank"
+            className="text-sm text-muted-foreground hover:text-black no-underline"
+          >
+            Open Source
+          </a>
         </div>
 
         <div className="flex justify-center space-y-4 flex-col">
-          <a className="text-sm text-muted-foreground hover:text-black no-underline">Privacy Policy</a>
-          <a className="text-sm text-muted-foreground hover:text-black no-underline">Terms of Service</a>
+          <a className="text-sm text-muted-foreground hover:text-black no-underline">
+            Privacy Policy
+          </a>
+          <a className="text-sm text-muted-foreground hover:text-black no-underline">
+            Terms of Service
+          </a>
         </div>
 
         <div className="flex justify-center space-y-4 flex-col">
-          <a href="https://github.com/git-init-priyanshu" target="_blank" className="text-sm text-muted-foreground hover:text-black no-underline">Github</a>
-          <a href="https://x.com/PriyanshuBartw5" target="_blank" className="text-sm text-muted-foreground hover:text-black no-underline">X ( Twitter )</a>
-          <a href="https://www.linkedin.com/in/priyanshu-bartwal/" target="_blank" className="text-sm text-muted-foreground hover:text-black no-underline">LinkedIn</a>
+          <a
+            href="https://github.com/git-init-priyanshu"
+            target="_blank"
+            className="text-sm text-muted-foreground hover:text-black no-underline"
+          >
+            Github
+          </a>
+          <a
+            href="https://x.com/PriyanshuBartw5"
+            target="_blank"
+            className="text-sm text-muted-foreground hover:text-black no-underline"
+          >
+            X ( Twitter )
+          </a>
+          <a
+            href="https://www.linkedin.com/in/priyanshu-bartwal/"
+            target="_blank"
+            className="text-sm text-muted-foreground hover:text-black no-underline"
+          >
+            LinkedIn
+          </a>
         </div>
 
         <a
