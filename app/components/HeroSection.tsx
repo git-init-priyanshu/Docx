@@ -12,7 +12,14 @@ export default function HeroSection() {
       <Navbar />
 
       <section className="flex items-center h-screen w-full bg-background border-b overflow-hidden">
-        <GridBg />
+        <GridBg
+          isCursorMaskEnabled={true}
+          cursorMaskSize={300}
+          bgMaskSize={800}
+          bgMaskPos={[50, 50 ]}
+          blurValue={1}
+          opacity={0.3}
+        />
         <div className="flex items-center justify-center text-center w-full px-4 md:mt-40 md:px-6 lg:mt-0 ">
           <div className="relative flex flex-col justify-center space-y-4">
             <div className="space-y-2">

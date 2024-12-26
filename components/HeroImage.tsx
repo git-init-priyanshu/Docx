@@ -7,6 +7,7 @@ import { motion, useScroll, useSpring, useTransform } from "framer-motion";
 import Poster from "@/public/Hero video thumbnail.png";
 import Toolbar from "@/public/Toolbar.png";
 import Mobile from "@/public/Hero image mobile view.webp";
+import GridBg from "./GridBg";
 
 export default function HeroImage() {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -30,9 +31,18 @@ export default function HeroImage() {
   });
 
   return (
-    <div ref={containerRef} className="grid pt-20 place-items-center">
+    <div ref={containerRef} className="flex flex-col items-center">
+      <GridBg
+        isCursorMaskEnabled={false}
+        cursorMaskSize={300}
+        bgMaskSize={1000}
+        bgMaskPos={[50, 200]}
+        blurValue={1}
+        opacity={0.5}
+      />
+
       <motion.h2
-        className="text-xl sm:text-2xl md:text-3xl lg:text-4xl 2xl:text-5xl z-[-5] text-center font-bold text-neutral-600"
+        className="text-xl mt-20 sm:text-2xl md:text-3xl lg:text-4xl 2xl:text-5xl z-[-5] text-center font-bold text-neutral-600"
         style={{
           y: textSpringProgress,
           opacity: opacityProgress,
@@ -44,7 +54,7 @@ export default function HeroImage() {
 
       <motion.div
         style={{ y: videoSpringProgress }}
-        className="w-[100%] sm:w-[82%] lg:w-[70%] mt-28 sm:mt-36 md:mt-48 lg:mt-64 border rounded-lg shadow-lg "
+        className="relative w-[100%] sm:w-[82%] lg:w-[70%] mt-28 sm:mt-36 md:mt-48 lg:mt-64 border rounded-lg shadow-lg "
       >
         <motion.div
           className="shimmer absolute h-[1.5px] w-[20%] bg-white left-[30%] transform -translate-x-1/2 "
