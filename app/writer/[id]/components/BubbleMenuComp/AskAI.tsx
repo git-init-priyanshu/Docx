@@ -146,7 +146,6 @@ export default function AskAI({
               </DropdownMenuPortal>
             </DropdownMenuSub>
           </DropdownMenuGroup>
-
           <DropdownMenuSeparator />
 
           <DropdownMenuGroup>

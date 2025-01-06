@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { LogOut } from "lucide-react";
 import { PopoverContent, PopoverTrigger } from "@radix-ui/react-popover";
+import { motion } from "framer-motion";
 
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import { Popover } from "@/components/ui/popover";
@@ -41,15 +42,25 @@ export default function ProfileBtn({ name, image }: ProfileBtnPropType) {
         )}
       </PopoverTrigger>
       <PopoverContent className="flex flex-col p-0 py-1 text-left w-min bg-white shadow-md">
-        <Button
-          // id={item.title}
-          variant="ghost"
-          className="gap-2 justify-start"
-          onClick={logout}
+        <motion.div
+          initial={{
+            scale: 0.9,
+            opacity: 0.5,
+          }}
+          animate={{
+            scale: 1,
+            opacity: 1,
+          }}
         >
-          <LogOut size={20} color="#48acf9" strokeWidth={1.5} />
-          <p className="text-neutral-600">Logout</p>
-        </Button>
+          <Button
+            variant="ghost"
+            className="gap-2 justify-start"
+            onClick={logout}
+          >
+            <LogOut size={20} color="#48acf9" strokeWidth={1.5} />
+            <p className="text-neutral-600">Logout</p>
+          </Button>
+        </motion.div>
       </PopoverContent>
     </Popover>
   );

@@ -5,11 +5,6 @@ import { Editor } from "@tiptap/react";
 import { Baseline, ChevronDown, Highlighter } from "lucide-react";
 import { HexColorPicker } from "react-colorful";
 
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
 import { Input } from "@/components/ui/input";
 import {
   DropdownMenu,
