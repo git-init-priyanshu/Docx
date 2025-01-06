@@ -1,30 +1,114 @@
-import { Github } from "lucide-react";
-import Link from "next/link";
+"use client";
 
+import Image from "next/image";
+import { useRef } from "react";
+import { Montserrat_Alternates as Montserrat } from "next/font/google";
+import { Github, Star } from "lucide-react";
+import { motion, useScroll, useSpring, useTransform } from "framer-motion";
+
+import logo from "@/public/logo.svg";
+
+const roboto = Montserrat({
+  weight: "500",
+  style: "normal",
+  subsets: ["cyrillic"],
+});
 export default function Footer() {
+  const footerRef = useRef(null);
+
+  const { scrollYProgress } = useScroll({
+    target: footerRef,
+    offset: ["0 1", "1 1"],
+  });
+
+  const footerProgress = useTransform(scrollYProgress, [0, 1], ["-100%", "0%"]);
+
   return (
-    <footer className="flex flex-col gap-2 sm:flex-row py-6 w-full shrink-0 items-center px-4 md:px-6 border-t">
-      <p className="text-xs text-muted-foreground">
-        &copy; 2024 DocX. All rights reserved.
-      </p>
-      <nav className="sm:ml-auto flex gap-4 sm:gap-6">
-        <Link href="https://github.com/git-init-priyanshu/Docx">
-          <Github color="#808080" size={20} />
-        </Link>
-        <Link href="https://x.com/PriyanshuBartw5">
-          <svg
-            stroke="#808080"
-            fill="#808080"
-            stroke-width="0"
-            viewBox="0 0 16 16"
-            height="1em"
-            width="1em"
-            xmlns="http://www.w3.org/2000/svg"
+    <motion.footer
+      ref={footerRef}
+      style={{ y: footerProgress }}
+      className="flex z-0 justify-between py-20  px-4 md:px-6 lg:px-6 2xl:px-20"
+    >
+      <div>
+        <div className="flex gap-2 items-end mb-2">
+          <Image src={logo} alt="logo" width={40} />
+          <p
+            className={`${roboto.className} hidden sm:block text-lg text-neutral-600 `}
           >
-            <path d="M12.6.75h2.454l-5.36 6.142L16 15.25h-4.937l-3.867-5.07-4.425 5.07H.316l5.733-6.57L0 .75h5.063l3.495 4.633L12.601.75Zm-.86 13.028h1.36L4.323 2.145H2.865z"></path>
-          </svg>
-        </Link>
-      </nav>
-    </footer>
+            DocX
+          </p>
+        </div>
+        <p className="text-sm text-muted-foreground">
+          Copyright &copy; 2025 DocX. <br /> All rights reserved.
+        </p>
+      </div>
+
+      <div className="grid grid-cols-3 gap-10 items-start mt-10">
+        <div className="flex justify-center space-y-4 flex-col">
+          <a
+            href="#"
+            className="text-sm text-muted-foreground hover:text-black no-underline"
+          >
+            Home
+          </a>
+          <a
+            href="#features"
+            className="text-sm text-muted-foreground hover:text-black no-underline"
+          >
+            Features
+          </a>
+          <a
+            href="https://github.com/git-init-priyanshu/Docx"
+            target="_blank"
+            className="text-sm text-muted-foreground hover:text-black no-underline"
+          >
+            Open Source
+          </a>
+        </div>
+
+        <div className="flex justify-center space-y-4 flex-col">
+          <a className="text-sm text-muted-foreground hover:text-black no-underline">
+            Privacy Policy
+          </a>
+          <a className="text-sm text-muted-foreground hover:text-black no-underline">
+            Terms of Service
+          </a>
+        </div>
+
+        <div className="flex justify-center space-y-4 flex-col">
+          <a
+            href="https://github.com/git-init-priyanshu"
+            target="_blank"
+            className="text-sm text-muted-foreground hover:text-black no-underline"
+          >
+            Github
+          </a>
+          <a
+            href="https://x.com/PriyanshuBartw5"
+            target="_blank"
+            className="text-sm text-muted-foreground hover:text-black no-underline"
+          >
+            X ( Twitter )
+          </a>
+          <a
+            href="https://www.linkedin.com/in/priyanshu-bartwal/"
+            target="_blank"
+            className="text-sm text-muted-foreground hover:text-black no-underline"
+          >
+            LinkedIn
+          </a>
+        </div>
+
+        <a
+          href="https://github.com/git-init-priyanshu/Docx"
+          target="_blank"
+          className=" col-span-3 z-10 flex cursor-pointer gap-2 h-10 items-center justify-center rounded-md border bg-background px-4 sm:px-8 text-sm font-medium shadow-sm transition-colors hover:bg-accent hover:text-accent-foreground hover:border-blue-200 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 text-muted-foreground"
+        >
+          <Star size={18} strokeWidth={2} />
+          <p>Star us on</p>
+          <Github size={18} strokeWidth={2} />
+        </a>
+      </div>
+    </motion.footer>
   );
 }

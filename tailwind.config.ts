@@ -86,7 +86,8 @@ const config = {
         "accordion-up": "accordion-up 0.2s ease-out",
       },
       backgroundImage: {
-        'gradient-radial': 'radial-gradient(circle at center, var(--tw-gradient-stops))',
+        "gradient-radial":
+          "radial-gradient(circle at center, var(--tw-gradient-stops))",
       },
     },
   },

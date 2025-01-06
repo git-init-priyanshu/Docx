@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import { useCallback, useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
@@ -16,19 +16,19 @@ const images = [
   { path: "reset-password", image: ResetPassword },
   { path: "forget-password", image: ForgotPassword },
   { path: "otp", image: VerifyOtp },
-]
+];
 export default function DynamicImage() {
   const url = usePathname();
 
   const getImageFromRoute = useCallback(() => {
-    return images.find((e) => e.path === url.split("/")[1])?.image || ""
-  }, [url])
+    return images.find((e) => e.path === url.split("/")[1])?.image || "";
+  }, [url]);
 
   const [currentImage, setCurrentImage] = useState(getImageFromRoute());
 
   useEffect(() => {
     setCurrentImage(getImageFromRoute());
-  }, [getImageFromRoute, url])
+  }, [getImageFromRoute, url]);
 
   return (
     <Image
@@ -36,5 +36,5 @@ export default function DynamicImage() {
       alt="Image"
       className="h-full w-full dark:brightness-[0.2] dark:grayscale bg-white"
     />
-  )
+  );
 }

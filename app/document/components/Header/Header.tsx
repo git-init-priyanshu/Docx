@@ -1,6 +1,6 @@
 import Image from "next/image";
 import { Montserrat_Alternates as Montserrat } from "next/font/google";
-import * as motion from "framer-motion/client"
+import * as motion from "framer-motion/client";
 
 import { SessionReturnType } from "@/lib/customHooks/ReturnType";
 import logo from "@/public/logo.svg";
@@ -23,11 +23,11 @@ export default function Header({ image, name }: HeaderPropType) {
         className="hidden md:flex border-b bg-white justify-between items-center py-2 px-2 md:px-4 sticky top-0 z-50"
         initial={{
           y: -50,
-          opacity: 0
+          opacity: 0,
         }}
         animate={{
           y: 0,
-          opacity: 1
+          opacity: 1,
         }}
         transition={{ ease: "easeInOut" }}
       >
@@ -37,16 +37,16 @@ export default function Header({ image, name }: HeaderPropType) {
             <motion.p
               initial={{
                 x: -100,
-                opacity: 0
+                opacity: 0,
               }}
               animate={{
                 x: 0,
-                opacity: 100
+                opacity: 100,
               }}
               transition={{
                 delay: 0.5,
                 duration: 0.4,
-                ease: "easeInOut"
+                ease: "easeInOut",
               }}
               className={`${roboto.className} hidden sm:block text-lg text-neutral-600 `}
             >
