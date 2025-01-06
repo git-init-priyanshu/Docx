@@ -93,7 +93,7 @@ export const Editor = ({ setIsSaving }: EditorPropType) => {
   // Editor instance
   const editor = useEditor({
     onCreate: ({ editor: currentEditor }) => {
-      provider.on("synced", () => {
+      provider.on("sync", () => {
         if (currentEditor.isEmpty) {
           currentEditor.commands.setContent("");
         }
