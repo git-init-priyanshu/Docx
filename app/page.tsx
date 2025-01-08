@@ -6,14 +6,12 @@ import Footer from "./components/Footer";
 
 export default function Component() {
   return (
-    <div className="flex flex-col min-h-[100dvh] overflow-hidden">
-      <main className="flex-1">
-        <HeroSection />
-        <FeaturesSection />
-        {/* <AboutSection /> */}
-        {/* <ContactSection /> */}
-        <Footer />
-      </main>
-    </div>
+    <main className="flex flex-col min-h-[100dvh] overflow-hidden">
+      <HeroSection />
+      <FeaturesSection />
+      {/* <AboutSection /> */}
+      {/* <ContactSection /> */}
+      <Footer />
+    </main>
   );
 }
