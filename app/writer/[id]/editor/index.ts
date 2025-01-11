@@ -25,7 +25,6 @@ export const Editor = ({ setIsSaving }: EditorPropType) => {
 
   const session = useClientSession();
 
-  const [isFirstLoad, setIsFirstLoad] = useState(true);
   const [name, setName] = useState("");
   const [docData, setDocData] = useState<Document | undefined>(undefined);
   const [status, setStatus] = useState("connecting");
@@ -33,7 +32,6 @@ export const Editor = ({ setIsSaving }: EditorPropType) => {
 
   useEffect(() => {
     setName(localStorage.getItem("name") || "");
-    setIsFirstLoad(false);
   }, []);
 
   useEffect(() => {
@@ -139,9 +137,7 @@ export const Editor = ({ setIsSaving }: EditorPropType) => {
     editorProps: props,
     content: "",
     onUpdate({ editor }) {
-      if (!isFirstLoad) {
-        debounce(editor);
-      }
+      debounce(editor);
     },
   });
 

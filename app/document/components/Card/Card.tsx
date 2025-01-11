@@ -13,6 +13,7 @@ import CardOptions from "./components/Options";
 import prettifyDate from "@/helpers/prettifyDates";
 import useClientSession from "@/lib/customHooks/useClientSession";
 import useDebounce from "@/lib/customHooks/useDebounce";
+import { updateGuestDocument } from "@/lib/guestServices";
 
 type DocCardPropType = {
   docId: string;
@@ -33,8 +34,12 @@ export default function DocCard({
   const router = useRouter();
 
   const debounce = useDebounce(async () => {
-    if (!inputRef.current || !session?.id) return;
-    await RenameDocument(docId, inputRef.current.value);
+    if (!inputRef.current) return;
+    if (session?.id) {
+      await RenameDocument(docId, inputRef.current.value);
+    } else {
+      updateGuestDocument(docId, 'name', inputRef.current.value);
+    }
   }, 1000);
 
   const session = useClientSession();

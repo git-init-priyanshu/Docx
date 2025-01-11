@@ -23,9 +23,12 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
+import { deleteGuestDocument } from "@/lib/guestServices";
+import LoaderButton from "@/components/LoaderButton";
+import useClientSession from "@/lib/customHooks/useClientSession";
 
 import { DeleteDocument } from "../actions";
-import LoaderButton from "@/components/LoaderButton";
+import { revalidatePath } from "next/cache";
 
 type CardOptionsPropType = {
   docId: string;
@@ -34,6 +37,8 @@ type CardOptionsPropType = {
 
 export default function CardOptions({ docId, inputRef }: CardOptionsPropType) {
   const router = useRouter();
+
+  const session = useClientSession();
 
   const docOptions = [
     {
@@ -99,14 +104,20 @@ export default function CardOptions({ docId, inputRef }: CardOptionsPropType) {
   const confirmDeleteDocument = async () => {
     setIsDeleting(true);
 
-    const response = await DeleteDocument(docId);
-    if (response.success) {
-      toast.success(response.data);
+    if (session?.id) {
+      const response = await DeleteDocument(docId);
+      if (response.success) {
+        toast.success(response.data);
+      } else {
+        toast.error(response.error);
+      }
+      setIsDeleting(false);
+      setIsDeleteModalOpen(false);
     } else {
-      toast.error(response.error);
+      deleteGuestDocument(docId);
+      setIsDeleting(false);
+      setIsDeleteModalOpen(false);
     }
-    setIsDeleting(false);
-    setIsDeleteModalOpen(false);
   };
   return (
     <>
@@ -120,16 +131,18 @@ export default function CardOptions({ docId, inputRef }: CardOptionsPropType) {
         >
           {docOptions.map((item, index) => {
             return (
-              <Button
-                key={index}
-                id={item.title}
-                variant="ghost"
-                className="gap-2 justify-start"
-                onClick={item.onClick}
-              >
-                <item.icon size={20} color={item.color} strokeWidth={1.5} />
-                <p className="text-neutral-600">{item.title}</p>
-              </Button>
+              !session?.id && index === 2
+                ? <></>
+                : <Button
+                  key={index}
+                  id={item.title}
+                  variant="ghost"
+                  className="gap-2 justify-start"
+                  onClick={item.onClick}
+                >
+                  <item.icon size={20} color={item.color} strokeWidth={1.5} />
+                  <p className="text-neutral-600">{item.title}</p>
+                </Button>
             );
           })}
         </PopoverContent>

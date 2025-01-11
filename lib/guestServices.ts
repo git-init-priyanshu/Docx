@@ -90,3 +90,13 @@ export const updateGuestDocument = (docId: string, docProp: string, updateValue:
   }
   localStorage.setItem('documents', JSON.stringify(allDocuments));
 }
+export const deleteGuestDocument = (docId: string) => {
+  const document = getGuestDocumentDetails(docId);
+  if (!document) return;
+
+  const allDocuments: Document[] = JSON.parse(localStorage.getItem('documents') || '[]');
+  const index = allDocuments.findIndex((e) => e.id === document.id);
+
+  allDocuments.splice(index, 1);
+  localStorage.setItem('documents', JSON.stringify(allDocuments));
+}
