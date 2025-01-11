@@ -13,9 +13,9 @@ export async function middleware(request: NextRequest) {
     }
     return NextResponse.next();
   } else {
-    if (!isAuthorized) {
-      return NextResponse.redirect(new URL("/api/auth/signin", request.url));
-    }
+    // if (!isAuthorized) {
+    //   return NextResponse.redirect(new URL("/api/auth/signin", request.url));
+    // }
     return NextResponse.next();
   }
 }
