@@ -1,4 +1,5 @@
 import { Editor } from "@tiptap/react";
+import GoBack from "../GoBack";
 
 type InsterOptionsPropTypes = {
   editor: Editor | null;
@@ -9,6 +10,7 @@ export default function InsertOptions({ editor }: InsterOptionsPropTypes) {
       className="w-fit hidden flex-col items-start gap-8 lg:flex"
       x-chunk="dashboard-03-chunk-0"
     >
+      <GoBack />
       <form className="grid w-full items-start gap-6">
         <fieldset className=" grid gap-6 bg-white rounded-lg border p-4">
           <legend className="-ml-1 px-1 text-sm font-medium">Style</legend>

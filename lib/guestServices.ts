@@ -1,5 +1,6 @@
 import { uuidv4 as uuid } from "lib0/random.js";
 
+import Avatar from "@/public/profilepic_placeholder.png"
 import type { Document, User } from ".prisma/client";
 
 export const createGuestUser = () => {
@@ -9,7 +10,7 @@ export const createGuestUser = () => {
     name: "Anonymous",
     email: "anonymous@email.com",
     password: null,
-    picture: null,
+    picture: Avatar.src,
     isVerified: false,
     verifyCode: null,
     verifyCodeExpiry: null,

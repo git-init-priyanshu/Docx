@@ -1,3 +1,5 @@
+'use client' 
+
 import Image from "next/image";
 import { Montserrat_Alternates as Montserrat } from "next/font/google";
 import * as motion from "framer-motion/client";

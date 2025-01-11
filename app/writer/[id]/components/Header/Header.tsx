@@ -34,7 +34,7 @@ export default function Header({ editor, name, isSaving }: HeaderPropType) {
   return (
     <header className="flex h-[57px] items-center gap-1 border-b bg-background">
       <div className="p-2 lg:border-r">
-        <Button variant="outline" size="icon" onClick={() => router.push("/")}>
+        <Button variant="outline" size="icon" onClick={() => router.push("/document")}>
           {/* <Triangle className="size-5 fill-foreground" /> */}
           <Image src={logo} width={25} alt="logo" />
         </Button>
