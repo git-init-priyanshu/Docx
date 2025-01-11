@@ -69,7 +69,7 @@ export default function HeroSection() {
               className="flex justify-center flex-col gap-8 min-[400px]:flex-row"
             >
               <Link
-                href="/signup"
+                href="/document"
                 className="z-10 inline-flex h-10 items-center bg-blue-500 justify-center rounded-md px-8 text-sm font-medium text-primary-foreground shadow transition-colors hover:bg-blue-600 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
                 prefetch={false}
               >

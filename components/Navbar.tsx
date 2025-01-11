@@ -4,6 +4,8 @@ import * as motion from "framer-motion/client";
 import { Montserrat_Alternates as Montserrat } from "next/font/google";
 
 import logo from "@/public/logo.svg";
+import Github from "@/public/github.png";
+import { GithubIcon } from "lucide-react";
 
 const roboto = Montserrat({
   weight: "500",
@@ -64,19 +66,21 @@ export default function Navbar() {
           transition={{ delay: 0.5 }}
         >
           <Link
-            href="/signin"
-            className="z-10 inline-flex h-10 items-center justify-center rounded-md border border-input bg-background px-4 sm:px-8 text-sm font-medium shadow-sm transition-colors hover:bg-accent hover:text-accent-foreground hover:border-blue-200 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
+            href="https://github.com/git-init-priyanshu/Docx/"
+            className="z-10 w-fit gap-3 inline-flex h-10 items-center justify-center rounded-md border border-input bg-background px-4 sm:px-8 text-sm font-medium shadow-sm transition-colors hover:bg-accent hover:text-accent-foreground hover:border-blue-200 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
             prefetch={false}
           >
-            Signin
+            {/* <Image src={Github} alt="github" className="w-[8%]" /> */}
+            <GithubIcon size={20}/>
+            5 stars
           </Link>
-          <Link
-            href="/signup"
-            className="z-10 inline-flex h-10 items-center bg-blue-500 justify-center rounded-md px-4 sm:px-8 text-sm font-medium text-primary-foreground shadow transition-colors hover:bg-blue-600 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
-            prefetch={false}
-          >
-            Signup
-          </Link>
+          {/* <Link */}
+          {/*   href="/signup" */}
+          {/*   className="z-10 inline-flex h-10 items-center bg-blue-500 justify-center rounded-md px-4 sm:px-8 text-sm font-medium text-primary-foreground shadow transition-colors hover:bg-blue-600 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50" */}
+          {/*   prefetch={false} */}
+          {/* > */}
+          {/*   <Image src={Github} alt="github" className="w-[8%]"/> */}
+          {/* </Link> */}
         </motion.div>
       </nav>
     </>
