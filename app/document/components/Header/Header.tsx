@@ -19,8 +19,8 @@ type HeaderPropType = Pick<SessionReturnType, "name" | "image">;
 export default function Header({ image, name }: HeaderPropType) {
   return (
     <>
-      <motion.div
-        className="hidden md:flex border-b bg-white justify-between items-center py-2 px-2 md:px-4 sticky top-0 z-50"
+      <motion.header
+        className="hidden h-16 md:flex border-b bg-white justify-between items-center py-2 px-2 md:px-4 sticky top-0 z-50"
         initial={{
           y: -50,
           opacity: 0,
@@ -34,7 +34,7 @@ export default function Header({ image, name }: HeaderPropType) {
         <div className="flex gap-2 items-end justify-center ">
           <Image src={logo} width={45} alt="logo" />
           <div className="overflow-hidden">
-            <motion.p
+            <motion.h1
               initial={{
                 x: -100,
                 opacity: 0,
@@ -51,7 +51,7 @@ export default function Header({ image, name }: HeaderPropType) {
               className={`${roboto.className} hidden sm:block text-lg text-neutral-600 `}
             >
               DocX
-            </motion.p>
+            </motion.h1>
           </div>
         </div>
         <SearchBar />
@@ -59,7 +59,7 @@ export default function Header({ image, name }: HeaderPropType) {
           <HeaderButtons />
           <ProfileBtn name={name} image={image} />
         </div>
-      </motion.div>
+      </motion.header>
 
       <div className="w-full p-4 flex gap-4 items-center md:hidden">
         <div className="border rounded-full bg-white p-[8px]">
