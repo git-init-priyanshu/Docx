@@ -109,7 +109,6 @@ export const UpdateThumbnail = async (id: any, thumbnail: string) => {
         error: "User is not logged in",
       };
 
-    console.log(process.env.BACKEND_SERVER_URL);
     const response = await fetch(
       `${process.env.BACKEND_SERVER_URL}/push-to-quque`,
       {

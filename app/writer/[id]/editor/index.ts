@@ -10,6 +10,8 @@ import Collaboration from "@tiptap/extension-collaboration";
 import CollaborationCursor from "@tiptap/extension-collaboration-cursor";
 
 import { getRandomColor } from "@/helpers/getRandomColor";
+import { getGuestDocumentDetails, updateGuestDocument } from "@/lib/guestServices";
+import useClientSession from "@/lib/customHooks/useClientSession";
 import useDebounce from "@/lib/customHooks/useDebounce";
 
 import { ydoc, provider, extensions, props } from "./editorConfig";
@@ -20,6 +22,8 @@ type EditorPropType = {
 };
 export const Editor = ({ setIsSaving }: EditorPropType) => {
   const params = useParams();
+
+  const session = useClientSession();
 
   const [isFirstLoad, setIsFirstLoad] = useState(true);
   const [name, setName] = useState("");
@@ -47,20 +51,25 @@ export const Editor = ({ setIsSaving }: EditorPropType) => {
 
   // Doc data fetching
   useEffect(() => {
-    (async () => {
-      const response = await GetDocDetails(params.id);
-      if (response.success) {
-        setDocData(response.data);
-      } else {
-        toast.error(response.error);
-      }
-    })();
-  }, [params.id]);
+    if (session?.id) {
+      (async () => {
+        const response = await GetDocDetails(params.id);
+        if (response.success) {
+          setDocData(response.data);
+        } else {
+          toast.error(response.error);
+        }
+      })();
+    } else {
+      const data = getGuestDocumentDetails(params.id as string)
+      setDocData(data);
+    }
+  }, [session?.id, params.id]);
 
   const createDocThumbnail = useCallback(async () => {
     try {
       const page = document.getElementsByClassName("tiptap")[0];
-      if (!page) return;
+      if (!page) return setIsSaving(false);
       // @ts-ignore
       const canvas = await html2canvas(page, { scale: 1 });
 
@@ -68,7 +77,12 @@ export const Editor = ({ setIsSaving }: EditorPropType) => {
         .toDataURL(`${docData?.id}thumbnail/png`)
         .replace(/^data:image\/\w+;base64,/, "");
 
-      await UpdateThumbnail(params.id, thumbnail);
+      if (session?.id) {
+        await UpdateThumbnail(params.id, thumbnail);
+      } else {
+        updateGuestDocument(params.id as string, "thumbnail", thumbnail);
+      }
+      setIsSaving(false);
     } catch (e) {
       console.log(e);
       toast.error("Something went wrong");
@@ -78,16 +92,26 @@ export const Editor = ({ setIsSaving }: EditorPropType) => {
   const debounce = useDebounce(async (editor: any) => {
     setIsSaving(true);
 
-    const response = await UpdateDocData(
-      params.id,
-      JSON.stringify(editor.getJSON()),
-    );
-    if (response.success) {
+    if (session?.id) {
+      const response = await UpdateDocData(
+        params.id as string,
+        JSON.stringify(editor.getJSON()),
+      );
+      if (response.success) {
+        setIsSaving(false);
+        return createDocThumbnail();
+      }
       setIsSaving(false);
-      return createDocThumbnail();
+      toast.error(response.error);
+    } else {
+      updateGuestDocument(
+        params.id as string,
+        "data",
+        JSON.stringify(editor.getJSON()),
+      )
+      createDocThumbnail();
+      setIsSaving(false);
     }
-    setIsSaving(false);
-    toast.error(response.error);
   }, 1000);
 
   // Editor instance
