@@ -8,6 +8,7 @@ import logo from "@/public/logo.svg";
 import SearchBar from "./components/SearchBar";
 import HeaderButtons from "./components/HeaderButtons";
 import ProfileBtn from "./components/ProfileBtn";
+import useClientSession from "@/lib/customHooks/useClientSession";
 
 const roboto = Montserrat({
   weight: "500",
@@ -17,6 +18,8 @@ const roboto = Montserrat({
 
 type HeaderPropType = Pick<SessionReturnType, "name" | "image">;
 export default function Header({ image, name }: HeaderPropType) {
+  const session = useClientSession();
+
   return (
     <>
       <motion.header
@@ -54,7 +57,7 @@ export default function Header({ image, name }: HeaderPropType) {
             </motion.h1>
           </div>
         </div>
-        <SearchBar />
+        {session?.id && <SearchBar />}
         <div className="flex gap-4">
           <HeaderButtons />
           <ProfileBtn name={name} image={image} />
