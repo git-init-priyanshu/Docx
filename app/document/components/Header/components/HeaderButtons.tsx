@@ -6,25 +6,35 @@ import { toast } from "sonner";
 import { CloudUpload, PlusIcon } from "lucide-react";
 
 import { CreateNewDocument } from "../actions";
+import { createGuestDocument } from "@/lib/guestServices";
 import { Button } from "@/components/ui/button";
 import LoaderButton from "@/components/LoaderButton";
+import useClientSession from "@/lib/customHooks/useClientSession";
 
 export default function HeaderButtons() {
   const router = useRouter();
 
+  const session = useClientSession();
+
   const [isLoading, setIsLoading] = useState(false);
 
   const createDocument = async () => {
-    setIsLoading(true);
+    if (session?.id) {
+      setIsLoading(true);
 
-    const response = await CreateNewDocument();
-    if (response.success) {
-      setIsLoading(false);
-      toast.success("Successfully created new document");
-      router.push(`/writer/${response.data?.id}`);
+      const response = await CreateNewDocument();
+      if (response.success) {
+        setIsLoading(false);
+        toast.success("Successfully created new document");
+        router.push(`/writer/${response.data?.id}`);
+      } else {
+        setIsLoading(false);
+        toast.error(response.error);
+      }
     } else {
-      setIsLoading(false);
-      toast.error(response.error);
+      const document = createGuestDocument();
+      toast.success("Successfully created new document");
+      router.push(`/writer/${document.id}`);
     }
   };
 
