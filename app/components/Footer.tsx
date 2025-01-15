@@ -11,7 +11,7 @@ const roboto = Montserrat({
 });
 export default function Footer() {
   return (
-    <footer className="relative h-[400px] z-[-10]">
+    <footer className="relative h-[400px] z-[0]">
       <div className="fixed bottom-0 h-[400px] w-full">
 
         <div className="flex justify-between py-20 px-4 md:px-6 lg:px-6 2xl:px-20">
@@ -85,15 +85,15 @@ export default function Footer() {
               </a>
             </div>
 
-            <a
-              href="https://github.com/git-init-priyanshu/Docx"
-              target="_blank"
-              className=" col-span-3 z-10 flex cursor-pointer gap-2 h-10 items-center justify-center rounded-md border bg-background px-4 sm:px-8 text-sm font-medium shadow-sm transition-colors hover:bg-accent hover:text-accent-foreground hover:border-blue-200 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 text-muted-foreground"
-            >
-              <Star size={18} strokeWidth={2} />
-              <p>Star us on</p>
-              <Github size={18} strokeWidth={2} />
-            </a>
+            {/* <a */}
+            {/*   href="https://github.com/git-init-priyanshu/Docx" */}
+            {/*   target="_blank" */}
+            {/*   className=" col-span-3 z-10 flex cursor-pointer gap-2 h-10 items-center justify-center rounded-md border bg-background px-4 sm:px-8 text-sm font-medium shadow-sm transition-colors hover:bg-accent hover:text-accent-foreground hover:border-blue-200 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 text-muted-foreground" */}
+            {/* > */}
+            {/*   <Star size={18} strokeWidth={2} /> */}
+            {/*   <p>Star us on</p> */}
+            {/*   <Github size={18} strokeWidth={2} /> */}
+            {/* </a> */}
           </div>
         </div>
 

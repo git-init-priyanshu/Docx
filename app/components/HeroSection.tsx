@@ -11,7 +11,7 @@ export default function HeroSection() {
     <>
       <Navbar />
 
-      <section className="flex items-center h-screen w-full bg-background border-b overflow-hidden">
+      <section className="flex z-[5] items-center h-screen w-full bg-background border-b overflow-hidden">
         <GridBg
           isCursorMaskEnabled={true}
           cursorMaskSize={300}

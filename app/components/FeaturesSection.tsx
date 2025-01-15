@@ -1,6 +1,9 @@
 import { Cloud, Users, Wand } from "lucide-react";
 import * as motion from "framer-motion/client";
 import AiAnimation from "@/components/aiAnimation";
+import AiFeature from "@/public/ai-feature.png"
+import CollabFeature from "@/public/collab-feature.png"
+import Image, { StaticImageData } from "next/image";
 
 export default function FeaturesSection() {
   const features = [
@@ -9,19 +12,22 @@ export default function FeaturesSection() {
       description:
         "Leverage advanced AI capabilities, offering intelligent assistance and seamless automation without additional costs",
       animation: <Wand />,
+      image: AiFeature
     },
     {
       title: "Real-Time Collaboration ",
       description:
         "Multiple users can edit the same document simultaneously, with changes syncing in real-time.",
       animation: <Users />,
+      image: CollabFeature
     },
-    {
-      title: "Highly scalable",
-      description:
-        "Adapts effortlessly to growth, maintaining performance as needs expand.",
-      animation: <Cloud />,
-    },
+    // {
+    //   title: "Highly scalable",
+    //   description:
+    //     "Adapts effortlessly to growth, maintaining performance as needs expand.",
+    //   animation: <Cloud />,
+    //   image: AiFeature
+    // },
   ];
 
   return (
@@ -57,11 +63,13 @@ function Feature({
   title,
   description,
   animation,
+  image,
   index,
 }: {
   title: string;
   description: string;
   animation: React.ReactNode;
+  image: StaticImageData,
   index: number;
 }) {
   const featureSize = "h-60 w-96";
@@ -81,7 +89,8 @@ function Feature({
         // }}
         className={`${featureSize} relative bg-neutral-50 border-blue-100 flex justify-center items-center border rounded-md overflow-hidden`}
       >
-        {animation}
+        {/* {animation} */}
+        <Image src={image} alt="feat" />
 
         {/* <div */}
         {/*   className="absolute w-[120%] h-[120%] bottom-0" */}

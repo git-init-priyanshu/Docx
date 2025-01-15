@@ -42,7 +42,7 @@ export default function HeroImage() {
       />
 
       <motion.h2
-        className="text-xl mt-20 sm:text-2xl md:text-3xl lg:text-4xl 2xl:text-5xl z-[-5] text-center font-bold text-neutral-600"
+        className="text-xl mt-20 sm:text-2xl md:text-3xl lg:text-4xl 2xl:text-5xl z-[0] text-center font-bold text-neutral-600"
         style={{
           y: textSpringProgress,
           opacity: opacityProgress,
