@@ -31,7 +31,7 @@ export default function HeroImage() {
   });
 
   return (
-    <div ref={containerRef} className="flex flex-col items-center bg-slate-50">
+    <div ref={containerRef} className="flex flex-col items-center bg-slate-50 z-10">
       <GridBg
         isCursorMaskEnabled={false}
         cursorMaskSize={300}
