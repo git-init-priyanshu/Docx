@@ -72,7 +72,7 @@ export default function Navbar() {
           >
             {/* <Image src={Github} alt="github" className="w-[8%]" /> */}
             <GithubIcon size={20}/>
-            5 stars
+            11 stars
           </Link>
           {/* <Link */}
           {/*   href="/signup" */}
