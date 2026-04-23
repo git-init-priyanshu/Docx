@@ -33,7 +33,7 @@ export default function FeaturesSection() {
   return (
     <section
       id="features"
-      className="relative w-full border-t bg-white z-10 border-b"
+      className="relative w-full border-t bg-background z-10 border-b"
     >
       <div className="container px-4 md:px-6 md:mt-20 pb-4">
         <div className="flex flex-col items-center justify-center space-y-4 text-center">
@@ -45,7 +45,7 @@ export default function FeaturesSection() {
             viewport={{ once: true }}
             className="text-3xl font-bold tracking-tighter sm:text-5xl"
           >
-            <span className="text-black">Key&nbsp;</span>
+            <span className="text-foreground">Key&nbsp;</span>
             <span className="text-blue-500">Features</span>
           </motion.h2>
         </div>
@@ -87,7 +87,7 @@ function Feature({
         //   duration: 0.5,
         //   ease: "easeIn",
         // }}
-        className={`${featureSize} relative bg-neutral-50 border-blue-100 flex justify-center items-center border rounded-md overflow-hidden`}
+        className={`${featureSize} relative bg-muted border-blue-100 flex justify-center items-center border rounded-md overflow-hidden`}
       >
         {/* {animation} */}
         <Image src={image} alt="feat" />

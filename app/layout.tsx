@@ -5,6 +5,7 @@ import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 
 import { cn } from "@/lib/utils";
 import { Toaster } from "@/components/ui/sonner";
+import { ThemeProvider } from "@/components/ThemeProvider";
 
 import { NextAuthProvider } from "./NextAuthProvider";
 import ReactQueryProvider from "./ReactQueryProvider";
@@ -25,19 +26,26 @@ export default function RootLayout({
 }>) {
   return (
     <ReactQueryProvider>
-      <html lang="en">
+      <html lang="en" suppressHydrationWarning>
         <NextAuthProvider>
-          <body
-            className={cn(
-              "min-h-screen bg-slate-50 font-sans antialiased",
-              inter.className,
-            )}
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="system"
+            enableSystem
+            disableTransitionOnChange
           >
-            <Toaster />
-            <Analytics />
-            {children}
-            <ReactQueryDevtools initialIsOpen={false} />
-          </body>
+            <body
+              className={cn(
+                "min-h-screen bg-background font-sans antialiased",
+                inter.className,
+              )}
+            >
+              <Toaster />
+              <Analytics />
+              {children}
+              <ReactQueryDevtools initialIsOpen={false} />
+            </body>
+          </ThemeProvider>
         </NextAuthProvider>
       </html>
     </ReactQueryProvider>

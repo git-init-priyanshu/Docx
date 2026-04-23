@@ -19,10 +19,10 @@ export default function BulletListBtns({ editor }: any) {
               Icon === List
                 ? editor?.isActive("bulletList")
                   ? "bg-blue-500 text-white hover:bg-blue-500"
-                  : "hover:bg-slate-100 bg-white"
+                  : "hover:bg-muted bg-background"
                 : editor?.isActive("orderedList")
                   ? "bg-blue-500 text-white hover:bg-blue-500"
-                  : "hover:bg-slate-100 bg-white"
+                  : "hover:bg-muted bg-background"
             } p-2 rounded ${
               i === BulletBtns.length - 1 ? "border-none" : "border-r"
             }`}

@@ -4,15 +4,28 @@ import * as motion from "framer-motion/client";
 import { Montserrat_Alternates as Montserrat } from "next/font/google";
 
 import logo from "@/public/logo.svg";
-import Github from "@/public/github.png";
 import { GithubIcon } from "lucide-react";
+import ThemeToggle from "@/components/ThemeToggle";
 
 const roboto = Montserrat({
   weight: "500",
   style: "normal",
   subsets: ["cyrillic"],
 });
-export default function Navbar() {
+export default async function Navbar() {
+  let stars = 17;
+  try {
+    const res = await fetch("https://api.github.com/repos/git-init-priyanshu/Docx", {
+      next: { revalidate: 3600 },
+    });
+    if (res.ok) {
+      const data = await res.json();
+      stars = data.stargazers_count || stars;
+    }
+  } catch (error) {
+    console.error("Failed to fetch Github stars", error);
+  }
+
   return (
     <>
       <motion.div
@@ -72,8 +85,9 @@ export default function Navbar() {
           >
             {/* <Image src={Github} alt="github" className="w-[8%]" /> */}
             <GithubIcon size={20}/>
-            17 stars
+            {stars} stars
           </Link>
+          <ThemeToggle />
           {/* <Link */}
           {/*   href="/signup" */}
           {/*   className="z-10 inline-flex h-10 items-center bg-blue-500 justify-center rounded-md px-4 sm:px-8 text-sm font-medium text-primary-foreground shadow transition-colors hover:bg-blue-600 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50" */}

@@ -12,7 +12,7 @@ export default function ParagraphBtns({ editor }: any) {
             className={`${
               editor?.isActive({ textAlign: align })
                 ? "bg-blue-500 text-white hover:bg-blue-500"
-                : "hover:bg-slate-100 bg-white"
+                : "hover:bg-muted bg-background"
             } p-2 rounded ${
               i === paragraphBtns.length - 1 ? "border-none" : "border-r"
             }`}

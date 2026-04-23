@@ -34,18 +34,18 @@ export const Editor = ({ setIsSaving }: EditorPropType) => {
     setName(localStorage.getItem("name") || "");
   }, []);
 
-  useEffect(() => {
-    // Update status changes
-    const statusHandler = (event: any) => {
-      setStatus(event.status);
-    };
-
-    provider.on("status", statusHandler);
-
-    return () => {
-      provider.off("status", statusHandler);
-    };
-  }, []);
+  // useEffect(() => {
+  //   // Update status changes
+  //   const statusHandler = (event: any) => {
+  //     setStatus(event.status);
+  //   };
+  //
+  //   provider.on("status", statusHandler);
+  //
+  //   return () => {
+  //     provider.off("status", statusHandler);
+  //   };
+  // }, []);
 
   // Doc data fetching
   useEffect(() => {
@@ -115,11 +115,11 @@ export const Editor = ({ setIsSaving }: EditorPropType) => {
   // Editor instance
   const editor = useEditor({
     onCreate: ({ editor: currentEditor }) => {
-      provider.on("sync", () => {
-        if (currentEditor.isEmpty) {
-          currentEditor.commands.setContent("");
-        }
-      });
+      // provider.on("sync", () => {
+      //   if (currentEditor.isEmpty) {
+      //     currentEditor.commands.setContent("");
+      //   }
+      // });
     },
     extensions: [
       ...extensions,
@@ -127,7 +127,7 @@ export const Editor = ({ setIsSaving }: EditorPropType) => {
         document: ydoc,
       }),
       CollaborationCursor.configure({
-        provider,
+        // provider,
         user: {
           name,
           color: getRandomColor(),

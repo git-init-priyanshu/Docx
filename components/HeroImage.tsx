@@ -31,7 +31,7 @@ export default function HeroImage() {
   });
 
   return (
-    <div ref={containerRef} className="flex flex-col items-center bg-slate-50 z-10">
+    <div ref={containerRef} className="flex flex-col items-center bg-background z-10">
       <GridBg
         isCursorMaskEnabled={false}
         cursorMaskSize={300}
@@ -42,7 +42,7 @@ export default function HeroImage() {
       />
 
       <motion.h2
-        className="text-xl mt-20 sm:text-2xl md:text-3xl lg:text-4xl 2xl:text-5xl z-[0] text-center font-bold text-neutral-600"
+        className="text-xl mt-20 sm:text-2xl md:text-3xl lg:text-4xl 2xl:text-5xl z-[0] text-center font-bold text-neutral-600 dark:text-neutral-300"
         style={{
           y: textSpringProgress,
           opacity: opacityProgress,
@@ -102,7 +102,7 @@ export default function HeroImage() {
             className="cursor-auto w-full h-full rounded-md shadow-lg z-10"
           >
             <source
-              src="https://utfs.io/f/LdDzZPI8fQBxuaJqilab6xNMD8AjkOU2RVI1zTuyBQLaHdP4"
+              src="/Hero video.mp4"
               type="video/mp4"
             />
           </video>

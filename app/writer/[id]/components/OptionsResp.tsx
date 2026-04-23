@@ -47,7 +47,7 @@ export default function OptionsResp({
         x-chunk="dashboard-03-chunk-0"
       >
         <form className="grid w-full items-start gap-6">
-          <fieldset className=" grid gap-6 bg-white rounded-lg border p-4">
+          <fieldset className=" grid gap-6 bg-background rounded-lg border p-4">
             <legend className="-ml-1 px-1 text-sm font-medium">Style</legend>
             <div className="grid gap-3">
               <Select
@@ -73,7 +73,7 @@ export default function OptionsResp({
             </div>
           </fieldset>
 
-          <fieldset className="grid max-w-fit gap-6 bg-white rounded-lg border p-4">
+          <fieldset className="grid max-w-fit gap-6 bg-background rounded-lg border p-4">
             <legend className="-ml-1 px-1 text-sm font-medium">Font</legend>
             <div className="">
               <Select
@@ -109,7 +109,7 @@ export default function OptionsResp({
                         className={`${
                           editor?.isActive(name)
                             ? "bg-blue-500 text-white hover:bg-blue-500"
-                            : "hover:bg-slate-100 bg-white"
+                            : "hover:bg-muted bg-background"
                         } p-2 rounded ${
                           i === formattingBtns.length - 1
                             ? "border-none"
@@ -140,7 +140,7 @@ export default function OptionsResp({
                       className={`${
                         editor?.isActive({ textAlign: align })
                           ? "bg-blue-500 text-white hover:bg-blue-500"
-                          : "hover:bg-slate-100 bg-white"
+                          : "hover:bg-muted bg-background"
                       } p-2 rounded ${
                         i === paragraphBtns.length - 1
                           ? "border-none"

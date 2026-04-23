@@ -6,6 +6,7 @@ import * as motion from "framer-motion/client";
 
 import { SessionReturnType } from "@/lib/customHooks/ReturnType";
 import logo from "@/public/logo.svg";
+import ThemeToggle from "@/components/ThemeToggle";
 
 import SearchBar from "./components/SearchBar";
 import HeaderButtons from "./components/HeaderButtons";
@@ -25,7 +26,7 @@ export default function Header({ image, name }: HeaderPropType) {
   return (
     <>
       <motion.header
-        className="hidden h-16 md:flex border-b bg-white justify-between items-center py-2 px-2 md:px-4 sticky top-0 z-50"
+        className="hidden h-16 md:flex border-b bg-background justify-between items-center py-2 px-2 md:px-4 sticky top-0 z-50"
         initial={{
           y: -50,
           opacity: 0,
@@ -61,13 +62,14 @@ export default function Header({ image, name }: HeaderPropType) {
         </div>
         {session?.id && <SearchBar />}
         <div className="flex gap-4">
+          <ThemeToggle />
           <HeaderButtons />
           <ProfileBtn name={name} image={image} />
         </div>
       </motion.header>
 
       <div className="w-full p-4 flex gap-4 items-center md:hidden">
-        <div className="border rounded-full bg-white p-[8px]">
+        <div className="border rounded-full bg-background p-[8px]">
           <Image src={logo} width={35} alt="logo" />
         </div>
         <SearchBar />

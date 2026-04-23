@@ -55,7 +55,7 @@ export default function ProfileBtn({ name, image }: ProfileBtnPropType) {
             <></>
           )}
         </PopoverTrigger>
-        <PopoverContent className="flex flex-col p-0 py-1 text-left w-min bg-white shadow-md">
+        <PopoverContent className="flex flex-col p-0 py-1 text-left w-min bg-background shadow-md border rounded-md">
           <motion.div
             initial={{
               scale: 0.9,

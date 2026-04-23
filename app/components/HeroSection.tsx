@@ -31,7 +31,7 @@ export default function HeroSection() {
                   opacity: { duration: 0.2 },
                   y: { duration: 1 },
                 }}
-                className="text-3xl pt-4 font-bold tracking-tighter sm:text-5xl xl:text-6xl/none text-transparent bg-clip-text bg-gradient-to-br from-neutral-500 to-neutral-800"
+                className="text-3xl pt-4 font-bold tracking-tighter sm:text-5xl xl:text-6xl/none text-transparent bg-clip-text bg-gradient-to-br from-neutral-500 to-neutral-800 dark:from-neutral-200 dark:to-neutral-400"
               >
                 <span className="flex justify-center">
                   <p>Unlock the&nbsp;</p>

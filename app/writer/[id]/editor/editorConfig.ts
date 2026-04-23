@@ -17,11 +17,11 @@ const room = `room.${new Date()
   .toString()
   .slice(-2)}${new Date().getMonth() + 1}${new Date().getDate()}`;
 
-export const provider = new WebsocketProvider(
-  process.env.NEXT_PUBLIC_WEBSOCKET_URL as string,
-  room,
-  ydoc,
-);
+// export const provider = new WebsocketProvider(
+//   process.env.NEXT_PUBLIC_WEBSOCKET_URL as string,
+//   room,
+//   ydoc,
+// );
 
 export const extensions = [
   StarterKit.configure({
@@ -43,7 +43,7 @@ export const extensions = [
 export const props = {
   attributes: {
     class: cn(
-      "prose [&_ol]:list-decimal [&_ul]:list-disc w-[816.3px] max-w-[816.3px] h-[1056.36px] mx-auto bg-white rounded-md border p-24 my-2 shadow-none focus-visible:outline-none",
+      "prose [&_ol]:list-decimal [&_ul]:list-disc w-[816.3px] max-w-[816.3px] h-[1056.36px] mx-auto bg-white dark:bg-card dark:text-foreground rounded-md border p-24 my-2 shadow-none focus-visible:outline-none",
     ),
   },
 };

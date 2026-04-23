@@ -33,30 +33,30 @@ export default function Footer() {
             <div className="flex justify-center space-y-4 flex-col">
               <a
                 href="#"
-                className="text-sm text-muted-foreground hover:text-black no-underline"
+                className="text-sm text-muted-foreground hover:text-foreground no-underline"
               >
                 Home
               </a>
               <a
                 href="#features"
-                className="text-sm text-muted-foreground hover:text-black no-underline"
+                className="text-sm text-muted-foreground hover:text-foreground no-underline"
               >
                 Features
               </a>
               <a
                 href="https://github.com/git-init-priyanshu/Docx"
                 target="_blank"
-                className="text-sm text-muted-foreground hover:text-black no-underline"
+                className="text-sm text-muted-foreground hover:text-foreground no-underline"
               >
                 Open Source
               </a>
             </div>
 
             <div className="flex justify-center space-y-4 flex-col">
-              <a className="text-sm text-muted-foreground hover:text-black no-underline">
+              <a className="text-sm text-muted-foreground hover:text-foreground no-underline">
                 Privacy Policy
               </a>
-              <a className="text-sm text-muted-foreground hover:text-black no-underline">
+              <a className="text-sm text-muted-foreground hover:text-foreground no-underline">
                 Terms of Service
               </a>
             </div>
@@ -65,21 +65,21 @@ export default function Footer() {
               <a
                 href="https://github.com/git-init-priyanshu"
                 target="_blank"
-                className="text-sm text-muted-foreground hover:text-black no-underline"
+                className="text-sm text-muted-foreground hover:text-foreground no-underline"
               >
                 Github
               </a>
               <a
                 href="https://x.com/PriyanshuBartw5"
                 target="_blank"
-                className="text-sm text-muted-foreground hover:text-black no-underline"
+                className="text-sm text-muted-foreground hover:text-foreground no-underline"
               >
                 X ( Twitter )
               </a>
               <a
                 href="https://www.linkedin.com/in/priyanshu-bartwal/"
                 target="_blank"
-                className="text-sm text-muted-foreground hover:text-black no-underline"
+                className="text-sm text-muted-foreground hover:text-foreground no-underline"
               >
                 LinkedIn
               </a>

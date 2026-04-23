@@ -3,6 +3,7 @@
 import { useRouter } from "next/navigation";
 import { ALargeSmall, Redo, Undo, X } from "lucide-react";
 import { Editor } from "@tiptap/react";
+import ThemeToggle from "@/components/ThemeToggle";
 
 import {
   Drawer,
@@ -118,16 +119,10 @@ export default function Header({ editor, name, isSaving }: HeaderPropType) {
           )}
         </div>
 
-        {/* <Button */}
-        {/*   variant="outline" */}
-        {/*   size="icon" */}
-        {/*   className='mr-4 lg:hidden' */}
-        {/*   onClick={() => setIsDrawerOpen(!isDrawerOpen)} */}
-        {/* > */}
-        {/*   <AlignJustify */}
-        {/*     className="size-5 fill-foreground" */}
-        {/*   /> */}
-        {/* </Button> */}
+        {/* right side */}
+        <div className="flex items-center gap-2 pr-4">
+          <ThemeToggle />
+        </div>
       </div>
     </header>
   );

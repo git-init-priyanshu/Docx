@@ -95,7 +95,7 @@ export default function SearchBar() {
       <div
         ref={searchedResponseRef}
         className={`${isFocused && searchResponse ? "block" : "hidden"
-          } absolute shadow-md overflow-hidden border border-t-0 bg-white w-full md:w-full rounded-b-3xl`}
+          } absolute shadow-md overflow-hidden border border-t-0 bg-background w-full md:w-full rounded-b-3xl`}
       >
         {isSearching ? (
           <div className="p-3 flex items-center gap-2 justify-center text-center text-neutral-500">
@@ -125,7 +125,7 @@ export default function SearchBar() {
               <div
                 key={data.id}
                 onClick={() => router.push(`writer/${data.id}`)}
-                className="z-50 flex cursor-pointer justify-between p-2 border-l-2 border-white hover:bg-neutral-100 hover:border-blue-500 "
+                className="z-50 flex cursor-pointer justify-between p-2 border-l-2 border-transparent hover:bg-muted hover:border-blue-500 "
               >
                 <div className="flex gap-2 items-center">
                   <Image className="w-6" src={doc} height={10} alt="doc" />
