@@ -111,6 +111,7 @@
   --lp-accent-ink: #1d4ed8;
   --lp-tan: #C9A87C;
   --lp-leaf: #6B8E5A;
+  --lp-rose: #B4625A;
 }
 .dark {
   --lp-paper: #15120E;
@@ -125,7 +126,24 @@
   --lp-accent-ink: #93c5fd;
   --lp-tan: #D9B889;
   --lp-leaf: #8FAE7B;
+  --lp-rose: #D08576;
 }
+
+/* ─── Document page helpers ───────────────────────────────────────────────── */
+.doc-shadow {
+  box-shadow: 0 20px 40px -25px rgba(20,17,13,.18), 0 4px 12px -8px rgba(20,17,13,.08);
+}
+.dark .doc-shadow {
+  box-shadow: 0 20px 40px -25px rgba(0,0,0,.6), 0 4px 12px -8px rgba(0,0,0,.4);
+}
+.doc-thumb-lines {
+  background-image: repeating-linear-gradient(to bottom, var(--lp-border) 0 1px, transparent 1px 9px);
+}
+@keyframes doc-fade-up {
+  from { opacity: 0; transform: translateY(6px) }
+  to   { opacity: 1; transform: translateY(0) }
+}
+.doc-fade-up { animation: doc-fade-up .35s ease-out both; }
 
 /* Landing page animations */
 @keyframes lp-caret {
