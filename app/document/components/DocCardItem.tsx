@@ -1,0 +1,177 @@
+"use client";
+
+import { useRef, useState } from "react";
+import { useRouter } from "next/navigation";
+import type { User } from "@prisma/client";
+
+import prettifyDate from "@/helpers/prettifyDates";
+import useClientSession from "@/lib/customHooks/useClientSession";
+import useDebounce from "@/lib/customHooks/useDebounce";
+import { RenameDocument } from "./Card/actions";
+import { updateGuestDocument } from "@/lib/guestServices";
+import CardOptions from "./Card/components/Options";
+
+const DOC_COLORS = [
+  "var(--lp-accent)",
+  "var(--lp-leaf)",
+  "var(--lp-rose)",
+  "var(--lp-tan)",
+];
+
+type DocCardItemProps = {
+  docId: string;
+  thumbnail: string | null;
+  title: string;
+  updatedAt: Date;
+  users: { user: Pick<User, "name" | "picture"> }[];
+  view: "grid" | "list";
+  colorIndex: number;
+};
+
+export default function DocCardItem({
+  docId,
+  thumbnail,
+  title,
+  updatedAt,
+  users,
+  view,
+  colorIndex,
+}: DocCardItemProps) {
+  const router = useRouter();
+  const session = useClientSession();
+  const inputRef = useRef<HTMLInputElement>(null);
+  const [name, setName] = useState(title);
+  const color = DOC_COLORS[colorIndex % DOC_COLORS.length];
+
+  const debounce = useDebounce(async () => {
+    if (!inputRef.current) return;
+    if (session?.id) {
+      await RenameDocument(docId, inputRef.current.value);
+    } else {
+      updateGuestDocument(docId, "name", inputRef.current.value);
+    }
+  }, 1000);
+
+  const ownerName = users[0]?.user?.name ?? "You";
+  const ownerInitial = (ownerName[0] ?? "?").toUpperCase();
+  const formattedDate = prettifyDate(String(updatedAt), {
+    month: "short",
+    day: "2-digit",
+  });
+
+  if (view === "list") {
+    return (
+      <div
+        className="w-full grid grid-cols-[1fr,140px,90px,32px] gap-4 items-center px-4 py-3 rounded-md border transition cursor-pointer hover:border-[var(--lp-accent)]"
+        style={{ background: "var(--lp-card)", borderColor: "var(--lp-border)" }}
+        onClick={() => router.push(`/writer/${docId}`)}
+      >
+        {/* Name */}
+        <div className="flex items-center gap-3 min-w-0">
+          <span
+            className="w-8 h-8 rounded-md flex items-center justify-center text-white shrink-0"
+            style={{ background: color }}
+          >
+            <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6">
+              <path d="M3 21l3.5-1 11-11L14 5.5 3 16.5 3 21z" />
+            </svg>
+          </span>
+          <div className="min-w-0">
+            <input
+              ref={inputRef}
+              value={name}
+              className="text-[13.5px] font-medium truncate bg-transparent border-none outline-none w-full focus:bg-[var(--lp-paper-2)] focus:px-1 rounded transition"
+              style={{ color: "var(--lp-ink)" }}
+              onClick={e => e.stopPropagation()}
+              onChange={e => { setName(e.target.value); debounce(e.target.value); }}
+            />
+          </div>
+        </div>
+
+        {/* Owner */}
+        <div className="flex items-center gap-1.5 text-[12px]" style={{ color: "var(--lp-muted)" }}>
+          <span
+            className="w-5 h-5 rounded-full text-white text-[9px] font-bold flex items-center justify-center shrink-0"
+            style={{ background: "var(--lp-accent)" }}
+          >
+            {ownerInitial}
+          </span>
+          <span className="truncate">{ownerName}</span>
+        </div>
+
+        {/* Date */}
+        <div className="font-mono text-[10.5px]" style={{ color: "var(--lp-muted)" }}>
+          {formattedDate}
+        </div>
+
+        <span onClick={e => e.stopPropagation()}>
+          <CardOptions docId={docId} inputRef={inputRef} />
+        </span>
+      </div>
+    );
+  }
+
+  return (
+    <div
+      className="rounded-lg border overflow-hidden transition text-left cursor-pointer group doc-fade-up hover:border-[var(--lp-accent)] doc-shadow-hover"
+      style={{ background: "var(--lp-card)", borderColor: "var(--lp-border)" }}
+      onClick={() => router.push(`/writer/${docId}`)}
+    >
+      {/* Thumbnail area */}
+      <div
+        className="relative overflow-hidden border-b"
+        style={{
+          aspectRatio: "4/3.2",
+          borderColor: "var(--lp-border)",
+          background: thumbnail ? undefined : "var(--lp-paper-2)",
+          backgroundImage: thumbnail ? `url(${thumbnail})` : undefined,
+          backgroundSize: "cover",
+          backgroundPosition: "top",
+          padding: thumbnail ? 0 : "1rem",
+        }}
+      >
+        {!thumbnail && (
+          <>
+            <div className="h-1 w-12 rounded-full mb-3" style={{ background: color }} />
+            <div
+              className="text-[10.5px] font-medium leading-tight mb-2 line-clamp-2"
+              style={{ color: "var(--lp-ink)" }}
+            >
+              {name}
+            </div>
+            <div className="doc-thumb-lines opacity-70" style={{ height: "60%" }} />
+          </>
+        )}
+        {thumbnail && (
+          <div className="absolute top-0 left-0 right-0 h-1" style={{ background: color }} />
+        )}
+      </div>
+
+      {/* Card footer */}
+      <div className="p-3">
+        <input
+          ref={inputRef}
+          value={name}
+          className="text-[13px] font-medium truncate w-full bg-transparent border-none outline-none focus:bg-[var(--lp-paper-2)] focus:px-1 rounded transition"
+          style={{ color: "var(--lp-ink)" }}
+          onClick={e => e.stopPropagation()}
+          onChange={e => { setName(e.target.value); debounce(e.target.value); }}
+        />
+        <div className="flex items-center justify-between mt-1.5">
+          <div className="flex items-center gap-1.5" style={{ color: "var(--lp-muted)" }}>
+            <span
+              className="w-4 h-4 rounded-full text-white text-[8px] font-bold flex items-center justify-center shrink-0"
+              style={{ background: "var(--lp-accent)" }}
+            >
+              {ownerInitial}
+            </span>
+            <span className="text-[11px] truncate">{ownerName}</span>
+          </div>
+          <span className="font-mono text-[10px]" style={{ color: "var(--lp-muted)" }}>
+            {formattedDate}
+          </span>
+        </div>
+      </div>
+    </div>
+  );
+}

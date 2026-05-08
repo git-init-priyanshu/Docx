@@ -1,0 +1,165 @@
+"use client";
+
+import { useState, useRef, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { useTheme } from "next-themes";
+import { Sun, Moon, Plus, Search, X } from "lucide-react";
+import Image from "next/image";
+
+import prettifyDate from "@/helpers/prettifyDates";
+import useClientSession from "@/lib/customHooks/useClientSession";
+import useDebounce from "@/lib/customHooks/useDebounce";
+import doc from "@/public/output-onlinepngtools.svg";
+import { SearchDocAction } from "./Header/actions";
+
+type SearchResult = {
+  id: string;
+  name: string;
+  updatedAt: Date;
+  createdBy: { name: string };
+};
+
+type DocTopBarProps = {
+  q: string;
+  setQ: (q: string) => void;
+  onCreate: () => void;
+};
+
+export default function DocTopBar({ q, setQ, onCreate }: DocTopBarProps) {
+  const router = useRouter();
+  const { resolvedTheme, setTheme } = useTheme();
+  const session = useClientSession();
+  const searchRef = useRef<HTMLDivElement>(null);
+
+  const [isFocused, setIsFocused] = useState(false);
+  const [isSearching, setIsSearching] = useState(false);
+  const [searchResponse, setSearchResponse] = useState<{
+    success: boolean;
+    data?: SearchResult[];
+    error?: string;
+  } | undefined>(undefined);
+
+  const debounce = useDebounce(async (value: string) => {
+    if (!value || !session?.id) return;
+    setIsSearching(true);
+    const resp = await SearchDocAction(value);
+    setSearchResponse(resp as any);
+    setIsSearching(false);
+  }, 500);
+
+  useEffect(() => {
+    const handler = (e: MouseEvent) => {
+      if (searchRef.current && !searchRef.current.contains(e.target as Node)) {
+        setIsFocused(false);
+      }
+    };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, []);
+
+  const showDropdown = isFocused && !!searchResponse && !!session?.id;
+
+  return (
+    <div
+      className="h-[64px] border-b flex items-center px-6 gap-3 shrink-0"
+      style={{ borderColor: "var(--lp-border)", background: "var(--lp-card)" }}
+    >
+      {/* Search */}
+      <div className="relative flex-1 max-w-[480px]" ref={searchRef}>
+        <input
+          value={q}
+          onChange={e => {
+            setQ(e.target.value);
+            if (!e.target.value) {
+              setSearchResponse(undefined);
+              return;
+            }
+            debounce(e.target.value);
+          }}
+          onFocus={() => setIsFocused(true)}
+          placeholder="Search documents…"
+          className="w-full h-10 pl-10 pr-10 rounded-md text-[13.5px] outline-none transition"
+          style={{
+            background: "var(--lp-paper-2)",
+            border: "1px solid var(--lp-border)",
+            color: "var(--lp-ink)",
+          }}
+        />
+        <Search
+          className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 pointer-events-none"
+          style={{ color: "var(--lp-muted)" }}
+        />
+        {q && (
+          <button
+            className="absolute right-2.5 top-1/2 -translate-y-1/2"
+            onClick={() => { setQ(""); setSearchResponse(undefined); }}
+          >
+            <X className="w-4 h-4" style={{ color: "var(--lp-muted)" }} />
+          </button>
+        )}
+
+        {/* Search dropdown */}
+        {showDropdown && (
+          <div
+            className="absolute top-full left-0 right-0 z-50 rounded-b-xl border border-t-0 overflow-hidden shadow-lg"
+            style={{ background: "var(--lp-card)", borderColor: "var(--lp-border)" }}
+          >
+            {isSearching ? (
+              <div className="p-3 text-center text-[13px]" style={{ color: "var(--lp-muted)" }}>
+                Searching…
+              </div>
+            ) : !searchResponse?.success ? (
+              <div className="p-3 text-center text-[13px]" style={{ color: "var(--lp-muted)" }}>
+                {searchResponse?.error}
+              </div>
+            ) : (
+              searchResponse.data?.map(d => (
+                <div
+                  key={d.id}
+                  onClick={() => router.push(`/writer/${d.id}`)}
+                  className="flex cursor-pointer justify-between p-2.5 border-l-2 hover:bg-[var(--lp-paper-2)] transition"
+                  style={{ borderLeftColor: "transparent" }}
+                >
+                  <div className="flex gap-2 items-center">
+                    <Image className="w-5" src={doc} alt="doc" height={20} />
+                    <div>
+                      <p className="text-[13px]" style={{ color: "var(--lp-ink)" }}>{d.name}</p>
+                      <p className="text-[11px]" style={{ color: "var(--lp-muted)" }}>{d.createdBy.name}</p>
+                    </div>
+                  </div>
+                  <p className="text-[11px] font-mono" style={{ color: "var(--lp-muted)" }}>
+                    {prettifyDate(String(d.updatedAt), { month: "short", day: "2-digit" })}
+                  </p>
+                </div>
+              ))
+            )}
+          </div>
+        )}
+      </div>
+
+      {/* Right actions */}
+      <div className="ml-auto flex items-center gap-2">
+        <button
+          onClick={() => setTheme(resolvedTheme === "dark" ? "light" : "dark")}
+          className="h-9 w-9 rounded-md border flex items-center justify-center transition hover:bg-[var(--lp-paper-2)]"
+          style={{ borderColor: "var(--lp-border)" }}
+          aria-label="Toggle theme"
+        >
+          {resolvedTheme === "dark" ? (
+            <Sun className="w-4 h-4" style={{ color: "var(--lp-ink)" }} />
+          ) : (
+            <Moon className="w-4 h-4" style={{ color: "var(--lp-ink)" }} />
+          )}
+        </button>
+        <button
+          onClick={onCreate}
+          className="inline-flex items-center gap-1.5 h-9 px-3.5 rounded-md text-white text-[13px] font-medium transition hover:opacity-90"
+          style={{ background: "var(--lp-accent)" }}
+        >
+          <Plus className="w-3.5 h-3.5" strokeWidth={2.2} />
+          New
+        </button>
+      </div>
+    </div>
+  );
+}
