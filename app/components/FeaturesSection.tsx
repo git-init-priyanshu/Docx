@@ -1,154 +1,125 @@
-import { Cloud, Users, Wand } from "lucide-react";
-import * as motion from "framer-motion/client";
-import AiAnimation from "@/components/aiAnimation";
-import AiFeature from "@/public/ai-feature.png"
-import CollabFeature from "@/public/collab-feature.png"
-import Image, { StaticImageData } from "next/image";
+const FEATURES = [
+  {
+    icon: "users",
+    title: "Real-time collab",
+    body: "Cursors, comments, and edits sync over Y.js. Up to a few dozen people can edit the same page.",
+  },
+  {
+    icon: "sparkle",
+    title: "AI helpers",
+    body: "Highlight a paragraph, ask for a rewrite or a summary. Bring your own OpenAI / Anthropic key.",
+  },
+  {
+    icon: "history",
+    title: "Version history",
+    body: "Every change is saved. Roll back, branch a copy, or compare two versions side-by-side.",
+  },
+  {
+    icon: "lock",
+    title: "Self-hostable",
+    body: "Clone the repo, run `docker compose up`, and it's yours. MIT-licensed, no hidden tiers.",
+  },
+  {
+    icon: "layers",
+    title: "Outline view",
+    body: "Drag headings to reorder sections. The document follows along — no copy-paste between blocks.",
+  },
+  {
+    icon: "plug",
+    title: "Open API",
+    body: "REST endpoints for documents, comments, and exports. Webhook on every save.",
+  },
+];
 
-export default function FeaturesSection() {
-  const features = [
-    {
-      title: "AI powered",
-      description:
-        "Leverage advanced AI capabilities, offering intelligent assistance and seamless automation without additional costs",
-      animation: <Wand />,
-      image: AiFeature
-    },
-    {
-      title: "Real-Time Collaboration ",
-      description:
-        "Multiple users can edit the same document simultaneously, with changes syncing in real-time.",
-      animation: <Users />,
-      image: CollabFeature
-    },
-    // {
-    //   title: "Highly scalable",
-    //   description:
-    //     "Adapts effortlessly to growth, maintaining performance as needs expand.",
-    //   animation: <Cloud />,
-    //   image: AiFeature
-    // },
-  ];
+function FeatureIcon({ name }: { name: string }) {
+  const common = "fill-none stroke-current";
+  const icons: Record<string, React.ReactNode> = {
+    users: (
+      <>
+        <circle cx="9" cy="9" r="3.2" />
+        <path d="M2.5 19c.6-3 3.4-4.6 6.5-4.6s5.9 1.6 6.5 4.6" />
+        <circle cx="17" cy="9" r="2.6" />
+        <path d="M16 14.6c2.4.2 4.4 1.5 5 3.4" />
+      </>
+    ),
+    sparkle: (
+      <>
+        <path d="M12 3v3M12 18v3M3 12h3M18 12h3M5.5 5.5l2 2M16.5 16.5l2 2M5.5 18.5l2-2M16.5 7.5l2-2" />
+        <circle cx="12" cy="12" r="2.2" />
+      </>
+    ),
+    history: (
+      <>
+        <circle cx="12" cy="12" r="9" />
+        <path d="M12 7v5l3 2" />
+        <path d="M3 8a9 9 0 0 1 3-4" />
+      </>
+    ),
+    lock: (
+      <>
+        <rect x="4" y="11" width="16" height="10" rx="2" />
+        <path d="M8 11V7a4 4 0 0 1 8 0v4" />
+      </>
+    ),
+    layers: (
+      <>
+        <path d="M12 3l9 5-9 5-9-5 9-5z" />
+        <path d="M3 13l9 5 9-5" />
+      </>
+    ),
+    plug: <path d="M9 7V3M15 7V3M7 7h10v4a5 5 0 0 1-10 0V7zM12 16v5" />,
+  };
 
   return (
-    <section
-      id="features"
-      className="relative w-full border-t bg-white z-10 border-b"
+    <svg
+      viewBox="0 0 24 24"
+      className={`w-4 h-4 ${common}`}
+      strokeWidth={1.6}
+      strokeLinecap="round"
+      strokeLinejoin="round"
     >
-      <div className="container px-4 md:px-6 md:mt-20 pb-4">
-        <div className="flex flex-col items-center justify-center space-y-4 text-center">
-          <motion.h2
-            initial="hidden"
-            whileInView="visible"
-            variants={FeaturesVariant}
-            transition={{ delay: 0.2, duration: 0.4 }}
-            viewport={{ once: true }}
-            className="text-3xl font-bold tracking-tighter sm:text-5xl"
+      {icons[name]}
+    </svg>
+  );
+}
+
+export default function FeaturesSection() {
+  return (
+    <section id="features" className="py-20" style={{ background: "var(--lp-paper)" }}>
+      <div className="mx-auto w-full max-w-[1080px] px-6 lg:px-8">
+        <div className="max-w-[640px] mb-12">
+          <div className="font-mono text-[11px] uppercase tracking-wider mb-2" style={{ color: "var(--lp-muted)" }}>
+            Features
+          </div>
+          <h2
+            className="text-[38px] sm:text-[46px] leading-[1.05] tracking-[-0.03em] font-semibold"
+            style={{ color: "var(--lp-ink)" }}
           >
-            <span className="text-black">Key&nbsp;</span>
-            <span className="text-blue-500">Features</span>
-          </motion.h2>
+            Everything you&apos;d expect,<br />and a few things you wouldn&apos;t.
+          </h2>
         </div>
-        <div className="flex flex-col gap-10 my-16">
-          {features.map((feature, index) => (
-            <Feature key={feature.title} {...feature} index={index} />
+
+        <div
+          className="grid sm:grid-cols-2 lg:grid-cols-3 gap-px rounded-[10px] border overflow-hidden"
+          style={{ background: "var(--lp-border)", borderColor: "var(--lp-border)" }}
+        >
+          {FEATURES.map((f) => (
+            <div
+              key={f.title}
+              className="lp-feature-card p-6 group"
+            >
+              <div
+                className="w-9 h-9 rounded-md border flex items-center justify-center mb-4 transition-transform group-hover:-rotate-3"
+                style={{ borderColor: "var(--lp-border)", color: "var(--lp-accent)" }}
+              >
+                <FeatureIcon name={f.icon} />
+              </div>
+              <div className="font-medium text-[15px] mb-1" style={{ color: "var(--lp-ink)" }}>{f.title}</div>
+              <p className="text-[13px] leading-relaxed" style={{ color: "var(--lp-muted)" }}>{f.body}</p>
+            </div>
           ))}
         </div>
       </div>
     </section>
   );
 }
-
-function Feature({
-  title,
-  description,
-  animation,
-  image,
-  index,
-}: {
-  title: string;
-  description: string;
-  animation: React.ReactNode;
-  image: StaticImageData,
-  index: number;
-}) {
-  const featureSize = "h-60 w-96";
-
-  return (
-    <div
-      className={`${index % 2 === 0 ? "flex" : "flex flex-row-reverse"} w-full justify-center gap-10`}
-    >
-      <motion.div
-        // initial={`${index % 2 === 0 ? "hiddenLeft" : "hiddenRight"}`}
-        // whileInView="visible"
-        // viewport={{ once: true }}
-        // variants={FeatureVariant}
-        // transition={{
-        //   duration: 0.5,
-        //   ease: "easeIn",
-        // }}
-        className={`${featureSize} relative bg-neutral-50 border-blue-100 flex justify-center items-center border rounded-md overflow-hidden`}
-      >
-        {/* {animation} */}
-        <Image src={image} alt="feat" />
-
-        {/* <div */}
-        {/*   className="absolute w-[120%] h-[120%] bottom-0" */}
-        {/*   style={{ */}
-        {/*     background: "radial-gradient(73% 20% at 50% 100%, rgb(0, 102, 255) 10%, rgba(171, 171, 171, 0) 100%)", */}
-        {/*     filter: "blur(40px)" */}
-        {/*   }} */}
-        {/* ></div> */}
-
-        {/* <div */}
-        {/*   className="absolute w-[120%] h-[120%] bottom-0" */}
-        {/*   style={{ */}
-        {/*     background: "radial-gradient(100% 100% at 50% 50%, rgb(255 255 255 / 0%) 45%, rgb(59 130 246 / 82%) 115%)", */}
-        {/*     filter: "blur(40px)" */}
-        {/*   }} */}
-        {/* ></div> */}
-      </motion.div>
-
-      <motion.div
-        // initial={`${index % 2 !== 0 ? "hiddenLeft" : "hiddenRight"}`}
-        // whileInView="visible"
-        // variants={FeatureVariant}
-        // viewport={{ once: true }}
-        // transition={{
-        //   duration: 0.5,
-        //   ease: "easeIn",
-        // }}
-        className={`${featureSize} flex flex-col justify-center items-center gap-8 p-4`}
-      >
-        <h3 className="text-3xl text-center">{title}</h3>
-        <p className="text-sm text-neutral-500">{description}</p>
-      </motion.div>
-    </div>
-  );
-}
-
-const FeaturesVariant = {
-  hidden: {
-    y: 20,
-    opacity: 0,
-  },
-  visible: {
-    y: 0,
-    opacity: 1,
-  },
-};
-
-const FeatureVariant = {
-  hiddenLeft: {
-    x: "-100%",
-    opacity: 0,
-  },
-  hiddenRight: {
-    x: "100%",
-    opacity: 0,
-  },
-  visible: {
-    x: "0%",
-    opacity: 1,
-  },
-};

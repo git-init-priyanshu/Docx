@@ -1,17 +1,23 @@
-import FeaturesSection from "./components/FeaturesSection";
+import Navbar from "@/components/Navbar";
 import HeroSection from "./components/HeroSection";
-import AboutSection from "./components/AboutSection";
-import ContactSection from "./components/ContactSection";
+import LiveDemoSection from "./components/LiveDemoSection";
+import FeaturesSection from "./components/FeaturesSection";
+import HowItWorksSection from "./components/HowItWorksSection";
+import CTASection from "./components/CTASection";
 import Footer from "./components/Footer";
 
-export default function Component() {
+export default function LandingPage() {
   return (
-    <main className="flex flex-col min-h-[100dvh] overflow-hidden">
-      <HeroSection />
-      <FeaturesSection />
-      {/* <AboutSection /> */}
-      {/* <ContactSection /> */}
+    <div style={{ background: "var(--lp-paper)" }}>
+      <Navbar />
+      <main>
+        <HeroSection />
+        <LiveDemoSection />
+        <FeaturesSection />
+        <HowItWorksSection />
+        <CTASection />
+      </main>
       <Footer />
-    </main>
+    </div>
   );
 }

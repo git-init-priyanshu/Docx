@@ -97,6 +97,110 @@
   margin-left: 0.25em;
 }
 
+/* ─── Landing page design tokens ─────────────────────────────────────────── */
+:root {
+  --lp-paper: #FAF7F2;
+  --lp-paper-2: #F3EEE5;
+  --lp-ink: #1A1612;
+  --lp-ink-2: #2A2520;
+  --lp-muted: #6B6259;
+  --lp-border: #E5DFD3;
+  --lp-card: #FFFFFF;
+  --lp-accent: #2563eb;
+  --lp-accent-soft: #dbeafe;
+  --lp-accent-ink: #1d4ed8;
+  --lp-tan: #C9A87C;
+  --lp-leaf: #6B8E5A;
+}
+.dark {
+  --lp-paper: #15120E;
+  --lp-paper-2: #1C1813;
+  --lp-ink: #F4ECDF;
+  --lp-ink-2: #E8DEC9;
+  --lp-muted: #9A8E7E;
+  --lp-border: #2C2620;
+  --lp-card: #1A1611;
+  --lp-accent: #60a5fa;
+  --lp-accent-soft: #1e3a5f;
+  --lp-accent-ink: #93c5fd;
+  --lp-tan: #D9B889;
+  --lp-leaf: #8FAE7B;
+}
+
+/* Landing page animations */
+@keyframes lp-caret {
+  0%, 49% { opacity: 1 }
+  50%, 100% { opacity: 0 }
+}
+@keyframes lp-drift {
+  0%, 100% { transform: translate(0, 0) }
+  50% { transform: translate(6px, -4px) }
+}
+@keyframes lp-float-in {
+  from { opacity: 0; transform: translateY(8px) }
+  to { opacity: 1; transform: none }
+}
+.lp-caret { animation: lp-caret 1.05s steps(1) infinite; }
+.lp-drift { animation: lp-drift 7s ease-in-out infinite; }
+.lp-float-in { animation: lp-float-in 0.8s ease both; }
+
+/* Dot / grid tile backgrounds */
+.lp-bg-dots {
+  background-image: radial-gradient(circle, var(--lp-border) 1px, transparent 1px);
+  background-size: 22px 22px;
+}
+.lp-bg-grid {
+  background-image:
+    linear-gradient(to right, var(--lp-border) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--lp-border) 1px, transparent 1px);
+  background-size: 36px 36px;
+}
+
+/* Radial fade mask for pattern overlays */
+.lp-fade-mask {
+  -webkit-mask-image: radial-gradient(ellipse at center, #000 50%, transparent 100%);
+          mask-image: radial-gradient(ellipse at center, #000 50%, transparent 100%);
+}
+
+/* Card shadow */
+.lp-doc-shadow {
+  box-shadow:
+    0 1px 0 rgba(0,0,0,.04),
+    0 30px 50px -25px rgba(20,17,13,.25),
+    0 8px 20px -10px rgba(20,17,13,.12);
+}
+.dark .lp-doc-shadow {
+  box-shadow:
+    0 1px 0 rgba(255,255,255,.04),
+    0 30px 60px -25px rgba(0,0,0,.6),
+    0 8px 20px -10px rgba(0,0,0,.4);
+}
+
+/* Floating cursor tooltip */
+.lp-cursor-label {
+  transform: translate(-2px, -100%);
+  border-radius: 4px 4px 4px 0;
+  padding: 1px 6px;
+  font-size: 11px;
+  font-weight: 600;
+  color: white;
+  white-space: nowrap;
+  line-height: 1.2;
+}
+
+/* Feature card hover — CSS-only so the component stays a server component */
+.lp-feature-card {
+  background: var(--lp-card);
+  transition: background 0.15s;
+}
+.lp-feature-card:hover {
+  background: var(--lp-paper-2);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lp-caret, .lp-drift, .lp-float-in { animation: none; }
+}
+
 /* Give a remote user a caret  */
 .collaboration-cursor__caret {
   border-left: 1px solid #0d0d0d;
