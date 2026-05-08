@@ -3,79 +3,89 @@
 import { useEffect, useState } from "react";
 import { EditorContent } from "@tiptap/react";
 
-import { ScrollArea } from "@/components/ui/scroll-area";
-
 import { Editor } from "./editor";
-import { FormatOptions, InsertOptions } from "./components/options";
-import Header from "./components/Header/Header";
-import Tabs from "./components/Tabs";
+import Toolbar from "./components/Header/Header";
+import LeftSidebar from "./components/Tabs";
+import FormatBar from "./components/FormatBar";
+import RightRail from "./components/RightRail";
+import AskPalette from "./components/AskPalette";
 import Loading from "./components/EditorLoading";
 import BubbleMenuComp from "./components/BubbleMenuComp";
 
-export default function Dashboard() {
-  const [option, setOption] = useState(0);
+export default function WriterPage() {
   const [isSaving, setIsSaving] = useState(false);
   const [isHighlighted, setIsHighlighted] = useState(false);
   const [position, setPosition] = useState({ x: 0, y: 0 });
   const [position2, setPosition2] = useState({ x: 0, y: 0, width: 0 });
+  const [askOpen, setAskOpen] = useState(false);
 
   const { editor, docData } = Editor({ setIsSaving });
 
-  const Options = [
-    <FormatOptions key={1} editor={editor} />,
-    <InsertOptions key={2} editor={editor} />,
-  ];
+  // ⌘K / Ctrl+K to open the Ask palette
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") {
+        e.preventDefault();
+        setAskOpen((o) => !o);
+      }
+      if (e.key === "Escape") setAskOpen(false);
+    };
+    window.addEventListener("keydown", handler);
+    return () => window.removeEventListener("keydown", handler);
+  }, []);
 
-  // For bubble menu
+  // Bubble menu selection tracking
   useEffect(() => {
     const handleSelectionChange = () => {
       const selection = window.getSelection();
       if (!selection) return;
 
-      setIsHighlighted(selection && selection.toString().length > 0);
+      setIsHighlighted(selection.toString().length > 0);
 
-      const editorDimensions = document
-        .getElementsByClassName("tiptap")[0]
-        .getBoundingClientRect();
-      const selectionDimensions = selection
-        .getRangeAt(0)
-        .getBoundingClientRect();
+      const editorEl = document.getElementsByClassName("tiptap")[0];
+      if (!editorEl || !selection.rangeCount) return;
+
+      const editorRect = editorEl.getBoundingClientRect();
+      const selectionRect = selection.getRangeAt(0).getBoundingClientRect();
+
       setPosition({
-        x:
-          selectionDimensions.left -
-          editorDimensions.left +
-          selectionDimensions.width / 2,
-        y: selectionDimensions.top - editorDimensions.top - 60,
+        x: selectionRect.left - editorRect.left + selectionRect.width / 2,
+        y: selectionRect.top - editorRect.top - 60,
       });
       setPosition2({
-        x:
-          selectionDimensions.left -
-          editorDimensions.left +
-          selectionDimensions.width / 2,
-        y:
-          selectionDimensions.top -
-          editorDimensions.top +
-          selectionDimensions.height +
-          20,
-        width: selectionDimensions.width,
+        x: selectionRect.left - editorRect.left + selectionRect.width / 2,
+        y: selectionRect.top - editorRect.top + selectionRect.height + 20,
+        width: selectionRect.width,
       });
     };
 
     document.addEventListener("selectionchange", handleSelectionChange);
-
-    return () => {
-      document.removeEventListener("selectionchange", handleSelectionChange);
-    };
+    return () => document.removeEventListener("selectionchange", handleSelectionChange);
   }, []);
 
   return (
-    <div className="h-screen overflow-y-hidden w-full">
-      <Header editor={editor} name={docData?.name || ""} isSaving={isSaving} />
-      <div className="flex h-full">
-        <Tabs option={option} setOption={setOption} />
-        <div className="w-full flex gap-4 p-4">
-          {Options[option]}
-          <ScrollArea className="w-full mb-4 flex justify-center">
+    <div
+      className="h-screen w-screen flex overflow-hidden"
+      style={{ background: "var(--lp-paper)" }}
+    >
+      {/* Left sidebar */}
+      <LeftSidebar name={docData?.name} />
+
+      {/* Main content */}
+      <main className="flex-1 flex flex-col min-w-0">
+        {/* Toolbar */}
+        <Toolbar
+          name={docData?.name || ""}
+          isSaving={isSaving}
+          onAsk={() => setAskOpen(true)}
+        />
+
+        {/* Format bar */}
+        <FormatBar editor={editor} />
+
+        {/* Editor area */}
+        <div className="flex-1 overflow-y-auto" style={{ background: "var(--lp-paper-2)" }}>
+          <div className="relative pb-16">
             {!docData ? (
               <Loading />
             ) : (
@@ -89,9 +99,15 @@ export default function Dashboard() {
                 <EditorContent editor={editor} />
               </>
             )}
-          </ScrollArea>
+          </div>
         </div>
-      </div>
+      </main>
+
+      {/* Right rail */}
+      <RightRail />
+
+      {/* ⌘K palette */}
+      <AskPalette open={askOpen} onClose={() => setAskOpen(false)} />
     </div>
   );
 }
