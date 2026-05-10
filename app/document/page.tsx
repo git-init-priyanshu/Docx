@@ -1,65 +1,45 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { LayoutGrid, List, Plus } from "lucide-react";
-import type { User } from "@prisma/client";
 
-import { GetAllDocs } from "./actions";
 import { CreateNewDocument } from "./components/Header/actions";
-import { createGuestDocument, getAllGuestDocuments } from "@/lib/guestServices";
+import { createGuestDocument } from "@/lib/guestServices";
 import useClientSession from "@/lib/customHooks/useClientSession";
+import { useDocs, invalidateDocs } from "@/lib/hooks/useDocs";
 import Sidebar from "./components/Sidebar";
 import DocTopBar from "./components/DocTopBar";
 import DocCardItem from "./components/DocCardItem";
 import QuickStart from "./components/QuickStart";
 
-type DocType = {
-  id: string;
-  thumbnail: string | null;
-  name: string;
-  updatedAt: Date;
-  users: { user: Pick<User, "name" | "picture"> }[];
-};
-
 export default function DocumentPage() {
   const router = useRouter();
   const session = useClientSession();
 
-  const [data, setData] = useState<DocType[] | null>(null);
   const [folder, setFolder] = useState("all");
   const [view, setView] = useState<"grid" | "list">("grid");
   const [sort, setSort] = useState<"recent" | "alpha">("recent");
   const [q, setQ] = useState("");
 
-  useEffect(() => {
-    (async () => {
-      if (session?.id) {
-        const response = await GetAllDocs(session.id);
-        if (response.success) {
-          setData(response.data as DocType[]);
-        } else {
-          setData([]);
-        }
-      } else {
-        setData(getAllGuestDocuments() as unknown as DocType[]);
-      }
-    })();
-  }, [session?.id]);
+  const { docs, isLoading } = useDocs(session?.id);
+  const data = isLoading ? null : docs;
 
-  const createDocument = async () => {
+  const createDocument = async (content?: string) => {
     if (session?.id) {
-      const response = await CreateNewDocument();
+      const response = await CreateNewDocument(content);
       if (response.success) {
         toast.success("Successfully created new document");
+        await invalidateDocs(session.id);
         router.push(`/writer/${response.data?.id}`);
       } else {
         toast.error(response.error);
       }
     } else {
-      const doc = createGuestDocument();
+      const doc = createGuestDocument(content);
       toast.success("Successfully created new document");
+      await invalidateDocs();
       router.push(`/writer/${doc.id}`);
     }
   };
@@ -117,7 +97,7 @@ export default function DocumentPage() {
             </div>
 
             {/* Quick start */}
-            {folder === "all" && data !== null && (
+            {folder === "all" && (
               <div className="mb-10">
                 <QuickStart onCreate={createDocument} />
               </div>
@@ -145,7 +125,7 @@ export default function DocumentPage() {
                     <DocCardItem
                       key={d.id}
                       docId={d.id}
-                      thumbnail={d.thumbnail}
+                      data={d.data}
                       title={d.name}
                       updatedAt={d.updatedAt}
                       users={d.users}
@@ -267,7 +247,7 @@ export default function DocumentPage() {
                     <DocCardItem
                       key={d.id}
                       docId={d.id}
-                      thumbnail={d.thumbnail}
+                      data={d.data}
                       title={d.name}
                       updatedAt={d.updatedAt}
                       users={d.users}
@@ -285,7 +265,7 @@ export default function DocumentPage() {
                     <DocCardItem
                       key={d.id}
                       docId={d.id}
-                      thumbnail={d.thumbnail}
+                      data={d.data}
                       title={d.name}
                       updatedAt={d.updatedAt}
                       users={d.users}
@@ -304,7 +284,7 @@ export default function DocumentPage() {
 
       {/* FAB */}
       <button
-        onClick={createDocument}
+        onClick={() => createDocument()}
         className="fixed bottom-6 right-6 h-12 w-12 rounded-full text-white flex items-center justify-center hover:scale-105 transition shadow-lg z-10"
         style={{ background: "var(--lp-accent)" }}
         aria-label="New document"

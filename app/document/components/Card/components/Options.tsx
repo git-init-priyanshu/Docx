@@ -26,9 +26,9 @@ import { Button } from "@/components/ui/button";
 import { deleteGuestDocument } from "@/lib/guestServices";
 import LoaderButton from "@/components/LoaderButton";
 import useClientSession from "@/lib/customHooks/useClientSession";
+import { invalidateDocs } from "@/lib/hooks/useDocs";
 
 import { DeleteDocument } from "../actions";
-import { revalidatePath } from "next/cache";
 
 type CardOptionsPropType = {
   docId: string;
@@ -108,6 +108,7 @@ export default function CardOptions({ docId, inputRef }: CardOptionsPropType) {
       const response = await DeleteDocument(docId);
       if (response.success) {
         toast.success(response.data);
+        await invalidateDocs(session.id);
       } else {
         toast.error(response.error);
       }
@@ -115,6 +116,7 @@ export default function CardOptions({ docId, inputRef }: CardOptionsPropType) {
       setIsDeleteModalOpen(false);
     } else {
       deleteGuestDocument(docId);
+      await invalidateDocs();
       setIsDeleting(false);
       setIsDeleteModalOpen(false);
     }

@@ -14,6 +14,7 @@ import prettifyDate from "@/helpers/prettifyDates";
 import useClientSession from "@/lib/customHooks/useClientSession";
 import useDebounce from "@/lib/customHooks/useDebounce";
 import { updateGuestDocument } from "@/lib/guestServices";
+import { invalidateDocs } from "@/lib/hooks/useDocs";
 
 type DocCardPropType = {
   docId: string;
@@ -37,8 +38,10 @@ export default function DocCard({
     if (!inputRef.current) return;
     if (session?.id) {
       await RenameDocument(docId, inputRef.current.value);
+      await invalidateDocs(session.id);
     } else {
       updateGuestDocument(docId, 'name', inputRef.current.value);
+      await invalidateDocs();
     }
   }, 1000);
 
