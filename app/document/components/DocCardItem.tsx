@@ -10,6 +10,8 @@ import useDebounce from "@/lib/customHooks/useDebounce";
 import { RenameDocument } from "./Card/actions";
 import { updateGuestDocument } from "@/lib/guestServices";
 import CardOptions from "./Card/components/Options";
+import DocThumbnail from "@/components/DocThumbnail";
+import { invalidateDocs } from "@/lib/hooks/useDocs";
 
 const DOC_COLORS = [
   "var(--lp-accent)",
@@ -20,7 +22,7 @@ const DOC_COLORS = [
 
 type DocCardItemProps = {
   docId: string;
-  thumbnail: string | null;
+  data: string | null;
   title: string;
   updatedAt: Date;
   users: { user: Pick<User, "name" | "picture"> }[];
@@ -30,7 +32,7 @@ type DocCardItemProps = {
 
 export default function DocCardItem({
   docId,
-  thumbnail,
+  data,
   title,
   updatedAt,
   users,
@@ -47,8 +49,10 @@ export default function DocCardItem({
     if (!inputRef.current) return;
     if (session?.id) {
       await RenameDocument(docId, inputRef.current.value);
+      await invalidateDocs(session.id);
     } else {
       updateGuestDocument(docId, "name", inputRef.current.value);
+      await invalidateDocs();
     }
   }, 1000);
 
@@ -118,34 +122,12 @@ export default function DocCardItem({
       onClick={() => router.push(`/writer/${docId}`)}
     >
       {/* Thumbnail area */}
-      <div
-        className="relative overflow-hidden border-b"
-        style={{
-          aspectRatio: "4/3.2",
-          borderColor: "var(--lp-border)",
-          background: thumbnail ? undefined : "var(--lp-paper-2)",
-          backgroundImage: thumbnail ? `url(${thumbnail})` : undefined,
-          backgroundSize: "cover",
-          backgroundPosition: "top",
-          padding: thumbnail ? 0 : "1rem",
-        }}
-      >
-        {!thumbnail && (
-          <>
-            <div className="h-1 w-12 rounded-full mb-3" style={{ background: color }} />
-            <div
-              className="text-[10.5px] font-medium leading-tight mb-2 line-clamp-2"
-              style={{ color: "var(--lp-ink)" }}
-            >
-              {name}
-            </div>
-            <div className="doc-thumb-lines opacity-70" style={{ height: "60%" }} />
-          </>
-        )}
-        {thumbnail && (
-          <div className="absolute top-0 left-0 right-0 h-1" style={{ background: color }} />
-        )}
-      </div>
+      <DocThumbnail
+        data={data}
+        accentColor={color}
+        className="border-b"
+        style={{ aspectRatio: "4/3.2", borderColor: "var(--lp-border)" }}
+      />
 
       {/* Card footer */}
       <div className="p-3">
