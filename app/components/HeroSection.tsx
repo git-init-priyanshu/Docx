@@ -135,7 +135,7 @@ export default function HeroSection() {
               style={{ borderColor: "var(--lp-border)", background: "var(--lp-card)", color: "var(--lp-muted)" }}
             >
               <span className="w-1.5 h-1.5 rounded-full" style={{ background: "var(--lp-leaf)" }} />
-              <span className="font-mono uppercase tracking-wider text-[10.5px]">Open source · MIT</span>
+              <span className="font-mono uppercase tracking-wider text-[10.5px]">Open source</span>
             </div>
 
             <h1
@@ -157,7 +157,7 @@ export default function HeroSection() {
                 className="inline-flex items-center gap-2 h-10 px-5 rounded-md font-medium text-[13.5px] hover:opacity-90 transition-opacity"
                 style={{ background: "var(--lp-ink)", color: "var(--lp-paper)" }}
               >
-                Open the editor <ArrowIcon />
+                Try Docx <ArrowIcon />
               </Link>
               <Link
                 href="https://github.com/git-init-priyanshu/Docx"
@@ -169,13 +169,13 @@ export default function HeroSection() {
             </div>
 
             <div className="mt-8 flex items-center gap-5 text-[12px]" style={{ color: "var(--lp-muted)" }}>
-              <span className="flex items-center gap-1.5">
-                <span style={{ color: "var(--lp-leaf)" }}><CheckIcon /></span>
-                No account needed for the demo
-              </span>
               <span className="hidden sm:flex items-center gap-1.5">
                 <span style={{ color: "var(--lp-leaf)" }}><CheckIcon /></span>
-                Self-hostable
+                Open-source
+              </span>
+              <span className="flex items-center gap-1.5">
+                <span style={{ color: "var(--lp-leaf)" }}><CheckIcon /></span>
+                No sign up needed for the demo
               </span>
             </div>
           </div>

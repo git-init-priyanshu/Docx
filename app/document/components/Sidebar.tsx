@@ -96,33 +96,6 @@ export default function Sidebar({ folder, setFolder, onCreate }: SidebarProps) {
         </ul>
       </nav>
 
-      {/* Storage */}
-      <div className="px-3 mt-4 shrink-0">
-        <div
-          className="font-mono uppercase tracking-[0.18em] text-[10px] px-2 mb-2"
-          style={{ color: "var(--lp-muted)" }}
-        >
-          Storage
-        </div>
-        <div className="px-2.5">
-          <div
-            className="h-1.5 rounded-full overflow-hidden"
-            style={{ background: "var(--lp-border)" }}
-          >
-            <div
-              className="h-full rounded-full"
-              style={{ width: "32%", background: "var(--lp-accent)" }}
-            />
-          </div>
-          <div
-            className="font-mono text-[10.5px] mt-1.5"
-            style={{ color: "var(--lp-muted)" }}
-          >
-            3.2 GB of 10 GB used
-          </div>
-        </div>
-      </div>
-
       {/* Profile */}
       <div
         className="mt-auto px-3 py-3 border-t shrink-0"

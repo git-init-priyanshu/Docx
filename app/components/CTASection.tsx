@@ -41,7 +41,7 @@ export default function CTASection() {
                 className="inline-flex items-center gap-2 h-10 px-4 rounded-md text-[13.5px] font-medium hover:opacity-90 transition-opacity"
                 style={{ background: "var(--lp-ink)", color: "var(--lp-paper)" }}
               >
-                Open the editor <ArrowIcon />
+                Try Docx <ArrowIcon />
               </Link>
               <Link
                 href="https://github.com/git-init-priyanshu/Docx"

@@ -1,15 +1,12 @@
+import Image from "next/image";
 import Link from "next/link";
 
-function DocxLogo({ className = "h-5 w-5" }: { className?: string }) {
-  return (
-    <svg className={className} viewBox="0 0 64 64" fill="none" aria-label="DocX">
-      <rect x="6" y="4" width="42" height="56" rx="6" fill="var(--lp-paper-2)" stroke="var(--lp-border)" strokeWidth="1.5" />
-      <path d="M14 18h22M14 26h26M14 34h20M14 42h24" stroke="var(--lp-muted)" strokeWidth="1.6" strokeLinecap="round" />
-      <circle cx="50" cy="46" r="11" fill="var(--lp-accent)" />
-      <path d="M46 46l3 3 6-6" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-    </svg>
-  );
+import logo from "@/public/logo.svg";
+
+function DocxLogo({ width = 30 }: { width?: number }) {
+  return <Image src={logo} width={width} alt="logo" />;
 }
+
 
 export default function Footer() {
   return (
@@ -33,7 +30,6 @@ export default function Footer() {
           <Link href="https://github.com/git-init-priyanshu/Docx" className="hover:text-[var(--lp-ink)] transition-colors">github</Link>
           <Link href="https://x.com/PriyanshuBartw5" className="hover:text-[var(--lp-ink)] transition-colors">twitter</Link>
           <Link href="https://www.linkedin.com/in/priyanshu-bartwal/" className="hover:text-[var(--lp-ink)] transition-colors">linkedin</Link>
-          <span>MIT</span>
         </div>
       </div>
     </footer>
