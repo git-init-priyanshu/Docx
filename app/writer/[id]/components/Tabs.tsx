@@ -1,26 +1,18 @@
 "use client";
 
-import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { useRouter, useParams } from "next/navigation";
 import { Search, PenLine, Layers } from "lucide-react";
 
-function DocxLogo({ className = "h-6 w-6" }: { className?: string }) {
-  return (
-    <svg className={className} viewBox="0 0 64 64" fill="none" aria-label="DocX">
-      <rect x="6" y="4" width="42" height="56" rx="6" fill="var(--lp-paper-2)" stroke="var(--lp-border)" strokeWidth="1.5" />
-      <path d="M14 18h22M14 26h26M14 34h20M14 42h24" stroke="var(--lp-muted)" strokeWidth="1.6" strokeLinecap="round" />
-      <circle cx="50" cy="46" r="11" fill="var(--lp-accent)" />
-      <path d="M46 46l3 3 6-6" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-    </svg>
-  );
-}
+import useClientSession from "@/lib/customHooks/useClientSession";
+import { useDocs } from "@/lib/hooks/useDocs";
+import Image from "next/image";
 
-const RECENT_DOCS = [
-  { title: "Current document", time: "now", active: true },
-  { title: "todo for next weekend", time: "2h ago" },
-  { title: "blog draft (untitled)", time: "yesterday" },
-  { title: "meeting notes", time: "2d ago" },
-  { title: "random thoughts", time: "5d ago" },
-];
+import logo from "@/public/logo.svg";
+
+function DocxLogo({ width = 30 }: { width?: number }) {
+  return <Image src={logo} width={width} alt="logo" />;
+}
 
 const FOLDERS = [
   { name: "Drafts", count: 12 },
@@ -29,12 +21,38 @@ const FOLDERS = [
   { name: "Archive", count: 71 },
 ];
 
-export default function LeftSidebar({ name }: { name?: string }) {
-  const router = useRouter();
+function relativeTime(date: Date | string): string {
+  const ms = Date.now() - new Date(date).getTime();
+  const mins = Math.floor(ms / 60000);
+  if (mins < 1) return "now";
+  if (mins < 60) return `${mins}m ago`;
+  const hrs = Math.floor(mins / 60);
+  if (hrs < 24) return `${hrs}h ago`;
+  const days = Math.floor(hrs / 24);
+  if (days === 1) return "yesterday";
+  if (days < 7) return `${days}d ago`;
+  return new Date(date).toLocaleDateString(undefined, { month: "short", day: "numeric" });
+}
 
-  const docs = name
-    ? [{ title: name, time: "now", active: true }, ...RECENT_DOCS.slice(1)]
-    : RECENT_DOCS;
+type Doc = { id: string; name: string; updatedAt: Date | string };
+
+export default function LeftSidebar() {
+  const router = useRouter();
+  const params = useParams();
+  const session = useClientSession();
+  const currentId = params.id as string;
+
+  const [q, setQ] = useState("");
+
+  const { docs: allDocs, isLoading: loading } = useDocs(session?.id);
+  const docs = allDocs
+    .slice()
+    .sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime())
+    .slice(0, 6);
+
+  const filtered = docs.filter(d =>
+    !q || d.name.toLowerCase().includes(q.toLowerCase()),
+  );
 
   return (
     <aside
@@ -70,6 +88,8 @@ export default function LeftSidebar({ name }: { name?: string }) {
           <input
             className="w-full h-9 pl-8 pr-3 rounded-md border text-[13px] outline-none"
             placeholder="Search…"
+            value={q}
+            onChange={e => setQ(e.target.value)}
             style={{
               background: "var(--lp-card)",
               borderColor: "var(--lp-border)",
@@ -91,30 +111,55 @@ export default function LeftSidebar({ name }: { name?: string }) {
         >
           Recent
         </div>
-        <ul className="space-y-0.5">
-          {docs.map((doc, i) => (
-            <li key={i}>
-              <div
-                className="flex items-start gap-2 px-2 py-1.5 rounded-md text-[13px] cursor-pointer"
-                style={{
-                  background: doc.active
-                    ? "color-mix(in oklab, var(--lp-accent) 10%, var(--lp-card))"
-                    : undefined,
-                  color: doc.active ? "var(--lp-ink)" : "var(--lp-muted)",
-                }}
-              >
-                <span
-                  className="inline-block w-1.5 h-1.5 rounded-full shrink-0 mt-1.5"
-                  style={{ background: doc.active ? "var(--lp-accent)" : "transparent" }}
-                />
-                <div className="flex-1 min-w-0">
-                  <div className="truncate text-[13px]">{doc.title}</div>
-                  <div className="font-mono text-[10px]" style={{ color: "var(--lp-muted)" }}>{doc.time}</div>
+        {loading ? (
+          <ul className="space-y-0.5">
+            {Array.from({ length: 4 }).map((_, i) => (
+              <li key={i} className="flex items-start gap-2 px-2 py-1.5">
+                <span className="inline-block w-1.5 h-1.5 rounded-full shrink-0 mt-1.5 animate-pulse" style={{ background: "var(--lp-border)" }} />
+                <div className="flex-1 min-w-0 space-y-1.5">
+                  <div className="h-3 rounded animate-pulse" style={{ background: "var(--lp-border)", width: `${60 + (i % 3) * 15}%` }} />
+                  <div className="h-2 rounded animate-pulse w-10" style={{ background: "var(--lp-border)" }} />
                 </div>
-              </div>
-            </li>
-          ))}
-        </ul>
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <ul className="space-y-0.5">
+            {filtered.map((doc) => {
+              const active = doc.id === currentId;
+              return (
+                <li key={doc.id}>
+                  <div
+                    className="flex items-start gap-2 px-2 py-1.5 rounded-md text-[13px] cursor-pointer"
+                    style={{
+                      background: active
+                        ? "color-mix(in oklab, var(--lp-accent) 10%, var(--lp-card))"
+                        : undefined,
+                      color: active ? "var(--lp-ink)" : "var(--lp-muted)",
+                    }}
+                    onClick={() => router.push(`/writer/${doc.id}`)}
+                  >
+                    <span
+                      className="inline-block w-1.5 h-1.5 rounded-full shrink-0 mt-1.5"
+                      style={{ background: active ? "var(--lp-accent)" : "transparent" }}
+                    />
+                    <div className="flex-1 min-w-0">
+                      <div className="truncate text-[13px]">{doc.name || "Untitled"}</div>
+                      <div className="font-mono text-[10px]" style={{ color: "var(--lp-muted)" }}>
+                        {relativeTime(doc.updatedAt)}
+                      </div>
+                    </div>
+                  </div>
+                </li>
+              );
+            })}
+            {filtered.length === 0 && (
+              <li className="px-2 py-1.5 text-[12px]" style={{ color: "var(--lp-muted)" }}>
+                {q ? "No matches" : "No documents yet"}
+              </li>
+            )}
+          </ul>
+        )}
       </div>
 
       {/* Folders */}
@@ -143,9 +188,7 @@ export default function LeftSidebar({ name }: { name?: string }) {
 
       {/* User profile */}
       <div className="mt-auto px-3 py-3 border-t" style={{ borderColor: "var(--lp-border)" }}>
-        <div
-          className="flex items-center gap-2 px-2 py-1.5 rounded-md cursor-pointer hover:bg-[var(--lp-card)]"
-        >
+        <div className="flex items-center gap-2 px-2 py-1.5 rounded-md cursor-pointer hover:bg-[var(--lp-card)]">
           <span
             className="w-7 h-7 rounded-full text-white text-[11px] font-semibold flex items-center justify-center shrink-0"
             style={{ background: "var(--lp-accent)" }}

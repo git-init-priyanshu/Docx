@@ -69,7 +69,7 @@ export default function WriterPage() {
       style={{ background: "var(--lp-paper)" }}
     >
       {/* Left sidebar */}
-      <LeftSidebar name={docData?.name} />
+      <LeftSidebar />
 
       {/* Main content */}
       <main className="flex-1 flex flex-col min-w-0">
