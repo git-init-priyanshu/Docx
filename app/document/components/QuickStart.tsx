@@ -1,15 +1,9 @@
 "use client";
 
-const TEMPLATES = [
-  { id: "blank",   label: "Blank document", hint: "Start from scratch" },
-  { id: "meeting", label: "Meeting notes",  hint: "Agenda · Attendees · Actions" },
-  { id: "brief",   label: "Project brief",  hint: "Goals · Scope · Risks" },
-  { id: "rfc",     label: "RFC",            hint: "Problem · Proposal · Tradeoffs" },
-];
+import DocThumbnail from "@/components/DocThumbnail";
+import { TEMPLATES } from "@/lib/templates";
 
-const TILE_COLORS = ["var(--lp-accent)", "var(--lp-leaf)", "var(--lp-rose)"];
-
-type QuickStartProps = { onCreate: () => void };
+type QuickStartProps = { onCreate: (content?: string) => void };
 
 export default function QuickStart({ onCreate }: QuickStartProps) {
   return (
@@ -41,46 +35,37 @@ export default function QuickStart({ onCreate }: QuickStartProps) {
       </div>
 
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-        {/* Blank */}
-        <button
-          onClick={onCreate}
-          className="rounded-lg p-3 text-left border transition hover:border-[var(--lp-accent)]"
-          style={{ background: "var(--lp-card)", borderColor: "var(--lp-border)" }}
-        >
-          <div
-            className="rounded-md border-2 border-dashed flex items-center justify-center mb-2.5"
-            style={{ aspectRatio: "4/3", borderColor: "var(--lp-border)" }}
-          >
-            <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" style={{ color: "var(--lp-muted)" }}>
-              <path d="M12 5v14M5 12h14"/>
-            </svg>
-          </div>
-          <div className="text-[13px] font-medium" style={{ color: "var(--lp-ink)" }}>
-            {TEMPLATES[0].label}
-          </div>
-          <div className="text-[11px] mt-0.5" style={{ color: "var(--lp-muted)" }}>
-            {TEMPLATES[0].hint}
-          </div>
-        </button>
-
-        {/* Other templates */}
-        {TEMPLATES.slice(1).map((t, i) => (
+        {TEMPLATES.map((t) => (
           <button
             key={t.id}
-            onClick={onCreate}
+            onClick={() => onCreate(t.content || undefined)}
             className="rounded-lg p-3 text-left border transition hover:border-[var(--lp-accent)]"
             style={{ background: "var(--lp-card)", borderColor: "var(--lp-border)" }}
           >
-            <div
-              className="rounded-md p-2.5 mb-2.5 overflow-hidden"
-              style={{ aspectRatio: "4/3", background: "var(--lp-paper-2)" }}
-            >
+            {t.id === "blank" ? (
               <div
-                className="h-1.5 w-2/3 rounded-full mb-1.5"
-                style={{ background: TILE_COLORS[i % TILE_COLORS.length] }}
+                className="rounded-md border-2 border-dashed flex items-center justify-center mb-2.5"
+                style={{ aspectRatio: "4/3", borderColor: "var(--lp-border)" }}
+              >
+                <svg
+                  className="w-6 h-6"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="1.6"
+                  style={{ color: "var(--lp-muted)" }}
+                >
+                  <path d="M12 5v14M5 12h14" />
+                </svg>
+              </div>
+            ) : (
+              <DocThumbnail
+                data={t.content}
+                accentColor={t.accentColor}
+                className="rounded-md mb-2.5"
+                style={{ aspectRatio: "4/3" }}
               />
-              <div className="doc-thumb-lines h-full opacity-70" />
-            </div>
+            )}
             <div className="text-[13px] font-medium" style={{ color: "var(--lp-ink)" }}>
               {t.label}
             </div>
