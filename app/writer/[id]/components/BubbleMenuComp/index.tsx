@@ -29,7 +29,7 @@ export default function BubbleMenuComp({
         className={`min-w-max absolute z-10 ${isHighlighted && !isAiActive ? "flex" : "hidden"}`}
         style={{ left: `${bubblePosition.x}px`, top: `${bubblePosition.y}px` }}
       >
-        <div className="flex gap-1 p-2 shadow-md bg-neutral-50 ">
+        <div className="flex gap-1 p-2 shadow-md bg-[var(--lp-card)] text-[var(--lp-ink)]">
           <AskAI
             isHighlighted={isHighlighted}
             isAiActive={isAiActive}

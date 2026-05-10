@@ -64,11 +64,11 @@ export default function ColorHighlight({
         size={35}
         color={fontColor}
         onClick={() => editor?.chain().focus().setColor(fontColor).run()}
-        className={`hover:bg-slate-100 p-2 rounded ${isBubbleMenuBtn ? "" : "border-r"}`}
+        className={`hover:bg-[var(--lp-paper-2)] p-2 rounded ${isBubbleMenuBtn ? "" : "border-r"}`}
       />
       <DropdownMenu open={isColorPopoverOpen}>
         <DropdownMenuTrigger
-          className={`py-2 hover:bg-slate-100 ${isBubbleMenuBtn ? "" : "border-r"}`}
+          className={`py-2 hover:bg-[var(--lp-paper-2)] ${isBubbleMenuBtn ? "" : "border-r"}`}
           onClick={() => setIsColorPopoverOpen(!isColorPopoverOpen)}
         >
           <ChevronDown size={15} />
@@ -102,11 +102,11 @@ export default function ColorHighlight({
             .toggleHighlight({ color: highlightColor })
             .run()
         }
-        className={`hover:bg-slate-100 p-2 rounded ${isBubbleMenuBtn ? "" : "border-r"}`}
+        className={`hover:bg-[var(--lp-paper-2)] p-2 rounded ${isBubbleMenuBtn ? "" : "border-r"}`}
       />
       <DropdownMenu open={isBgPopoverOpen}>
         <DropdownMenuTrigger
-          className="py-2 hover:bg-slate-100"
+          className="py-2 hover:bg-[var(--lp-paper-2)]"
           onClick={() => setIsBgPopoverOpen(!isBgPopoverOpen)}
         >
           <ChevronDown size={15} />

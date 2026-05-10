@@ -43,7 +43,7 @@ export const extensions = [
 export const props = {
   attributes: {
     class: cn(
-      "prose [&_ol]:list-decimal [&_ul]:list-disc w-[816.3px] max-w-[816.3px] min-h-[1056.36px] mx-auto bg-white rounded-md p-24 my-6 lp-doc-shadow focus-visible:outline-none",
+      "prose [&_ol]:list-decimal [&_ul]:list-disc w-[816.3px] max-w-[816.3px] min-h-[1056.36px] mx-auto bg-[var(--lp-card)] text-[var(--lp-ink)] rounded-md p-24 my-6 lp-doc-shadow focus-visible:outline-none",
     ),
   },
 };
