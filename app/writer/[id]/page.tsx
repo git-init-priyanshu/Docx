@@ -107,7 +107,7 @@ export default function WriterPage() {
       <RightRail />
 
       {/* ⌘K palette */}
-      <AskPalette open={askOpen} onClose={() => setAskOpen(false)} />
+      <AskPalette open={askOpen} onClose={() => setAskOpen(false)} editor={editor} />
     </div>
   );
 }

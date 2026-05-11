@@ -136,6 +136,7 @@ export const generateText = async (
   option: generateTextOptions,
   text: string,
   language?: string,
+  customInstruction?: string,
 ) => {
   try {
     const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || "");
@@ -145,6 +146,9 @@ export const generateText = async (
     if (option === generateTextOptions.TRANSLATE) {
       if (!language) return { success: false, error: "Undefined prompt" };
       prompt = `Here is the text: ${text} and language: ${language}. ${prompts.find((e) => e.option === option)?.prompt}`;
+    } else if (option === generateTextOptions.CUSTOM) {
+      if (!customInstruction) return { success: false, error: "No instruction provided" };
+      prompt = `Here is the document text: "${text}". Task: ${customInstruction}`;
     } else {
       prompt = `Here is the text: "${text}". ${prompts.find((e) => e.option === option)?.prompt}`;
     }
