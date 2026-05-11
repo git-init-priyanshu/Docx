@@ -3,7 +3,7 @@
 import { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useTheme } from "next-themes";
-import { Sun, Moon, Plus, Search, X } from "lucide-react";
+import { Sun, Moon, Plus, Search, X, LogIn } from "lucide-react";
 import Image from "next/image";
 
 import prettifyDate from "@/helpers/prettifyDates";
@@ -151,14 +151,16 @@ export default function DocTopBar({ q, setQ, onCreate }: DocTopBarProps) {
             <Moon className="w-4 h-4" style={{ color: "var(--lp-ink)" }} />
           )}
         </button>
-        <button
-          onClick={onCreate}
-          className="inline-flex items-center gap-1.5 h-9 px-3.5 rounded-md text-white text-[13px] font-medium transition hover:opacity-90"
-          style={{ background: "var(--lp-accent)" }}
-        >
-          <Plus className="w-3.5 h-3.5" strokeWidth={2.2} />
-          New
-        </button>
+        {!session?.id && (
+          <button
+            onClick={() => router.push("/api/auth/signin")}
+            className="inline-flex items-center gap-1.5 h-9 px-3.5 rounded-md text-white text-[13px] font-medium transition hover:opacity-90"
+            style={{ background: "var(--lp-accent)" }}
+          >
+            <LogIn className="w-3.5 h-3.5" strokeWidth={2} />
+            Sign in
+          </button>
+        )}
       </div>
     </div>
   );

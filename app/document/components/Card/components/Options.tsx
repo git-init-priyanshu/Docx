@@ -130,6 +130,7 @@ export default function CardOptions({ docId, inputRef }: CardOptionsPropType) {
         <PopoverContent
           onPointerDownOutside={() => setIsOptionsOpen(false)}
           className="flex flex-col p-0 py-2 text-left w-min"
+          style={{ background: "var(--lp-card)", borderColor: "var(--lp-border)" }}
         >
           {docOptions.map((item, index) => {
             return (
@@ -139,11 +140,12 @@ export default function CardOptions({ docId, inputRef }: CardOptionsPropType) {
                   key={index}
                   id={item.title}
                   variant="ghost"
-                  className="gap-2 justify-start"
+                  className="gap-2 justify-start hover:bg-[var(--lp-paper-2)]"
+                  style={{ color: "var(--lp-ink)" }}
                   onClick={item.onClick}
                 >
                   <item.icon size={20} color={item.color} strokeWidth={1.5} />
-                  <p className="text-neutral-600">{item.title}</p>
+                  <p>{item.title}</p>
                 </Button>
             );
           })}
@@ -159,7 +161,8 @@ export default function CardOptions({ docId, inputRef }: CardOptionsPropType) {
             </DialogDescription>
             <Button
               variant="ghost"
-              className="bg-white z-10 absolute -right-2 -top-6 px-2"
+              className="z-10 absolute -right-2 -top-6 px-2"
+              style={{ background: "var(--lp-card)", color: "var(--lp-ink)" }}
               onClick={() => setIsDeleteModalOpen(false)}
             >
               <X size={15} />

@@ -10,6 +10,7 @@ import useDebounce from "@/lib/customHooks/useDebounce";
 import { RenameDocument } from "./Card/actions";
 import { updateGuestDocument } from "@/lib/guestServices";
 import CardOptions from "./Card/components/Options";
+import AvatarList from "@/components/AvatarList";
 import DocThumbnail from "@/components/DocThumbnail";
 import { invalidateDocs } from "@/lib/hooks/useDocs";
 
@@ -140,18 +141,18 @@ export default function DocCardItem({
           onChange={e => { setName(e.target.value); debounce(e.target.value); }}
         />
         <div className="flex items-center justify-between mt-1.5">
-          <div className="flex items-center gap-1.5" style={{ color: "var(--lp-muted)" }}>
-            <span
-              className="w-4 h-4 rounded-full text-white text-[8px] font-bold flex items-center justify-center shrink-0"
-              style={{ background: "var(--lp-accent)" }}
-            >
-              {ownerInitial}
+          <div className="flex items-center gap-1.5">
+            <AvatarList users={users} />
+            <span className="text-[11px] truncate" style={{ color: "var(--lp-muted)" }}>
+              {ownerName}
             </span>
-            <span className="text-[11px] truncate">{ownerName}</span>
           </div>
-          <span className="font-mono text-[10px]" style={{ color: "var(--lp-muted)" }}>
-            {formattedDate}
-          </span>
+          <div className="flex items-center gap-1" onClick={e => e.stopPropagation()}>
+            <span className="font-mono text-[10px]" style={{ color: "var(--lp-muted)" }}>
+              {formattedDate}
+            </span>
+            <CardOptions docId={docId} inputRef={inputRef} />
+          </div>
         </div>
       </div>
     </div>
