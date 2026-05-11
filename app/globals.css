@@ -219,6 +219,43 @@
   .lp-caret, .lp-drift, .lp-float-in { animation: none; }
 }
 
+/* ─── TipTap dark-mode: direct element overrides ─────────────────────────── */
+/* prose uses :where() (zero specificity), so (0,2,1) beats it cleanly.      */
+/* Inline style="color:…" from the Color extension still wins (specificity 1,0,0). */
+.dark .tiptap,
+.dark .tiptap p,
+.dark .tiptap h1,
+.dark .tiptap h2,
+.dark .tiptap h3,
+.dark .tiptap h4,
+.dark .tiptap h5,
+.dark .tiptap h6,
+.dark .tiptap li,
+.dark .tiptap strong,
+.dark .tiptap em,
+.dark .tiptap td,
+.dark .tiptap th {
+  color: var(--lp-ink);
+}
+.dark .tiptap a {
+  color: var(--lp-accent-ink);
+}
+.dark .tiptap blockquote {
+  color: var(--lp-muted);
+  border-color: var(--lp-border);
+}
+.dark .tiptap code {
+  color: var(--lp-ink);
+  background: var(--lp-paper-2);
+}
+.dark .tiptap pre {
+  color: var(--lp-ink);
+  background: var(--lp-paper-2);
+}
+.dark .tiptap hr {
+  border-color: var(--lp-border);
+}
+
 /* Give a remote user a caret  */
 .collaboration-cursor__caret {
   border-left: 1px solid #0d0d0d;
