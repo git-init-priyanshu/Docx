@@ -1,5 +1,3 @@
-"use client";
-
 type TipTapNode = {
   type: string;
   attrs?: Record<string, unknown>;

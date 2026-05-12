@@ -10,7 +10,7 @@ type Doc = {
   name: string;
   data: string | null;
   updatedAt: Date;
-  users: { user: { name: string; picture: string } }[];
+  users: { user: { name: string; picture: string | null } }[];
 };
 
 const docsKey = (userId?: string) =>
@@ -26,17 +26,17 @@ async function fetchDocs(userId?: string): Promise<Doc[]> {
 }
 
 // userId: null = session still resolving (defer); undefined = guest; string = authenticated
-export function useDocs(userId: string | null | undefined) {
+export function useDocs(userId: string | null | undefined, fallbackData?: Doc[]) {
   const key = userId !== null ? docsKey(userId) : null;
 
   const { data, error, isLoading, mutate: revalidate } = useSWR<Doc[]>(
     key,
     () => fetchDocs(userId ?? undefined),
-    { revalidateOnFocus: false },
+    { revalidateOnFocus: false, fallbackData },
   );
 
   return {
-    docs: data ?? [],
+    docs: data ?? fallbackData ?? [],
     isLoading,
     error,
     revalidate,
