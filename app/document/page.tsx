@@ -1,53 +1,31 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { LayoutGrid, List, Plus } from "lucide-react";
-import type { User } from "@prisma/client";
+import { LayoutGrid, List } from "lucide-react";
 
-import { GetAllDocs } from "./actions";
 import { CreateNewDocument } from "./components/Header/actions";
-import { createGuestDocument, getAllGuestDocuments } from "@/lib/guestServices";
+import { createGuestDocument } from "@/lib/guestServices";
 import useClientSession from "@/lib/customHooks/useClientSession";
+import { useDocs } from "@/lib/hooks/useDocs";
 import Sidebar from "./components/Sidebar";
 import DocTopBar from "./components/DocTopBar";
 import DocCardItem from "./components/DocCardItem";
 import QuickStart from "./components/QuickStart";
 
-type DocType = {
-  id: string;
-  data: string | null;
-  name: string;
-  updatedAt: Date;
-  users: { user: Pick<User, "name" | "picture"> }[];
-};
 
 export default function DocumentPage() {
   const router = useRouter();
   const session = useClientSession();
 
-  const [data, setData] = useState<DocType[] | null>(null);
   const [folder, setFolder] = useState("all");
   const [view, setView] = useState<"grid" | "list">("grid");
   const [sort, setSort] = useState<"recent" | "alpha">("recent");
   const [q, setQ] = useState("");
 
-  useEffect(() => {
-    if (session === null) return; // still loading — keep skeleton
-    (async () => {
-      if (session?.id) {
-        const response = await GetAllDocs(session.id);
-        if (response.success) {
-          setData(response.data as DocType[]);
-        } else {
-          setData([]);
-        }
-      } else {
-        setData(getAllGuestDocuments() as unknown as DocType[]);
-      }
-    })();
-  }, [session]);
+  const userId = session === null ? null : session?.id;
+  const { docs, isLoading } = useDocs(userId);
 
   const createDocument = async () => {
     if (session?.id) {
@@ -65,20 +43,20 @@ export default function DocumentPage() {
     }
   };
 
-  const filtered = (data ?? [])
+  const filtered = docs
     .filter(d => !q || d.name.toLowerCase().includes(q.toLowerCase()))
     .sort((a, b) => {
       if (sort === "alpha") return a.name.localeCompare(b.name);
       return new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime();
     });
 
-  const recent = (data ?? [])
+  const recent = docs
     .slice()
     .sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime())
     .slice(0, 4);
 
   const firstName = session?.name?.split(" ")[0] ?? "there";
-  const totalDocs = data?.length ?? 0;
+  const totalDocs = docs.length;
 
   return (
     <div
@@ -118,14 +96,14 @@ export default function DocumentPage() {
             </div>
 
             {/* Quick start */}
-            {folder === "all" && data !== null && (
+            {folder === "all" && !isLoading && (
               <div className="mb-10">
                 <QuickStart onCreate={createDocument} />
               </div>
             )}
 
             {/* Recent */}
-            {folder === "all" && recent.length > 0 && (
+            {folder === "all" && !isLoading && recent.length > 0 && (
               <section className="mb-10">
                 <div className="flex items-end justify-between mb-3">
                   <h2
@@ -225,7 +203,7 @@ export default function DocumentPage() {
               )}
 
               {/* Loading skeleton */}
-              {data === null && (
+              {isLoading && (
                 <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
                   {Array.from({ length: 8 }).map((_, i) => (
                     <div
@@ -242,7 +220,7 @@ export default function DocumentPage() {
               )}
 
               {/* Empty state */}
-              {data !== null && filtered.length === 0 && (
+              {!isLoading && filtered.length === 0 && (
                 <div
                   className="rounded-lg border p-12 text-center"
                   style={{ background: "var(--lp-card)", borderColor: "var(--lp-border)" }}
@@ -262,7 +240,7 @@ export default function DocumentPage() {
               )}
 
               {/* Grid view */}
-              {data !== null && filtered.length > 0 && view === "grid" && (
+              {!isLoading && filtered.length > 0 && view === "grid" && (
                 <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
                   {filtered.map((d, i) => (
                     <DocCardItem
@@ -280,7 +258,7 @@ export default function DocumentPage() {
               )}
 
               {/* List view */}
-              {data !== null && filtered.length > 0 && view === "list" && (
+              {!isLoading && filtered.length > 0 && view === "list" && (
                 <div className="space-y-2">
                   {filtered.map((d, i) => (
                     <DocCardItem

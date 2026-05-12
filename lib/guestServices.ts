@@ -55,6 +55,7 @@ export const getAllGuestDocuments = () => {
   const data = documents.map((doc) => {
     return {
       id: doc.id,
+      data: doc.data,
       thumbnail: doc.thumbnail,
       name: doc.name,
       updatedAt: doc.updatedAt,
