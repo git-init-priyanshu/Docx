@@ -33,14 +33,6 @@ export const SignupAction = async (data: z.infer<typeof signupSchema>) => {
     const salt = await bcrypt.genSalt(Number(process.env.SALT) || 10);
     const hashedPassword = await bcrypt.hash(data.password, salt);
 
-    const jwtPayload = {
-      id: user?.id,
-      email: data.email,
-      name: user?.name,
-      picture: user?.picture,
-    };
-    const authToken = await generateJWT(jwtPayload);
-
     const otp = otpGenerator.generate(6, {
       upperCaseAlphabets: false,
       specialChars: false,
@@ -74,7 +66,7 @@ export const SignupAction = async (data: z.infer<typeof signupSchema>) => {
     );
     if (!mail.success) return { success: false, error: mail.error };
 
-    return { success: true, data: authToken };
+    return { success: true };
   } catch (e) {
     console.log(e);
     return { success: false, error: "Internal server error" };
@@ -130,16 +122,11 @@ export const SigninAction = async (data: z.infer<typeof signinSchema>) => {
 };
 
 const ExpireOtp = async (user: User, isVerified: boolean) => {
-  if (!user.verifyCodeExpiry) throw new Error();
-
-  const expiredDate = new Date();
-  expiredDate.setHours(user.verifyCodeExpiry.getHours() - 24);
-
   await prisma.user.update({
     where: { email: user.email },
     data: {
       isVerified,
-      verifyCodeExpiry: expiredDate,
+      verifyCodeExpiry: new Date(0),
     },
   });
 };
@@ -152,16 +139,13 @@ export const verifyEmail = async (inputOtp: string, userEmail: string) => {
     if (!user) {
       errorMsg = "User does not exist";
     } else if (user.isVerified) {
-      await ExpireOtp(user, false);
       errorMsg = "User already verified";
     } else if (!user.verifyCode || !user.verifyCodeExpiry) {
-      await ExpireOtp(user, false);
       errorMsg = "OTP not sent to the user's mail";
     } else if (user.verifyCodeExpiry < new Date()) {
-      await ExpireOtp(user, false);
       errorMsg = "OTP expired";
     } else if (user.verifyCode === inputOtp) {
-      await ExpireOtp(user, false);
+      await ExpireOtp(user, true);
 
       const jwtPayload = {
         id: user?.id,
@@ -193,7 +177,6 @@ export const resendVerifyCode = async (userEmail: string) => {
     if (!user) {
       errorMsg = "User does not exist";
     } else if (user.isVerified) {
-      await ExpireOtp(user, false);
       errorMsg = "User already verified";
     } else {
       // Expire the previous otp
@@ -262,7 +245,7 @@ export const sendResetPasswordMail = async (userEmail: string) => {
   }
 };
 
-export const resetPassword = async (userId: any, newPassword: string) => {
+export const resetPassword = async (userId: string, newPassword: string) => {
   try {
     const user = await prisma.user.findFirst({
       where: {
