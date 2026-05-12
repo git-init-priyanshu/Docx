@@ -78,7 +78,7 @@ All UI uses CSS custom properties prefixed `--lp-*` defined in `app/globals.css`
 - `--lp-accent` / `--lp-accent-soft` / `--lp-accent-ink` — interactive accent
 - `--lp-tan`, `--lp-leaf`, `--lp-rose` — template/category accent colors
 
-Use `style={{ color: "var(--lp-ink)" }}` or inline styles, not Tailwind color utilities, for theme-aware colors.
+Always use Tailwind CSS for styling wherever possible, including for `--lp-*` tokens via arbitrary-value classes (e.g. `bg-[var(--lp-card)]`, `text-[var(--lp-ink)]`, `border-[var(--lp-border)]`). For `color-mix()` values, replace spaces with underscores inside the brackets (e.g. `bg-[color-mix(in_oklab,var(--lp-rose)_15%,var(--lp-card))]`). Only fall back to inline `style` props when Tailwind cannot express the value (e.g. dynamic runtime values).
 
 ### Document Thumbnail
 `components/DocThumbnail.tsx` renders a scaled pure-React preview of a Tiptap JSON document — it replaced html2canvas. It parses the stored JSON and renders nodes (heading, paragraph, bulletList, blockquote, codeBlock) at 40% scale. Pass `data` (the raw JSON string from the DB) and optionally `accentColor` for a top stripe.

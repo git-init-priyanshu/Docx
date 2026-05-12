@@ -129,7 +129,7 @@ export default function CardOptions({ docId, inputRef }: CardOptionsPropType) {
         </PopoverTrigger>
         <PopoverContent
           onPointerDownOutside={() => setIsOptionsOpen(false)}
-          className="flex flex-col p-0 py-2 text-left w-min"
+          className="flex flex-col p-0 py-1 text-left w-min"
           style={{
             background: "var(--lp-card)",
             borderColor: "var(--lp-border)",
@@ -141,11 +141,11 @@ export default function CardOptions({ docId, inputRef }: CardOptionsPropType) {
                 key={index}
                 id={item.title}
                 variant="ghost"
-                className="gap-2 justify-start hover:bg-[var(--lp-paper-2)]"
+                className="gap-2 justify-start item-center text-xs hover:bg-[var(--lp-paper-2)]"
                 style={{ color: "var(--lp-ink)" }}
                 onClick={item.onClick}
               >
-                <item.icon size={20} color={item.color} strokeWidth={1.5} />
+                <item.icon size={15} color={item.color} strokeWidth={1.5} />
                 <p>{item.title}</p>
               </Button>
             )
@@ -154,16 +154,17 @@ export default function CardOptions({ docId, inputRef }: CardOptionsPropType) {
       </Popover>
 
       <Dialog open={isDeleteModalOpen}>
-        <DialogContent>
+        <DialogContent className="bg-[var(--lp-card)] border-[var(--lp-border)] text-[var(--lp-ink)]">
           <DialogHeader className="relative">
-            <DialogTitle>Delete Document?</DialogTitle>
-            <DialogDescription>
+            <DialogTitle className="text-[var(--lp-ink)]">
+              Delete Document?
+            </DialogTitle>
+            <DialogDescription className="text-[var(--lp-muted)]">
               Are you sure you want to delete this document?
             </DialogDescription>
             <Button
               variant="ghost"
-              className="z-10 absolute -right-2 -top-6 px-2"
-              style={{ background: "var(--lp-card)", color: "var(--lp-ink)" }}
+              className="z-10 absolute -right-2 -top-6 px-2 text-[var(--lp-muted)]"
               onClick={() => setIsDeleteModalOpen(false)}
             >
               <X size={15} />
@@ -172,6 +173,7 @@ export default function CardOptions({ docId, inputRef }: CardOptionsPropType) {
           <div className="flex gap-4">
             <Button
               variant="outline"
+              className="bg-[var(--lp-card)] border-[var(--lp-border)] text-[var(--lp-ink)]"
               onClick={() => setIsDeleteModalOpen(false)}
             >
               Cancel
@@ -180,7 +182,7 @@ export default function CardOptions({ docId, inputRef }: CardOptionsPropType) {
               variant="outline"
               onClickFunc={confirmDeleteDocument}
               isLoading={isDeleting}
-              className="border-red-200 bg-red-100 hover:bg-red-200"
+              className="bg-[color-mix(in_oklab,var(--lp-rose)_15%,var(--lp-card))] border-[color-mix(in_oklab,var(--lp-rose)_40%,var(--lp-border))] text-[var(--lp-rose)]"
             >
               Confirm
             </LoaderButton>
