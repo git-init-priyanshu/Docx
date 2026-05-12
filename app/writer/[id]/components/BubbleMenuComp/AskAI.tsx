@@ -1,3 +1,5 @@
+"use client";
+
 import { toast } from "sonner";
 import { Check, Languages, Pencil, Sparkles, Wand } from "lucide-react";
 
@@ -15,6 +17,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown";
 import { Button } from "@/components/ui/button";
+import useClientSession from "@/lib/customHooks/useClientSession";
 import { generateText } from "../../actions";
 import { generateTextOptions } from "./generateTextConfig";
 
@@ -24,18 +27,28 @@ type AskAIPropType = {
   setIsAiActive: React.Dispatch<React.SetStateAction<boolean>>;
   setIsGeneratingText: React.Dispatch<React.SetStateAction<boolean>>;
   setGenerativeTextResult: React.Dispatch<React.SetStateAction<string>>;
+  onAuthRequired: () => void;
 };
+
 export default function AskAI({
   isHighlighted,
   isAiActive,
   setIsAiActive,
   setIsGeneratingText,
   setGenerativeTextResult,
+  onAuthRequired,
 }: AskAIPropType) {
+  const session = useClientSession();
+
   const getAITextGeneration = async (
     options: generateTextOptions,
     language?: string,
   ) => {
+    if (session !== null && !session.id) {
+      onAuthRequired();
+      return;
+    }
+
     setIsAiActive(true);
     setIsGeneratingText(true);
     const selectedText = window.getSelection();
@@ -54,6 +67,7 @@ export default function AskAI({
     setGenerativeTextResult(result.data || "No result.");
     setIsGeneratingText(false);
   };
+
   return (
     <>
       <DropdownMenu>

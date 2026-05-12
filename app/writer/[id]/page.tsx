@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { EditorContent } from "@tiptap/react";
 
+import useClientSession from "@/lib/customHooks/useClientSession";
 import { Editor } from "./editor";
 import Toolbar from "./components/Header/Header";
 import LeftSidebar from "./components/Tabs";
@@ -11,28 +12,40 @@ import RightRail from "./components/RightRail";
 import AskPalette from "./components/AskPalette";
 import Loading from "./components/EditorLoading";
 import BubbleMenuComp from "./components/BubbleMenuComp";
+import SignInPromptModal from "./components/SignInPromptModal";
 
 export default function WriterPage() {
+  const session = useClientSession();
+
   const [isSaving, setIsSaving] = useState(false);
   const [isHighlighted, setIsHighlighted] = useState(false);
   const [position, setPosition] = useState({ x: 0, y: 0 });
   const [position2, setPosition2] = useState({ x: 0, y: 0, width: 0 });
   const [askOpen, setAskOpen] = useState(false);
+  const [showSignInPrompt, setShowSignInPrompt] = useState(false);
 
   const { editor, docData } = Editor({ setIsSaving });
+
+  const isGuest = session !== null && !session.id;
+
+  const openAsk = () => {
+    if (isGuest) { setShowSignInPrompt(true); return; }
+    setAskOpen(true);
+  };
 
   // ⌘K / Ctrl+K to open the Ask palette
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
       if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") {
         e.preventDefault();
+        if (isGuest) { setShowSignInPrompt(true); return; }
         setAskOpen((o) => !o);
       }
-      if (e.key === "Escape") setAskOpen(false);
+      if (e.key === "Escape") { setAskOpen(false); setShowSignInPrompt(false); }
     };
     window.addEventListener("keydown", handler);
     return () => window.removeEventListener("keydown", handler);
-  }, []);
+  }, [isGuest]);
 
   // Bubble menu selection tracking
   useEffect(() => {
@@ -64,27 +77,19 @@ export default function WriterPage() {
   }, []);
 
   return (
-    <div
-      className="h-screen w-screen flex overflow-hidden"
-      style={{ background: "var(--lp-paper)" }}
-    >
-      {/* Left sidebar */}
+    <div className="h-screen w-screen flex overflow-hidden bg-[var(--lp-paper)]">
       <LeftSidebar />
 
-      {/* Main content */}
       <main className="flex-1 flex flex-col min-w-0">
-        {/* Toolbar */}
         <Toolbar
           name={docData?.name || ""}
           isSaving={isSaving}
-          onAsk={() => setAskOpen(true)}
+          onAsk={openAsk}
         />
 
-        {/* Format bar */}
         <FormatBar editor={editor} />
 
-        {/* Editor area */}
-        <div className="flex-1 overflow-y-auto" style={{ background: "var(--lp-paper-2)" }}>
+        <div className="flex-1 overflow-y-auto">
           <div className="relative pb-16">
             {!docData ? (
               <Loading />
@@ -95,6 +100,7 @@ export default function WriterPage() {
                   isHighlighted={isHighlighted}
                   bubblePosition={position}
                   generativeTextBubblePosition={position2}
+                  onAuthRequired={() => setShowSignInPrompt(true)}
                 />
                 <EditorContent editor={editor} />
               </>
@@ -103,11 +109,15 @@ export default function WriterPage() {
         </div>
       </main>
 
-      {/* Right rail */}
       <RightRail />
 
       {/* ⌘K palette */}
       <AskPalette open={askOpen} onClose={() => setAskOpen(false)} editor={editor} />
+
+      <SignInPromptModal
+        open={showSignInPrompt}
+        onClose={() => setShowSignInPrompt(false)}
+      />
     </div>
   );
 }

@@ -11,12 +11,14 @@ type BubbleMenuPropType = {
   isHighlighted: boolean;
   bubblePosition: { x: number; y: number };
   generativeTextBubblePosition: { x: number; y: number; width: number };
+  onAuthRequired: () => void;
 };
 export default function BubbleMenuComp({
   editor,
   isHighlighted,
   bubblePosition,
   generativeTextBubblePosition,
+  onAuthRequired,
 }: BubbleMenuPropType) {
   const [isAiActive, setIsAiActive] = useState(false);
   const [isGeneratingText, setIsGeneratingText] = useState(false);
@@ -36,6 +38,7 @@ export default function BubbleMenuComp({
             setIsAiActive={setIsAiActive}
             setIsGeneratingText={setIsGeneratingText}
             setGenerativeTextResult={setGenerativeTextResult}
+            onAuthRequired={onAuthRequired}
           />
           <FormattingBtns editor={editor} isBubbleMenuBtn={true} />
           <ColorHighlight editor={editor} isBubbleMenuBtn={true} />
