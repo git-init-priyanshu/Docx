@@ -50,45 +50,31 @@ export default function LeftSidebar() {
       <div className="px-3 mt-4">
         <div className="relative">
           <input
-            className="w-full h-9 pl-8 pr-3 rounded-md border text-[13px] outline-none"
+            className="w-full h-9 pl-8 pr-3 rounded-md border border-[var(--lp-border)] bg-[var(--lp-card)] text-[var(--lp-ink)] text-[13px] outline-none"
             placeholder="Search…"
             value={q}
             onChange={e => setQ(e.target.value)}
-            style={{
-              background: "var(--lp-card)",
-              borderColor: "var(--lp-border)",
-              color: "var(--lp-ink)",
-            }}
           />
-          <Search
-            className="absolute left-2.5 top-1/2 -translate-y-1/2 w-4 h-4"
-            style={{ color: "var(--lp-muted)" }}
-          />
+          <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--lp-muted)]" />
         </div>
       </div>
 
       {/* Recent docs */}
       <div className="px-3 mt-5">
-        <div
-          className="font-mono uppercase tracking-[0.18em] text-[10px] px-2 mb-2"
-          style={{ color: "var(--lp-muted)" }}
-        >
+        <div className="font-mono uppercase tracking-[0.18em] text-[10px] px-2 mb-2 text-[var(--lp-muted)]">
           Recent
         </div>
         {loading ? (
           <ul className="space-y-0.5">
             {Array.from({ length: 4 }).map((_, i) => (
               <li key={i} className="flex items-start gap-2 px-2 py-1.5">
-                <span
-                  className="inline-block w-1.5 h-1.5 rounded-full shrink-0 mt-1.5 animate-pulse"
-                  style={{ background: "var(--lp-border)" }}
-                />
+                <span className="inline-block w-1.5 h-1.5 rounded-full shrink-0 mt-1.5 animate-pulse bg-[var(--lp-border)]" />
                 <div className="flex-1 min-w-0 space-y-1.5">
                   <div
-                    className="h-3 rounded animate-pulse"
-                    style={{ background: "var(--lp-border)", width: `${60 + (i % 3) * 15}%` }}
+                    className="h-3 rounded animate-pulse bg-[var(--lp-border)]"
+                    style={{ width: `${60 + (i % 3) * 15}%` }}
                   />
-                  <div className="h-2 rounded animate-pulse w-10" style={{ background: "var(--lp-border)" }} />
+                  <div className="h-2 rounded animate-pulse w-10 bg-[var(--lp-border)]" />
                 </div>
               </li>
             ))}
@@ -100,22 +86,21 @@ export default function LeftSidebar() {
               return (
                 <li key={doc.id}>
                   <div
-                    className="flex items-start gap-2 px-2 py-1.5 rounded-md text-[13px] cursor-pointer"
-                    style={{
-                      background: active
-                        ? "color-mix(in oklab, var(--lp-accent) 10%, var(--lp-card))"
-                        : undefined,
-                      color: active ? "var(--lp-ink)" : "var(--lp-muted)",
-                    }}
+                    className={`flex items-start gap-2 px-2 py-1.5 rounded-md text-[13px] cursor-pointer ${
+                      active
+                        ? "bg-[color-mix(in_oklab,var(--lp-accent)_10%,var(--lp-card))] text-[var(--lp-ink)]"
+                        : "text-[var(--lp-muted)]"
+                    }`}
                     onClick={() => router.push(`/writer/${doc.id}`)}
                   >
                     <span
-                      className="inline-block w-1.5 h-1.5 rounded-full shrink-0 mt-1.5"
-                      style={{ background: active ? "var(--lp-accent)" : "transparent" }}
+                      className={`inline-block w-1.5 h-1.5 rounded-full shrink-0 mt-1.5 ${
+                        active ? "bg-[var(--lp-accent)]" : "bg-transparent"
+                      }`}
                     />
                     <div className="flex-1 min-w-0">
                       <div className="truncate text-[13px]">{doc.name || "Untitled"}</div>
-                      <div className="font-mono text-[10px]" style={{ color: "var(--lp-muted)" }}>
+                      <div className="font-mono text-[10px] text-[var(--lp-muted)]">
                         {relativeTime(doc.updatedAt)}
                       </div>
                     </div>
@@ -124,7 +109,7 @@ export default function LeftSidebar() {
               );
             })}
             {filtered.length === 0 && (
-              <li className="px-2 py-1.5 text-[12px]" style={{ color: "var(--lp-muted)" }}>
+              <li className="px-2 py-1.5 text-[12px] text-[var(--lp-muted)]">
                 {q ? "No matches" : "No documents yet"}
               </li>
             )}
@@ -134,18 +119,14 @@ export default function LeftSidebar() {
 
       {/* Folders */}
       <div className="px-3 mt-5">
-        <div
-          className="font-mono uppercase tracking-[0.18em] text-[10px] px-2 mb-2"
-          style={{ color: "var(--lp-muted)" }}
-        >
+        <div className="font-mono uppercase tracking-[0.18em] text-[10px] px-2 mb-2 text-[var(--lp-muted)]">
           Folders
         </div>
         <ul className="space-y-0.5">
           {FOLDERS.map(({ name }) => (
             <li key={name}>
               <div
-                className="flex items-center gap-2 px-2 py-1.5 rounded-md text-[13px] cursor-pointer hover:bg-[var(--lp-card)]"
-                style={{ color: "var(--lp-muted)" }}
+                className="flex items-center gap-2 px-2 py-1.5 rounded-md text-[13px] text-[var(--lp-muted)] cursor-pointer hover:bg-[var(--lp-card)]"
                 onClick={() => router.push(`/document`)}
               >
                 <Layers className="w-4 h-4 shrink-0" />

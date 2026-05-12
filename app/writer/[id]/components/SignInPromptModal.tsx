@@ -38,7 +38,7 @@ export default function SignInPromptModal({ open, onClose }: Props) {
           Sign in to use AI features
         </h2>
         <p className="text-[13.5px] leading-relaxed mb-5 text-[var(--lp-muted)]">
-          AI writing tools require an account. It's free to sign up and takes less than a minute.
+          AI writing tools require an account. It&apos;s free to sign up and takes less than a minute.
         </p>
 
         <div className="flex gap-3">

@@ -15,7 +15,7 @@ const HEADING_OPTIONS = [
 ];
 
 const Divider = () => (
-  <span className="w-px h-5 mx-1 shrink-0" style={{ background: "var(--lp-border)" }} />
+  <span className="w-px h-5 mx-1 shrink-0 bg-[var(--lp-border)]" />
 );
 
 export default function FormatBar({ editor }: { editor: Editor | null }) {
@@ -31,24 +31,19 @@ export default function FormatBar({ editor }: { editor: Editor | null }) {
   const wordCount = editor?.getText().split(/\s+/).filter(Boolean).length ?? 0;
 
   return (
-    <div
-      className="h-[44px] border-b flex items-center px-3 gap-1 shrink-0 overflow-x-auto"
-      style={{ borderColor: "var(--lp-border)", background: "var(--lp-card)" }}
-    >
+    <div className="h-[44px] border-b border-[var(--lp-border)] bg-[var(--lp-card)] flex items-center px-3 gap-1 shrink-0 overflow-x-auto">
       {/* Undo / Redo */}
       <button
         onClick={() => editor?.commands.undo()}
         title="Undo"
-        className="h-8 w-8 rounded-md flex items-center justify-center transition-colors hover:bg-[var(--lp-border)] shrink-0"
-        style={{ color: "var(--lp-ink)" }}
+        className="h-8 w-8 rounded-md flex items-center justify-center text-[var(--lp-ink)] transition-colors hover:bg-[var(--lp-border)] shrink-0"
       >
         <Undo className="w-4 h-4" />
       </button>
       <button
         onClick={() => editor?.commands.redo()}
         title="Redo"
-        className="h-8 w-8 rounded-md flex items-center justify-center transition-colors hover:bg-[var(--lp-border)] shrink-0"
-        style={{ color: "var(--lp-ink)" }}
+        className="h-8 w-8 rounded-md flex items-center justify-center text-[var(--lp-ink)] transition-colors hover:bg-[var(--lp-border)] shrink-0"
       >
         <Redo className="w-4 h-4" />
       </button>
@@ -59,8 +54,7 @@ export default function FormatBar({ editor }: { editor: Editor | null }) {
       <select
         value={headingValue}
         onChange={(e) => onFontStyleChange(editor, e.target.value)}
-        className="h-8 px-2 rounded-md text-[12.5px] bg-transparent border-none outline-none cursor-pointer hover:bg-[var(--lp-border)] shrink-0"
-        style={{ color: "var(--lp-ink)" }}
+        className="h-8 px-2 rounded-md text-[12.5px] text-[var(--lp-ink)] bg-transparent border-none outline-none cursor-pointer hover:bg-[var(--lp-border)] shrink-0"
       >
         {HEADING_OPTIONS.map(({ value, label }) => (
           <option key={value} value={value}>{label}</option>
@@ -74,11 +68,11 @@ export default function FormatBar({ editor }: { editor: Editor | null }) {
         <button
           key={label}
           onClick={() => (editor?.chain().focus() as any)?.[func]?.().run()}
-          className={`h-8 w-8 rounded-md text-[13px] ${className} transition-colors shrink-0 ${active ? "" : "hover:bg-[var(--lp-border)]"}`}
-          style={{
-            background: active ? `color-mix(in oklab, var(--lp-accent) 18%, transparent)` : "transparent",
-            color: active ? "var(--lp-accent)" : "var(--lp-ink)",
-          }}
+          className={`h-8 w-8 rounded-md text-[13px] ${className} transition-colors shrink-0 ${
+            active
+              ? "bg-[color-mix(in_oklab,var(--lp-accent)_18%,transparent)] text-[var(--lp-accent)]"
+              : "bg-transparent text-[var(--lp-ink)] hover:bg-[var(--lp-border)]"
+          }`}
         >
           {label}
         </button>
@@ -90,24 +84,33 @@ export default function FormatBar({ editor }: { editor: Editor | null }) {
       <button
         onClick={() => editor?.chain().focus().toggleBulletList().run()}
         title="Bullet list"
-        className={`h-8 w-8 rounded-md flex items-center justify-center transition-colors shrink-0 ${editor?.isActive("bulletList") ? "" : "hover:bg-[var(--lp-border)]"}`}
-        style={{ background: editor?.isActive("bulletList") ? `color-mix(in oklab, var(--lp-accent) 18%, transparent)` : "transparent", color: editor?.isActive("bulletList") ? "var(--lp-accent)" : "var(--lp-ink)" }}
+        className={`h-8 w-8 rounded-md flex items-center justify-center transition-colors shrink-0 ${
+          editor?.isActive("bulletList")
+            ? "bg-[color-mix(in_oklab,var(--lp-accent)_18%,transparent)] text-[var(--lp-accent)]"
+            : "bg-transparent text-[var(--lp-ink)] hover:bg-[var(--lp-border)]"
+        }`}
       >
         <List className="w-4 h-4" />
       </button>
       <button
         onClick={() => editor?.chain().focus().toggleOrderedList().run()}
         title="Ordered list"
-        className={`h-8 w-8 rounded-md flex items-center justify-center transition-colors shrink-0 ${editor?.isActive("orderedList") ? "" : "hover:bg-[var(--lp-border)]"}`}
-        style={{ background: editor?.isActive("orderedList") ? `color-mix(in oklab, var(--lp-accent) 18%, transparent)` : "transparent", color: editor?.isActive("orderedList") ? "var(--lp-accent)" : "var(--lp-ink)" }}
+        className={`h-8 w-8 rounded-md flex items-center justify-center transition-colors shrink-0 ${
+          editor?.isActive("orderedList")
+            ? "bg-[color-mix(in_oklab,var(--lp-accent)_18%,transparent)] text-[var(--lp-accent)]"
+            : "bg-transparent text-[var(--lp-ink)] hover:bg-[var(--lp-border)]"
+        }`}
       >
         <ListOrdered className="w-4 h-4" />
       </button>
       <button
         onClick={() => editor?.chain().focus().toggleBlockquote().run()}
         title="Blockquote"
-        className={`h-8 w-8 rounded-md flex items-center justify-center transition-colors shrink-0 ${editor?.isActive("blockquote") ? "" : "hover:bg-[var(--lp-border)]"}`}
-        style={{ background: editor?.isActive("blockquote") ? `color-mix(in oklab, var(--lp-accent) 18%, transparent)` : "transparent", color: editor?.isActive("blockquote") ? "var(--lp-accent)" : "var(--lp-ink)" }}
+        className={`h-8 w-8 rounded-md flex items-center justify-center transition-colors shrink-0 ${
+          editor?.isActive("blockquote")
+            ? "bg-[color-mix(in_oklab,var(--lp-accent)_18%,transparent)] text-[var(--lp-accent)]"
+            : "bg-transparent text-[var(--lp-ink)] hover:bg-[var(--lp-border)]"
+        }`}
       >
         <Quote className="w-4 h-4" />
       </button>
@@ -115,16 +118,13 @@ export default function FormatBar({ editor }: { editor: Editor | null }) {
       <Divider />
 
       {/* AI Rewrite */}
-      <button
-        className="h-8 px-2.5 rounded-md flex items-center gap-1.5 text-[12.5px] transition-colors hover:bg-[var(--lp-border)] shrink-0"
-        style={{ color: "var(--lp-accent)" }}
-      >
+      <button className="h-8 px-2.5 rounded-md flex items-center gap-1.5 text-[12.5px] text-[var(--lp-accent)] transition-colors hover:bg-[var(--lp-border)] shrink-0">
         <Sparkles className="w-3.5 h-3.5" />
         <span className="hidden sm:inline">Rewrite</span>
       </button>
 
       {/* Word count */}
-      <div className="ml-auto flex items-center gap-3 font-mono text-[11px] shrink-0" style={{ color: "var(--lp-muted)" }}>
+      <div className="ml-auto flex items-center gap-3 font-mono text-[11px] text-[var(--lp-muted)] shrink-0">
         <span>{wordCount} word{wordCount !== 1 ? "s" : ""}</span>
       </div>
     </div>

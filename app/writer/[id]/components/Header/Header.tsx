@@ -28,43 +28,33 @@ export default function Toolbar({ name, isSaving, onAsk }: ToolbarProps) {
   const isDark = mounted && resolvedTheme === "dark";
 
   return (
-    <div
-      className="h-[52px] border-b flex items-center px-4 gap-3 shrink-0"
-      style={{ borderColor: "var(--lp-border)", background: "var(--lp-card)" }}
-    >
+    <div className="h-[52px] border-b border-[var(--lp-border)] bg-[var(--lp-card)] flex items-center px-4 gap-3 shrink-0">
       {/* Logo — only shows on mobile (sidebar hides on mobile) */}
       <div className="flex items-center gap-2 lg:hidden shrink-0">
         <DocxLogo />
-        <span className="font-semibold text-[16px] tracking-[-0.02em]" style={{ color: "var(--lp-ink)" }}>DocX</span>
+        <span className="font-semibold text-[16px] tracking-[-0.02em] text-[var(--lp-ink)]">DocX</span>
       </div>
 
       {/* Breadcrumb — desktop */}
       <div className="hidden lg:flex items-center gap-1.5 text-[12.5px] min-w-0">
-        <span style={{ color: "var(--lp-muted)" }}>Drafts</span>
-        <span style={{ color: "var(--lp-muted)" }}>/</span>
+        <span className="text-[var(--lp-muted)]">Drafts</span>
+        <span className="text-[var(--lp-muted)]">/</span>
         {name ? (
-          <span className="font-medium truncate max-w-[320px]" style={{ color: "var(--lp-ink)" }}>{name}</span>
+          <span className="font-medium truncate max-w-[320px] text-[var(--lp-ink)]">{name}</span>
         ) : (
-          <span className="w-40 h-4 rounded animate-pulse inline-block" style={{ background: "var(--lp-paper-2)" }} />
+          <span className="w-40 h-4 rounded animate-pulse inline-block bg-[var(--lp-paper-2)]" />
         )}
       </div>
 
       {/* Save status */}
-      <span className="hidden lg:block font-mono text-[10.5px] shrink-0" style={{ color: "var(--lp-muted)" }}>
+      <span className="hidden lg:block font-mono text-[10.5px] shrink-0 text-[var(--lp-muted)]">
         {isSaving ? "· saving…" : "· saved"}
       </span>
 
       <div className="ml-auto flex items-center gap-2">
         {/* Collab avatar */}
         <div className="hidden sm:flex -space-x-1.5">
-          <span
-            className="w-7 h-7 rounded-full text-white text-[11px] font-semibold flex items-center justify-center"
-            style={{
-              background: "var(--lp-accent)",
-              outline: "2px solid var(--lp-card)",
-              outlineOffset: "-1px",
-            }}
-          >
+          <span className="w-7 h-7 rounded-full bg-[var(--lp-accent)] text-white text-[11px] font-semibold flex items-center justify-center outline-2 outline-[var(--lp-card)] -outline-offset-1">
             P
           </span>
         </div>
@@ -72,29 +62,24 @@ export default function Toolbar({ name, isSaving, onAsk }: ToolbarProps) {
         {/* Ask DocX ⌘K */}
         <button
           onClick={onAsk}
-          className="hidden sm:inline-flex items-center gap-1.5 h-8 px-3 rounded-md border text-[12.5px] font-medium transition-colors hover:bg-[var(--lp-border)]"
-          style={{ borderColor: "var(--lp-border)", color: "var(--lp-ink)" }}
+          className="hidden sm:inline-flex items-center gap-1.5 h-8 px-3 rounded-md border border-[var(--lp-border)] text-[12.5px] font-medium text-[var(--lp-ink)] transition-colors hover:bg-[var(--lp-border)]"
         >
-          <Sparkles className="w-3.5 h-3.5" style={{ color: "var(--lp-accent)" }} />
+          <Sparkles className="w-3.5 h-3.5 text-[var(--lp-accent)]" />
           <span>Ask DocX</span>
-          <span className="font-mono text-[10px] ml-1" style={{ color: "var(--lp-muted)" }}>⌘K</span>
+          <span className="font-mono text-[10px] ml-1 text-[var(--lp-muted)]">⌘K</span>
         </button>
 
         {/* Theme toggle */}
         <button
           onClick={() => setTheme(isDark ? "light" : "dark")}
-          className="h-8 w-8 rounded-md border flex items-center justify-center transition-colors hover:bg-[var(--lp-border)]"
-          style={{ borderColor: "var(--lp-border)", color: "var(--lp-ink)" }}
+          className="h-8 w-8 rounded-md border border-[var(--lp-border)] text-[var(--lp-ink)] flex items-center justify-center transition-colors hover:bg-[var(--lp-border)]"
           aria-label="Toggle theme"
         >
           {mounted ? (isDark ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />) : <Moon className="w-4 h-4" />}
         </button>
 
         {/* Share */}
-        <button
-          className="h-8 px-3 rounded-md text-[12.5px] font-medium transition-opacity hover:opacity-80"
-          style={{ background: "var(--lp-ink)", color: "var(--lp-paper)" }}
-        >
+        <button className="h-8 px-3 rounded-md text-[12.5px] font-medium transition-opacity hover:opacity-80 bg-[var(--lp-ink)] text-[var(--lp-paper)]">
           Share
         </button>
       </div>
