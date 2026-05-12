@@ -1,49 +1,40 @@
-// @ts-nocheck
 "use client";
 
 import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 
 import { GetUserDetails } from "./action";
-import { ReturnType } from "./ReturnType";
+import type { ReturnType } from "./ReturnType";
 
 export default function useClientSession(): ReturnType | null {
   const [user, setUser] = useState<ReturnType | null>(null);
-  const [customLoading, setCustomLoading] = useState(false);
+  const [resolved, setResolved] = useState(false);
 
   const { data: session, status } = useSession();
 
   useEffect(() => {
-    if (session === null) {
-      setCustomLoading(true);
-      (async () => {
-        const userDetails = await GetUserDetails();
-        setUser({
-          id: userDetails?.id,
-          name: userDetails?.name,
-          email: userDetails?.email,
-          image: userDetails?.picture,
-        });
-        setCustomLoading(false);
-      })();
+    if (status === "loading") return;
+
+    if (session) {
+      const u = session.user as any;
+      setUser({ id: u?.id, name: u?.name, email: u?.email, image: u?.image });
+      setResolved(true);
+      return;
     }
-  }, [session]);
 
-  // Still waiting for NextAuth or custom auth to resolve — signal "loading"
-  if (status === "loading" || customLoading) return null;
+    // NextAuth has no session — check custom JWT cookie
+    (async () => {
+      const userDetails = await GetUserDetails();
+      setUser({
+        id: userDetails?.id,
+        name: userDetails?.name,
+        email: userDetails?.email,
+        image: userDetails?.picture,
+      });
+      setResolved(true);
+    })();
+  }, [session, status]);
 
-  if (session)
-    return {
-      id: session.user?.id,
-      name: session.user?.name,
-      email: session.user?.email,
-      image: session.user?.image,
-    };
-
-  return {
-    id: user?.id,
-    name: user?.name,
-    email: user?.email,
-    image: user?.image,
-  };
+  if (!resolved) return null;
+  return user;
 }
