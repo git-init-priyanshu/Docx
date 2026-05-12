@@ -25,11 +25,12 @@ export default function DocumentPage() {
   const [q, setQ] = useState("");
 
   const userId = session === null ? null : session?.id;
-  const { docs, isLoading } = useDocs(userId);
+  const { docs, isLoading: docsLoading } = useDocs(userId);
+  const isLoading = session === null || docsLoading;
 
-  const createDocument = async () => {
+  const createDocument = async (content?: string) => {
     if (session?.id) {
-      const response = await CreateNewDocument();
+      const response = await CreateNewDocument(content);
       if (response.success) {
         toast.success("Successfully created new document");
         router.push(`/writer/${response.data?.id}`);
@@ -37,7 +38,7 @@ export default function DocumentPage() {
         toast.error(response.error);
       }
     } else {
-      const doc = createGuestDocument();
+      const doc = createGuestDocument(content);
       toast.success("Successfully created new document");
       router.push(`/writer/${doc.id}`);
     }
