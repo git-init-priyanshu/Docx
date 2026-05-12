@@ -36,7 +36,7 @@ export default function LeftSidebar() {
 
   const [q, setQ] = useState("");
 
-  const { docs: allDocs, isLoading: loading } = useDocs(session?.id);
+  const { docs: allDocs, isLoading: loading } = useDocs(session === null ? null : session?.id);
   const docs = allDocs
     .slice()
     .sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime())

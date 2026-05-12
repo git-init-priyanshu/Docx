@@ -25,10 +25,13 @@ async function fetchDocs(userId?: string): Promise<Doc[]> {
   return getAllGuestDocuments() as unknown as Doc[];
 }
 
-export function useDocs(userId?: string) {
+// userId: null = session still resolving (defer); undefined = guest; string = authenticated
+export function useDocs(userId: string | null | undefined) {
+  const key = userId !== null ? docsKey(userId) : null;
+
   const { data, error, isLoading, mutate: revalidate } = useSWR<Doc[]>(
-    docsKey(userId),
-    () => fetchDocs(userId),
+    key,
+    () => fetchDocs(userId ?? undefined),
     { revalidateOnFocus: false },
   );
 
