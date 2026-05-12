@@ -3,7 +3,7 @@
 import { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useTheme } from "next-themes";
-import { Sun, Moon, Plus, Search, X, LogIn } from "lucide-react";
+import { Sun, Moon, Search, X, LogIn } from "lucide-react";
 import Image from "next/image";
 
 import prettifyDate from "@/helpers/prettifyDates";
@@ -22,10 +22,9 @@ type SearchResult = {
 type DocTopBarProps = {
   q: string;
   setQ: (q: string) => void;
-  onCreate: () => void;
 };
 
-export default function DocTopBar({ q, setQ, onCreate }: DocTopBarProps) {
+export default function DocTopBar({ q, setQ }: DocTopBarProps) {
   const router = useRouter();
   const { resolvedTheme, setTheme } = useTheme();
   const session = useClientSession();
@@ -60,10 +59,7 @@ export default function DocTopBar({ q, setQ, onCreate }: DocTopBarProps) {
   const showDropdown = isFocused && !!searchResponse && !!session?.id;
 
   return (
-    <div
-      className="h-[52px] border-b flex items-center px-6 gap-3 shrink-0"
-      style={{ borderColor: "var(--lp-border)", background: "var(--lp-card)" }}
-    >
+    <div className="h-[52px] border-b border-[var(--lp-border)] bg-[var(--lp-card)] flex items-center px-6 gap-3 shrink-0">
       {/* Search */}
       <div className="relative flex-1 max-w-[480px]" ref={searchRef}>
         <input
@@ -78,38 +74,27 @@ export default function DocTopBar({ q, setQ, onCreate }: DocTopBarProps) {
           }}
           onFocus={() => setIsFocused(true)}
           placeholder="Search documents…"
-          className="w-full h-9 pl-10 pr-10 rounded-md text-[13.5px] outline-none transition"
-          style={{
-            background: "var(--lp-paper-2)",
-            border: "1px solid var(--lp-border)",
-            color: "var(--lp-ink)",
-          }}
+          className="w-full h-9 pl-10 pr-10 rounded-md text-[13.5px] outline-none transition bg-[var(--lp-paper-2)] border border-[var(--lp-border)] text-[var(--lp-ink)]"
         />
-        <Search
-          className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 pointer-events-none"
-          style={{ color: "var(--lp-muted)" }}
-        />
+        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 pointer-events-none text-[var(--lp-muted)]" />
         {q && (
           <button
             className="absolute right-2.5 top-1/2 -translate-y-1/2"
             onClick={() => { setQ(""); setSearchResponse(undefined); }}
           >
-            <X className="w-4 h-4" style={{ color: "var(--lp-muted)" }} />
+            <X className="w-4 h-4 text-[var(--lp-muted)]" />
           </button>
         )}
 
         {/* Search dropdown */}
         {showDropdown && (
-          <div
-            className="absolute top-full left-0 right-0 z-50 rounded-b-xl border border-t-0 overflow-hidden shadow-lg"
-            style={{ background: "var(--lp-card)", borderColor: "var(--lp-border)" }}
-          >
+          <div className="absolute top-full left-0 right-0 z-50 rounded-b-xl border border-t-0 overflow-hidden shadow-lg bg-[var(--lp-card)] border-[var(--lp-border)]">
             {isSearching ? (
-              <div className="p-3 text-center text-[13px]" style={{ color: "var(--lp-muted)" }}>
+              <div className="p-3 text-center text-[13px] text-[var(--lp-muted)]">
                 Searching…
               </div>
             ) : !searchResponse?.success ? (
-              <div className="p-3 text-center text-[13px]" style={{ color: "var(--lp-muted)" }}>
+              <div className="p-3 text-center text-[13px] text-[var(--lp-muted)]">
                 {searchResponse?.error}
               </div>
             ) : (
@@ -117,17 +102,16 @@ export default function DocTopBar({ q, setQ, onCreate }: DocTopBarProps) {
                 <div
                   key={d.id}
                   onClick={() => router.push(`/writer/${d.id}`)}
-                  className="flex cursor-pointer justify-between p-2.5 border-l-2 hover:bg-[var(--lp-paper-2)] transition"
-                  style={{ borderLeftColor: "transparent" }}
+                  className="flex cursor-pointer justify-between p-2.5 border-l-2 border-l-transparent hover:bg-[var(--lp-paper-2)] transition"
                 >
                   <div className="flex gap-2 items-center">
                     <Image className="w-5" src={doc} alt="doc" height={20} />
                     <div>
-                      <p className="text-[13px]" style={{ color: "var(--lp-ink)" }}>{d.name}</p>
-                      <p className="text-[11px]" style={{ color: "var(--lp-muted)" }}>{d.createdBy.name}</p>
+                      <p className="text-[13px] text-[var(--lp-ink)]">{d.name}</p>
+                      <p className="text-[11px] text-[var(--lp-muted)]">{d.createdBy.name}</p>
                     </div>
                   </div>
-                  <p className="text-[11px] font-mono" style={{ color: "var(--lp-muted)" }}>
+                  <p className="text-[11px] font-mono text-[var(--lp-muted)]">
                     {prettifyDate(String(d.updatedAt), { month: "short", day: "2-digit" })}
                   </p>
                 </div>
@@ -141,21 +125,19 @@ export default function DocTopBar({ q, setQ, onCreate }: DocTopBarProps) {
       <div className="ml-auto flex items-center gap-2">
         <button
           onClick={() => setTheme(resolvedTheme === "dark" ? "light" : "dark")}
-          className="h-9 w-9 rounded-md border flex items-center justify-center transition hover:bg-[var(--lp-paper-2)]"
-          style={{ borderColor: "var(--lp-border)" }}
+          className="h-9 w-9 rounded-md border border-[var(--lp-border)] flex items-center justify-center transition hover:bg-[var(--lp-paper-2)]"
           aria-label="Toggle theme"
         >
           {resolvedTheme === "dark" ? (
-            <Sun className="w-4 h-4" style={{ color: "var(--lp-ink)" }} />
+            <Sun className="w-4 h-4 text-[var(--lp-ink)]" />
           ) : (
-            <Moon className="w-4 h-4" style={{ color: "var(--lp-ink)" }} />
+            <Moon className="w-4 h-4 text-[var(--lp-ink)]" />
           )}
         </button>
         {!session?.id && (
           <button
             onClick={() => router.push("/api/auth/signin")}
-            className="inline-flex items-center gap-1.5 h-9 px-3.5 rounded-md text-white text-[13px] font-medium transition hover:opacity-90"
-            style={{ background: "var(--lp-accent)" }}
+            className="inline-flex items-center gap-1.5 h-9 px-3.5 rounded-md text-white text-[13px] font-medium transition hover:opacity-90 bg-[var(--lp-accent)]"
           >
             <LogIn className="w-3.5 h-3.5" strokeWidth={2} />
             Sign in

@@ -67,8 +67,7 @@ export default function DocCardItem({
   if (view === "list") {
     return (
       <div
-        className="w-full grid grid-cols-[1fr,140px,90px,32px] gap-4 items-center px-4 py-3 rounded-md border transition cursor-pointer hover:border-[var(--lp-accent)]"
-        style={{ background: "var(--lp-card)", borderColor: "var(--lp-border)" }}
+        className="w-full grid grid-cols-[1fr,140px,90px,32px] gap-4 items-center px-4 py-3 rounded-md border border-[var(--lp-border)] bg-[var(--lp-card)] transition cursor-pointer hover:border-[var(--lp-accent)]"
         onClick={() => router.push(`/writer/${docId}`)}
       >
         {/* Name */}
@@ -85,8 +84,7 @@ export default function DocCardItem({
             <input
               ref={inputRef}
               value={name}
-              className="text-[13.5px] font-medium truncate bg-transparent border-none outline-none w-full focus:bg-[var(--lp-paper-2)] focus:px-1 rounded transition"
-              style={{ color: "var(--lp-ink)" }}
+              className="text-[13.5px] font-medium truncate bg-transparent border-none outline-none w-full focus:bg-[var(--lp-paper-2)] focus:px-1 rounded transition text-[var(--lp-ink)]"
               onClick={e => e.stopPropagation()}
               onChange={e => { setName(e.target.value); debounce(e.target.value); }}
             />
@@ -94,20 +92,15 @@ export default function DocCardItem({
         </div>
 
         {/* Owner */}
-        <div className="flex items-center gap-1.5 text-[12px]" style={{ color: "var(--lp-muted)" }}>
-          <span
-            className="w-5 h-5 rounded-full text-white text-[9px] font-bold flex items-center justify-center shrink-0"
-            style={{ background: "var(--lp-accent)" }}
-          >
+        <div className="flex items-center gap-1.5 text-[12px] text-[var(--lp-muted)]">
+          <span className="w-5 h-5 rounded-full bg-[var(--lp-accent)] text-white text-[9px] font-bold flex items-center justify-center shrink-0">
             {ownerInitial}
           </span>
           <span className="truncate">{ownerName}</span>
         </div>
 
         {/* Date */}
-        <div className="font-mono text-[10.5px]" style={{ color: "var(--lp-muted)" }}>
-          {formattedDate}
-        </div>
+        <div className="font-mono text-[10.5px] text-[var(--lp-muted)]">{formattedDate}</div>
 
         <span onClick={e => e.stopPropagation()}>
           <CardOptions docId={docId} inputRef={inputRef} />
@@ -118,16 +111,15 @@ export default function DocCardItem({
 
   return (
     <div
-      className="rounded-lg border overflow-hidden transition text-left cursor-pointer group doc-fade-up hover:border-[var(--lp-accent)] doc-shadow-hover"
-      style={{ background: "var(--lp-card)", borderColor: "var(--lp-border)" }}
+      className="rounded-lg border border-[var(--lp-border)] bg-[var(--lp-card)] overflow-hidden transition text-left cursor-pointer group doc-fade-up hover:border-[var(--lp-accent)] doc-shadow-hover"
       onClick={() => router.push(`/writer/${docId}`)}
     >
       {/* Thumbnail area */}
       <DocThumbnail
         data={data}
         accentColor={color}
-        className="border-b"
-        style={{ aspectRatio: "4/3.2", borderColor: "var(--lp-border)" }}
+        className="border-b border-[var(--lp-border)]"
+        style={{ aspectRatio: "4/3.2" }}
       />
 
       {/* Card footer */}
@@ -135,22 +127,17 @@ export default function DocCardItem({
         <input
           ref={inputRef}
           value={name}
-          className="text-[13px] font-medium truncate w-full bg-transparent border-none outline-none focus:bg-[var(--lp-paper-2)] focus:px-1 rounded transition"
-          style={{ color: "var(--lp-ink)" }}
+          className="text-[13px] font-medium truncate w-full bg-transparent border-none outline-none focus:bg-[var(--lp-paper-2)] focus:px-1 rounded transition text-[var(--lp-ink)]"
           onClick={e => e.stopPropagation()}
           onChange={e => { setName(e.target.value); debounce(e.target.value); }}
         />
         <div className="flex items-center justify-between mt-1.5">
           <div className="flex items-center gap-1.5">
             <AvatarList users={users} />
-            <span className="text-[11px] truncate" style={{ color: "var(--lp-muted)" }}>
-              {ownerName}
-            </span>
+            <span className="text-[11px] truncate text-[var(--lp-muted)]">{ownerName}</span>
           </div>
           <div className="flex items-center gap-1" onClick={e => e.stopPropagation()}>
-            <span className="font-mono text-[10px]" style={{ color: "var(--lp-muted)" }}>
-              {formattedDate}
-            </span>
+            <span className="font-mono text-[10px] text-[var(--lp-muted)]">{formattedDate}</span>
             <CardOptions docId={docId} inputRef={inputRef} />
           </div>
         </div>

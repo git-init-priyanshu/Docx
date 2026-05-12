@@ -23,10 +23,7 @@ export default function Sidebar({ folder, setFolder, onCreate }: SidebarProps) {
   return (
     <AppSidebar onCreate={onCreate} breakpoint="md">
       <nav className="px-3 mt-5">
-        <div
-          className="font-mono uppercase tracking-[0.18em] text-[10px] px-2 mb-2"
-          style={{ color: "var(--lp-muted)" }}
-        >
+        <div className="font-mono uppercase tracking-[0.18em] text-[10px] px-2 mb-2 text-[var(--lp-muted)]">
           Folders
         </div>
         <ul className="space-y-0.5">
@@ -34,22 +31,16 @@ export default function Sidebar({ folder, setFolder, onCreate }: SidebarProps) {
             <li key={id}>
               <button
                 onClick={() => setFolder(id)}
-                className="w-full flex items-center gap-2.5 px-2.5 py-1.5 rounded-md text-[13px] transition"
-                style={{
-                  background:
-                    folder === id
-                      ? "color-mix(in oklab, var(--lp-accent) 12%, var(--lp-card))"
-                      : "transparent",
-                  color: folder === id ? "var(--lp-ink)" : "var(--lp-muted)",
-                }}
+                className={`w-full flex items-center gap-2.5 px-2.5 py-1.5 rounded-md text-[13px] transition ${
+                  folder === id
+                    ? "bg-[color-mix(in_oklab,var(--lp-accent)_12%,var(--lp-card))] text-[var(--lp-ink)]"
+                    : "bg-transparent text-[var(--lp-muted)]"
+                }`}
               >
                 <Icon className="w-4 h-4 shrink-0" strokeWidth={1.6} />
                 <span className="flex-1 text-left">{label}</span>
                 {folder === id && (
-                  <span
-                    className="w-1.5 h-1.5 rounded-full"
-                    style={{ background: "var(--lp-accent)" }}
-                  />
+                  <span className="w-1.5 h-1.5 rounded-full bg-[var(--lp-accent)]" />
                 )}
               </button>
             </li>
