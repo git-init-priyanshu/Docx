@@ -61,7 +61,7 @@ export default function DocTopBar({ q, setQ, onCreate }: DocTopBarProps) {
 
   return (
     <div
-      className="h-[64px] border-b flex items-center px-6 gap-3 shrink-0"
+      className="h-[52px] border-b flex items-center px-6 gap-3 shrink-0"
       style={{ borderColor: "var(--lp-border)", background: "var(--lp-card)" }}
     >
       {/* Search */}
@@ -78,7 +78,7 @@ export default function DocTopBar({ q, setQ, onCreate }: DocTopBarProps) {
           }}
           onFocus={() => setIsFocused(true)}
           placeholder="Search documents…"
-          className="w-full h-10 pl-10 pr-10 rounded-md text-[13.5px] outline-none transition"
+          className="w-full h-9 pl-10 pr-10 rounded-md text-[13.5px] outline-none transition"
           style={{
             background: "var(--lp-paper-2)",
             border: "1px solid var(--lp-border)",

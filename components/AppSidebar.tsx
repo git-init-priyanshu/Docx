@@ -42,7 +42,7 @@ export default function AppSidebar({ onCreate, children, breakpoint = "md" }: Ap
     >
       {/* Logo */}
       <div
-        className="px-5 h-[64px] flex items-center gap-2.5 border-b shrink-0"
+        className="px-5 h-[52px] flex items-center gap-2.5 border-b shrink-0"
         style={{ borderColor: "var(--lp-border)" }}
       >
         <a href="/" className="flex items-center gap-2.5">

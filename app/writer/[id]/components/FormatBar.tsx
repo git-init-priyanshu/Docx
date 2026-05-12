@@ -39,16 +39,16 @@ export default function FormatBar({ editor }: { editor: Editor | null }) {
       <button
         onClick={() => editor?.commands.undo()}
         title="Undo"
-        className="h-8 w-8 rounded-md flex items-center justify-center transition-colors hover:bg-[var(--lp-paper-2)] shrink-0"
-        style={{ color: "var(--lp-muted)" }}
+        className="h-8 w-8 rounded-md flex items-center justify-center transition-colors hover:bg-[var(--lp-border)] shrink-0"
+        style={{ color: "var(--lp-ink)" }}
       >
         <Undo className="w-4 h-4" />
       </button>
       <button
         onClick={() => editor?.commands.redo()}
         title="Redo"
-        className="h-8 w-8 rounded-md flex items-center justify-center transition-colors hover:bg-[var(--lp-paper-2)] shrink-0"
-        style={{ color: "var(--lp-muted)" }}
+        className="h-8 w-8 rounded-md flex items-center justify-center transition-colors hover:bg-[var(--lp-border)] shrink-0"
+        style={{ color: "var(--lp-ink)" }}
       >
         <Redo className="w-4 h-4" />
       </button>
@@ -59,7 +59,7 @@ export default function FormatBar({ editor }: { editor: Editor | null }) {
       <select
         value={headingValue}
         onChange={(e) => onFontStyleChange(editor, e.target.value)}
-        className="h-8 px-2 rounded-md text-[12.5px] bg-transparent border-none outline-none cursor-pointer hover:bg-[var(--lp-paper-2)] shrink-0"
+        className="h-8 px-2 rounded-md text-[12.5px] bg-transparent border-none outline-none cursor-pointer hover:bg-[var(--lp-border)] shrink-0"
         style={{ color: "var(--lp-ink)" }}
       >
         {HEADING_OPTIONS.map(({ value, label }) => (
@@ -74,9 +74,9 @@ export default function FormatBar({ editor }: { editor: Editor | null }) {
         <button
           key={label}
           onClick={() => (editor?.chain().focus() as any)?.[func]?.().run()}
-          className={`h-8 w-8 rounded-md text-[13px] ${className} transition-colors shrink-0 ${active ? "" : "hover:bg-[var(--lp-paper-2)]"}`}
+          className={`h-8 w-8 rounded-md text-[13px] ${className} transition-colors shrink-0 ${active ? "" : "hover:bg-[var(--lp-border)]"}`}
           style={{
-            background: active ? `color-mix(in oklab, var(--lp-accent) 15%, var(--lp-card))` : undefined,
+            background: active ? `color-mix(in oklab, var(--lp-accent) 18%, transparent)` : "transparent",
             color: active ? "var(--lp-accent)" : "var(--lp-ink)",
           }}
         >
@@ -90,24 +90,24 @@ export default function FormatBar({ editor }: { editor: Editor | null }) {
       <button
         onClick={() => editor?.chain().focus().toggleBulletList().run()}
         title="Bullet list"
-        className="h-8 w-8 rounded-md flex items-center justify-center transition-colors hover:bg-[var(--lp-paper-2)] shrink-0"
-        style={{ color: editor?.isActive("bulletList") ? "var(--lp-accent)" : "var(--lp-ink)" }}
+        className={`h-8 w-8 rounded-md flex items-center justify-center transition-colors shrink-0 ${editor?.isActive("bulletList") ? "" : "hover:bg-[var(--lp-border)]"}`}
+        style={{ background: editor?.isActive("bulletList") ? `color-mix(in oklab, var(--lp-accent) 18%, transparent)` : "transparent", color: editor?.isActive("bulletList") ? "var(--lp-accent)" : "var(--lp-ink)" }}
       >
         <List className="w-4 h-4" />
       </button>
       <button
         onClick={() => editor?.chain().focus().toggleOrderedList().run()}
         title="Ordered list"
-        className="h-8 w-8 rounded-md flex items-center justify-center transition-colors hover:bg-[var(--lp-paper-2)] shrink-0"
-        style={{ color: editor?.isActive("orderedList") ? "var(--lp-accent)" : "var(--lp-ink)" }}
+        className={`h-8 w-8 rounded-md flex items-center justify-center transition-colors shrink-0 ${editor?.isActive("orderedList") ? "" : "hover:bg-[var(--lp-border)]"}`}
+        style={{ background: editor?.isActive("orderedList") ? `color-mix(in oklab, var(--lp-accent) 18%, transparent)` : "transparent", color: editor?.isActive("orderedList") ? "var(--lp-accent)" : "var(--lp-ink)" }}
       >
         <ListOrdered className="w-4 h-4" />
       </button>
       <button
         onClick={() => editor?.chain().focus().toggleBlockquote().run()}
         title="Blockquote"
-        className="h-8 w-8 rounded-md flex items-center justify-center transition-colors hover:bg-[var(--lp-paper-2)] shrink-0"
-        style={{ color: editor?.isActive("blockquote") ? "var(--lp-accent)" : "var(--lp-ink)" }}
+        className={`h-8 w-8 rounded-md flex items-center justify-center transition-colors shrink-0 ${editor?.isActive("blockquote") ? "" : "hover:bg-[var(--lp-border)]"}`}
+        style={{ background: editor?.isActive("blockquote") ? `color-mix(in oklab, var(--lp-accent) 18%, transparent)` : "transparent", color: editor?.isActive("blockquote") ? "var(--lp-accent)" : "var(--lp-ink)" }}
       >
         <Quote className="w-4 h-4" />
       </button>
@@ -116,7 +116,7 @@ export default function FormatBar({ editor }: { editor: Editor | null }) {
 
       {/* AI Rewrite */}
       <button
-        className="h-8 px-2.5 rounded-md flex items-center gap-1.5 text-[12.5px] transition-colors hover:bg-[var(--lp-paper-2)] shrink-0"
+        className="h-8 px-2.5 rounded-md flex items-center gap-1.5 text-[12.5px] transition-colors hover:bg-[var(--lp-border)] shrink-0"
         style={{ color: "var(--lp-accent)" }}
       >
         <Sparkles className="w-3.5 h-3.5" />

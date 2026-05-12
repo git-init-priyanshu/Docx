@@ -72,8 +72,8 @@ export default function Toolbar({ name, isSaving, onAsk }: ToolbarProps) {
         {/* Ask DocX ⌘K */}
         <button
           onClick={onAsk}
-          className="hidden sm:inline-flex items-center gap-1.5 h-8 px-3 rounded-md border text-[12.5px] font-medium transition-colors hover:bg-[var(--lp-paper-2)]"
-          style={{ borderColor: "var(--lp-border)", background: "var(--lp-card)", color: "var(--lp-ink)" }}
+          className="hidden sm:inline-flex items-center gap-1.5 h-8 px-3 rounded-md border text-[12.5px] font-medium transition-colors hover:bg-[var(--lp-border)]"
+          style={{ borderColor: "var(--lp-border)", color: "var(--lp-ink)" }}
         >
           <Sparkles className="w-3.5 h-3.5" style={{ color: "var(--lp-accent)" }} />
           <span>Ask DocX</span>
@@ -83,8 +83,8 @@ export default function Toolbar({ name, isSaving, onAsk }: ToolbarProps) {
         {/* Theme toggle */}
         <button
           onClick={() => setTheme(isDark ? "light" : "dark")}
-          className="h-8 w-8 rounded-md border flex items-center justify-center transition-colors hover:bg-[var(--lp-paper-2)]"
-          style={{ borderColor: "var(--lp-border)", color: "var(--lp-muted)" }}
+          className="h-8 w-8 rounded-md border flex items-center justify-center transition-colors hover:bg-[var(--lp-border)]"
+          style={{ borderColor: "var(--lp-border)", color: "var(--lp-ink)" }}
           aria-label="Toggle theme"
         >
           {mounted ? (isDark ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />) : <Moon className="w-4 h-4" />}

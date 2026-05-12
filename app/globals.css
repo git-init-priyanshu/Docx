@@ -219,42 +219,29 @@
   .lp-caret, .lp-drift, .lp-float-in { animation: none; }
 }
 
-/* ─── TipTap dark-mode: direct element overrides ─────────────────────────── */
-/* prose uses :where() (zero specificity), so (0,2,1) beats it cleanly.      */
-/* Inline style="color:…" from the Color extension still wins (specificity 1,0,0). */
-.dark .tiptap,
-.dark .tiptap p,
-.dark .tiptap h1,
-.dark .tiptap h2,
-.dark .tiptap h3,
-.dark .tiptap h4,
-.dark .tiptap h5,
-.dark .tiptap h6,
-.dark .tiptap li,
-.dark .tiptap strong,
-.dark .tiptap em,
-.dark .tiptap td,
-.dark .tiptap th {
-  color: var(--lp-ink);
+/* ─── TipTap: bind prose colors to design tokens ────────────────────────── */
+/* The `prose` plugin styles every element via `--tw-prose-*` variables.     */
+/* By rebinding them to `--lp-*` (which already switch on .dark), text       */
+/* automatically becomes black on light and white on dark — single source.   */
+.tiptap {
+  --tw-prose-body: var(--lp-ink);
+  --tw-prose-headings: var(--lp-ink);
+  --tw-prose-lead: var(--lp-muted);
+  --tw-prose-links: var(--lp-accent-ink);
+  --tw-prose-bold: var(--lp-ink);
+  --tw-prose-counters: var(--lp-muted);
+  --tw-prose-bullets: var(--lp-muted);
+  --tw-prose-hr: var(--lp-border);
+  --tw-prose-quotes: var(--lp-ink);
+  --tw-prose-quote-borders: var(--lp-border);
+  --tw-prose-captions: var(--lp-muted);
+  --tw-prose-code: var(--lp-ink);
+  --tw-prose-pre-code: var(--lp-ink);
+  --tw-prose-pre-bg: var(--lp-paper-2);
+  --tw-prose-th-borders: var(--lp-border);
+  --tw-prose-td-borders: var(--lp-border);
 }
-.dark .tiptap a {
-  color: var(--lp-accent-ink);
-}
-.dark .tiptap blockquote {
-  color: var(--lp-muted);
-  border-color: var(--lp-border);
-}
-.dark .tiptap code {
-  color: var(--lp-ink);
-  background: var(--lp-paper-2);
-}
-.dark .tiptap pre {
-  color: var(--lp-ink);
-  background: var(--lp-paper-2);
-}
-.dark .tiptap hr {
-  border-color: var(--lp-border);
-}
+/* Inline style="color:…" from the Color extension still wins (1,0,0) */
 
 /* Give a remote user a caret  */
 .collaboration-cursor__caret {
