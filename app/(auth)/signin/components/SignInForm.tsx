@@ -53,6 +53,7 @@ export default function CredentialsForm() {
         <div className="flex items-center">
           <Label htmlFor="password">Password</Label>
           <button
+            type="button"
             className="ml-auto inline-block text-sm text-blue-500 hover:underline"
             onClick={() => router.push("/forget-password")}
           >

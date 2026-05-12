@@ -13,7 +13,7 @@ export default function OTP() {
   const params = useParams();
   const router = useRouter();
 
-  const userEmail = params.id.toString().replace("%40", "@");
+  const userEmail = decodeURIComponent(params.id.toString());
 
   const [inputValue, setInputValue] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -24,7 +24,7 @@ export default function OTP() {
     const interval = setInterval(() => {
       setTimer((prev) => {
         if (prev <= 1) {
-          // clearInterval(interval);
+          clearInterval(interval);
           return 0;
         }
         return prev - 1;
@@ -113,9 +113,9 @@ export default function OTP() {
                 viewBox="0 0 24 24"
                 fill="none"
                 stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
               >
                 <path d="M21 12a9 9 0 1 1-6.219-8.56" />
               </svg>
