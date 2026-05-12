@@ -1,7 +1,7 @@
 import Link from "next/link";
 
 import SignInForm from "./components/SignInForm";
-import GoogleAuthButton from "./components/GoogleAuthButton";
+import GoogleAuthButton from "../components/GoogleAuthButton";
 
 export default function Login() {
   return (
