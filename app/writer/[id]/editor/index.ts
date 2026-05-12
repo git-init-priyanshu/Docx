@@ -26,7 +26,10 @@ export const Editor = ({ setIsSaving }: EditorPropType) => {
 
   const [name, setName] = useState("");
 
-  const { doc: docData } = useDoc(params.id as string, session?.id);
+  // session === null → still loading (pass null to defer the fetch)
+  // session !== null → resolved: id is set for authenticated users, undefined for guests
+  const userId = session === null ? null : session?.id;
+  const { doc: docData } = useDoc(params.id as string, userId);
 
   useEffect(() => {
     setName(localStorage.getItem("name") || "");

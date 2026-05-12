@@ -6,7 +6,8 @@ import type { Document } from "@prisma/client";
 import { GetDocDetails } from "@/app/writer/[id]/actions";
 import { getGuestDocumentDetails } from "@/lib/guestServices";
 
-const docKey = (docId: string) => ["doc", docId];
+// userId: null = session still resolving (defer); undefined = guest; string = authenticated
+const docKey = (docId: string, userId: string) => ["doc", docId, userId];
 
 async function fetchDoc(
   docId: string,
@@ -20,22 +21,23 @@ async function fetchDoc(
   return getGuestDocumentDetails(docId);
 }
 
-export function useDoc(docId: string, userId?: string) {
+export function useDoc(docId: string, userId: string | null | undefined) {
+  const ready = userId !== null;
+  const key = docId && ready ? docKey(docId, userId ?? "guest") : null;
+
   const { data, error, isLoading, mutate: revalidate } = useSWR<
     Document | undefined
   >(
-    docId ? docKey(docId) : null,
-    () => fetchDoc(docId, userId),
+    key,
+    () => fetchDoc(docId, userId ?? undefined),
     { revalidateOnFocus: false },
   );
 
-  return {
-    doc: data,
-    isLoading,
-    error,
-    revalidate,
-  };
+  return { doc: data, isLoading, error, revalidate };
 }
 
-/** Call after saving content or thumbnail to reflect latest data. */
-export const invalidateDoc = (docId: string) => mutate(docKey(docId));
+export const invalidateDoc = (docId: string) =>
+  mutate(
+    (key: unknown) =>
+      Array.isArray(key) && key[0] === "doc" && key[1] === docId,
+  );
