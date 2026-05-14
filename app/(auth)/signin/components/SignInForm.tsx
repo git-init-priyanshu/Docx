@@ -1,93 +1,117 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
-import { Eye, EyeOff } from "lucide-react";
 import { z } from "zod";
-
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import LoaderButton from "@/components/LoaderButton";
 
 import { SigninAction } from "../../actions";
 import { signinSchema } from "../../zodSchema";
+import {
+  Field,
+  TextInput,
+  PasswordInput,
+} from "../../components/AuthFormControls";
 
-export default function CredentialsForm() {
+type SignInValues = z.infer<typeof signinSchema>;
+
+export default function SignInForm() {
   const router = useRouter();
-
-  const { register, handleSubmit } = useForm<z.infer<typeof signinSchema>>();
+  const { register, handleSubmit } = useForm<SignInValues>();
 
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isPasswordVisible, setIsPasswordVisible] = useState(false);
+  const [remember, setRemember] = useState(true);
 
-  const submitForm = async (data: z.infer<typeof signinSchema>) => {
+  const submitForm = async (data: SignInValues) => {
     setIsSubmitting(true);
-    const parsedData = signinSchema.parse({
-      email: data.email,
-      password: data.password,
-    });
-    const response = await SigninAction(parsedData);
-    if (response.success) {
-      toast.success("login completed");
-      router.push("/document");
-      setIsSubmitting(false);
-    } else {
-      toast.error(response.error);
+    try {
+      const parsedData = signinSchema.parse({
+        email: data.email,
+        password: data.password,
+      });
+      const response = await SigninAction(parsedData);
+      if (response.success) {
+        toast.success("login completed");
+        router.push("/document");
+      } else {
+        toast.error(response.error);
+        setIsSubmitting(false);
+      }
+    } catch (error) {
+      console.log(error);
+      toast.error("Something went wrong. Please try again.");
       setIsSubmitting(false);
     }
   };
 
   return (
-    <form className="grid gap-4 text-left" onSubmit={handleSubmit(submitForm)}>
-      <div className="grid gap-2">
-        <Label htmlFor="email">Email</Label>
-        <Input
+    <form className="space-y-4 mt-5" onSubmit={handleSubmit(submitForm)}>
+      <Field label="Email" htmlFor="email">
+        <TextInput
+          id="email"
           type="email"
-          placeholder="johndoe@email.com"
+          placeholder="you@studio.com"
+          autoComplete="email"
           {...register("email", { required: true })}
         />
-      </div>
-      <div className="grid gap-2">
-        <div className="flex items-center">
-          <Label htmlFor="password">Password</Label>
-          <button
-            type="button"
-            className="ml-auto inline-block text-sm text-blue-500 hover:underline"
-            onClick={() => router.push("/forget-password")}
+      </Field>
+
+      <Field
+        label="Password"
+        htmlFor="password"
+        action={
+          <Link
+            href="/forget-password"
+            className="text-[11.5px] text-[var(--lp-muted)] hover:text-[var(--lp-accent)] transition-colors"
           >
-            Forgot your password?
-          </button>
-        </div>
-        <div>
-          <Input
-            type={isPasswordVisible ? "text" : "password"}
-            className="relative"
-            {...register("password", { required: true })}
-          />
-          {!isPasswordVisible ? (
-            <Eye
-              size={20}
-              onClick={() => setIsPasswordVisible(true)}
-              className="absolute transform -translate-y-[1.7rem] translate-x-80 cursor-pointer text-neutral-500 hover:text-black"
-            />
-          ) : (
-            <EyeOff
-              size={20}
-              onClick={() => setIsPasswordVisible(false)}
-              className="absolute transform -translate-y-[1.7rem] translate-x-80 cursor-pointer text-neutral-500 hover:text-black"
-            />
-          )}
-        </div>
-      </div>
-      <LoaderButton
-        className="w-full bg-blue-500 hover:bg-blue-600"
-        isLoading={isSubmitting}
-        type="submit"
+            Forgot?
+          </Link>
+        }
       >
-        Sign in
-      </LoaderButton>
+        <PasswordInput
+          id="password"
+          placeholder="••••••••"
+          autoComplete="current-password"
+          {...register("password", { required: true })}
+        />
+      </Field>
+
+      <label className="flex items-center gap-2 text-[12.5px] text-[var(--lp-muted)] select-none cursor-pointer">
+        <input
+          type="checkbox"
+          checked={remember}
+          onChange={(e) => setRemember(e.target.checked)}
+          className="accent-[var(--lp-accent)] w-3.5 h-3.5"
+        />
+        Keep me signed in for 30 days
+      </label>
+
+      <button
+        type="submit"
+        disabled={isSubmitting}
+        className="w-full h-11 rounded-md bg-[var(--lp-ink)] text-[var(--lp-paper)] text-[13.5px] font-medium hover:opacity-90 transition-opacity flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed"
+      >
+        {isSubmitting ? (
+          <>
+            <svg
+              className="w-4 h-4 animate-spin"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+            >
+              <path d="M12 4a8 8 0 0 1 8 8" strokeLinecap="round" />
+            </svg>
+            Signing you in…
+          </>
+        ) : (
+          <>
+            Sign in <span aria-hidden>→</span>
+          </>
+        )}
+      </button>
     </form>
   );
 }
