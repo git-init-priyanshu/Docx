@@ -55,7 +55,7 @@ Unauthenticated users can create and edit documents locally. All guest data live
 
 ### Editor (`app/writer/[id]/`)
 - **Tiptap** with `StarterKit`, `Collaboration`, `CollaborationCursor`, `Color`, `Highlight`, `Underline`, `TextAlign`, `FontFamily`, `TextStyle`.
-- **Yjs + y-websocket** for real-time collaboration. The `ydoc` and `provider` are module-level singletons in `editor/editorConfig.ts` — the room name is date-based (shared across all users on the same calendar day).
+- **Yjs + y-websocket** for real-time collaboration. `ydoc` and the `WebsocketProvider` are created **per document** inside the editor hook (keyed on `docId`) and destroyed on unmount / navigation. The room name is `doc.${docId}` so collaboration is scoped to each individual document — different documents never sync into one another.
 - Auto-save via a 1-second debounce: on change, calls `UpdateDocData` server action and then `invalidateDoc` to update the SWR cache.
 - `⌘K` opens `AskPalette` — a floating command palette for AI text operations.
 - Bubble menu appears on text selection with AI actions (improve writing, fix grammar, translate, summarize, etc.) via `generateText` server action → Gemini 1.5 Flash.
