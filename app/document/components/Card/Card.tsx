@@ -46,7 +46,6 @@ export default function DocCard({
   }, 1000);
 
   const session = useClientSession();
-  localStorage.setItem("name", session.name as string);
 
   const inputRef = useRef<HTMLInputElement>(null);
 

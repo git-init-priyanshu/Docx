@@ -4,3 +4,5 @@ export type ReturnType = {
   email: string | null | undefined;
   image: string | null | undefined;
 };
+
+export type SessionReturnType = ReturnType;
