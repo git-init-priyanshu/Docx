@@ -5,10 +5,12 @@ import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { KeyRound } from "lucide-react";
 
+import ForgotPasswordImage from "@/public/Forgot password.webp";
 import LoaderButton from "@/components/LoaderButton";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { sendResetPasswordMail } from "../actions";
+import LegacyAuthFrame from "../components/LegacyAuthFrame";
 
 export default function ForgetPassoword() {
   const router = useRouter();
@@ -35,7 +37,7 @@ export default function ForgetPassoword() {
     }
   };
   return (
-    <>
+    <LegacyAuthFrame image={ForgotPasswordImage} imageAlt="Forgot password">
       <div className="flex flex-col gap-2 text-center items-center">
         <KeyRound size={48} color="#3b82f6" />
         <h1 className="text-3xl font-bold">
@@ -62,6 +64,6 @@ export default function ForgetPassoword() {
           Send email
         </LoaderButton>
       </div>
-    </>
+    </LegacyAuthFrame>
   );
 }

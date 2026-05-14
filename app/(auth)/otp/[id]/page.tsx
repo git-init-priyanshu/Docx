@@ -5,9 +5,11 @@ import { useParams, useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { MailCheck } from "lucide-react";
 
+import VerifyOtpImage from "@/public/Verify otp.webp";
 import LoaderButton from "@/components/LoaderButton";
 import { Input } from "@/components/ui/input";
 import { resendVerifyCode, verifyEmail } from "../../actions";
+import LegacyAuthFrame from "../../components/LegacyAuthFrame";
 
 export default function OTP() {
   const params = useParams();
@@ -74,7 +76,7 @@ export default function OTP() {
     }
   };
   return (
-    <>
+    <LegacyAuthFrame image={VerifyOtpImage} imageAlt="Verify OTP">
       <div className="flex flex-col gap-2 text-center items-center">
         <MailCheck size={48} color="#3b82f6" />
         <h1 className="text-3xl font-bold">
@@ -133,6 +135,6 @@ export default function OTP() {
           </p>
         )}
       </div>
-    </>
+    </LegacyAuthFrame>
   );
 }

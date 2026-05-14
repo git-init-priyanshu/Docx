@@ -5,11 +5,13 @@ import { useParams, useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { KeyRound } from "lucide-react";
 
+import ResetPasswordImage from "@/public/Reset password.webp";
 import LoaderButton from "@/components/LoaderButton";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { resetPassword } from "../../actions";
 import { passwordValidation } from "../../zodSchema";
+import LegacyAuthFrame from "../../components/LegacyAuthFrame";
 
 export default function ResetPassword() {
   const params = useParams();
@@ -49,7 +51,7 @@ export default function ResetPassword() {
     }
   };
   return (
-    <>
+    <LegacyAuthFrame image={ResetPasswordImage} imageAlt="Reset password">
       <div className="flex flex-col gap-2 text-center items-center">
         <KeyRound size={48} color="#3b82f6" />
         <h1 className="text-3xl font-bold">
@@ -94,6 +96,6 @@ export default function ResetPassword() {
           Change my password
         </LoaderButton>
       </form>
-    </>
+    </LegacyAuthFrame>
   );
 }
