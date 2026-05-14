@@ -70,17 +70,6 @@ export default function AuthAside() {
             </span>
           </div>
         </div>
-
-        {/* Stat strip */}
-        <div className="mt-8 flex flex-wrap items-center gap-x-6 gap-y-2 text-[12px] text-[var(--lp-muted)]">
-          <div className="flex items-center gap-2">
-            <Check className="w-3.5 h-3.5 text-[var(--lp-leaf)]" /> Free for
-            teams under 10
-          </div>
-          <div className="flex items-center gap-2">
-            <Check className="w-3.5 h-3.5 text-[var(--lp-leaf)]" /> MIT-licensed
-          </div>
-        </div>
       </div>
     </div>
   );

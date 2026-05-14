@@ -25,7 +25,7 @@ export default function ProfileBtn({ name, image }: ProfileBtnPropType) {
     const response = await LogoutAction();
     if (response.success) {
       toast.success("Successfully logged out");
-      router.push("/api/auth/signin");
+      router.push("/login");
     } else {
       toast.error(response.error);
     }
@@ -36,10 +36,10 @@ export default function ProfileBtn({ name, image }: ProfileBtnPropType) {
       <Button
         variant="outline"
         className="flex gap-2 text-blue-500 hover:text-blue-500 hover:border-blue-200 rounded-lg md:rounded-full"
-        onClick={()=>router.push("/signup")}
+        onClick={() => router.push("/login")}
       >
         <LogIn size={15} />
-        <p className="hidden md:block">Signup</p>
+        <p className="hidden md:block">Login</p>
       </Button>
 
       : <Popover>

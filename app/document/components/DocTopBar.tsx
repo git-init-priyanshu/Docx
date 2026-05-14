@@ -136,11 +136,11 @@ export default function DocTopBar({ q, setQ }: DocTopBarProps) {
         </button>
         {!session?.id && (
           <button
-            onClick={() => router.push("/api/auth/signin")}
+            onClick={() => router.push("/login")}
             className="inline-flex items-center gap-1.5 h-9 px-3.5 rounded-md text-white text-[13px] font-medium transition hover:opacity-90 bg-[var(--lp-accent)]"
           >
             <LogIn className="w-3.5 h-3.5" strokeWidth={2} />
-            Sign in
+            Login
           </button>
         )}
       </div>

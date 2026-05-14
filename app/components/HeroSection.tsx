@@ -175,7 +175,7 @@ export default function HeroSection() {
               </span>
               <span className="flex items-center gap-1.5">
                 <span style={{ color: "var(--lp-leaf)" }}><CheckIcon /></span>
-                No sign up needed for the demo
+                No account needed for the demo
               </span>
             </div>
           </div>

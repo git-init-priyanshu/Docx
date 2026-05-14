@@ -269,3 +269,105 @@
   user-select: none;
   white-space: nowrap;
 }
+
+/* ─── Sonner toast: bind to design tokens ─────────────────────────────────── */
+/* Override both light and dark theme blocks Sonner ships with — the --lp-*  */
+/* tokens already swap on `.dark`, so a single value works for both modes.    */
+[data-sonner-toaster][data-theme="light"],
+[data-sonner-toaster][data-theme="dark"] {
+  --normal-bg: var(--lp-card);
+  --normal-text: var(--lp-ink);
+  --normal-border: var(--lp-border);
+
+  --success-bg: var(--lp-card);
+  --success-text: var(--lp-ink);
+  --success-border: var(--lp-border);
+
+  --error-bg: var(--lp-card);
+  --error-text: var(--lp-ink);
+  --error-border: var(--lp-border);
+
+  --info-bg: var(--lp-card);
+  --info-text: var(--lp-ink);
+  --info-border: var(--lp-border);
+
+  --warning-bg: var(--lp-card);
+  --warning-text: var(--lp-ink);
+  --warning-border: var(--lp-border);
+
+  --border-radius: 8px;
+}
+
+[data-sonner-toast] {
+  font-family: var(--font-inter), system-ui, sans-serif;
+  box-shadow:
+    0 10px 30px -15px rgba(20, 17, 13, 0.18),
+    0 2px 8px -4px rgba(20, 17, 13, 0.08);
+}
+.dark [data-sonner-toast] {
+  box-shadow:
+    0 10px 30px -15px rgba(0, 0, 0, 0.6),
+    0 2px 8px -4px rgba(0, 0, 0, 0.4);
+}
+
+[data-sonner-toast] [data-title] {
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: -0.005em;
+  color: var(--lp-ink);
+}
+[data-sonner-toast] [data-description] {
+  font-size: 12.5px;
+  color: var(--lp-muted);
+  margin-top: 2px;
+}
+
+[data-sonner-toast] [data-icon] {
+  color: var(--lp-muted);
+}
+[data-sonner-toast][data-type="success"] [data-icon] {
+  color: var(--lp-leaf);
+}
+[data-sonner-toast][data-type="error"] [data-icon] {
+  color: var(--lp-rose);
+}
+[data-sonner-toast][data-type="warning"] [data-icon] {
+  color: var(--lp-tan);
+}
+[data-sonner-toast][data-type="info"] [data-icon] {
+  color: var(--lp-accent);
+}
+[data-sonner-toast][data-type="loading"] [data-icon] {
+  color: var(--lp-accent);
+}
+
+[data-sonner-toast] [data-button] {
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 500;
+  padding: 6px 10px;
+  transition: opacity 0.15s;
+}
+[data-sonner-toast] [data-button]:hover {
+  opacity: 0.85;
+}
+[data-sonner-toast] [data-button][data-action] {
+  background: var(--lp-ink);
+  color: var(--lp-paper);
+  border: 1px solid var(--lp-ink);
+}
+[data-sonner-toast] [data-button][data-cancel] {
+  background: var(--lp-paper-2);
+  color: var(--lp-ink);
+  border: 1px solid var(--lp-border);
+}
+
+[data-sonner-toast] [data-close-button] {
+  background: var(--lp-card);
+  color: var(--lp-muted);
+  border: 1px solid var(--lp-border);
+}
+[data-sonner-toast] [data-close-button]:hover {
+  background: var(--lp-paper-2);
+  color: var(--lp-ink);
+}

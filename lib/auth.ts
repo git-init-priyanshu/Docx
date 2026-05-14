@@ -34,7 +34,12 @@ export const authOptions: NextAuthOptions = {
         if (!email_verified) return false;
 
         try {
-          const username = given_name + family_name;
+          const fromGiven = `${given_name ?? ""}${family_name ?? ""}`;
+          const fallback =
+            (name ?? email?.split("@")[0] ?? "user")
+              .replace(/\s+/g, "")
+              .slice(0, 20) || "user";
+          const username = (fromGiven || fallback).slice(0, 20);
 
           await prisma.user.upsert({
             where: { email },
@@ -53,7 +58,7 @@ export const authOptions: NextAuthOptions = {
 
           return true;
         } catch (e) {
-          console.log(e);
+          console.error("[next-auth] Google signIn upsert failed:", e);
           return false;
         }
       }
@@ -79,11 +84,11 @@ export const authOptions: NextAuthOptions = {
         httpOnly: true,
         sameSite: "lax",
         path: "/",
-        secure: true,
+        secure: process.env.NODE_ENV === "production",
       },
     },
   },
   pages: {
-    signIn: "/signin",
+    signIn: "/login",
   },
 } satisfies NextAuthOptions;

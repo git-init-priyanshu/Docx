@@ -12,7 +12,7 @@ import RightRail from "./components/RightRail";
 import AskPalette from "./components/AskPalette";
 import Loading from "./components/EditorLoading";
 import BubbleMenuComp from "./components/BubbleMenuComp";
-import SignInPromptModal from "./components/SignInPromptModal";
+import LoginPromptModal from "./components/LoginPromptModal";
 
 export default function WriterPage() {
   const session = useClientSession();
@@ -22,14 +22,14 @@ export default function WriterPage() {
   const [position, setPosition] = useState({ x: 0, y: 0 });
   const [position2, setPosition2] = useState({ x: 0, y: 0, width: 0 });
   const [askOpen, setAskOpen] = useState(false);
-  const [showSignInPrompt, setShowSignInPrompt] = useState(false);
+  const [showLoginPrompt, setShowLoginPrompt] = useState(false);
 
   const { editor, docData } = Editor({ setIsSaving });
 
   const isGuest = session !== null && !session.id;
 
   const openAsk = () => {
-    if (isGuest) { setShowSignInPrompt(true); return; }
+    if (isGuest) { setShowLoginPrompt(true); return; }
     setAskOpen(true);
   };
 
@@ -38,10 +38,10 @@ export default function WriterPage() {
     const handler = (e: KeyboardEvent) => {
       if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") {
         e.preventDefault();
-        if (isGuest) { setShowSignInPrompt(true); return; }
+        if (isGuest) { setShowLoginPrompt(true); return; }
         setAskOpen((o) => !o);
       }
-      if (e.key === "Escape") { setAskOpen(false); setShowSignInPrompt(false); }
+      if (e.key === "Escape") { setAskOpen(false); setShowLoginPrompt(false); }
     };
     window.addEventListener("keydown", handler);
     return () => window.removeEventListener("keydown", handler);
@@ -100,7 +100,7 @@ export default function WriterPage() {
                   isHighlighted={isHighlighted}
                   bubblePosition={position}
                   generativeTextBubblePosition={position2}
-                  onAuthRequired={() => setShowSignInPrompt(true)}
+                  onAuthRequired={() => setShowLoginPrompt(true)}
                 />
                 <EditorContent editor={editor} />
               </>
@@ -114,9 +114,9 @@ export default function WriterPage() {
       {/* ⌘K palette */}
       <AskPalette open={askOpen} onClose={() => setAskOpen(false)} editor={editor} />
 
-      <SignInPromptModal
-        open={showSignInPrompt}
-        onClose={() => setShowSignInPrompt(false)}
+      <LoginPromptModal
+        open={showLoginPrompt}
+        onClose={() => setShowLoginPrompt(false)}
       />
     </div>
   );

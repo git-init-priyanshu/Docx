@@ -33,7 +33,7 @@ export default function CTASection() {
               Ready to give it a try?
             </h2>
             <p className="mt-4 text-[15px] max-w-[460px] mx-auto" style={{ color: "var(--lp-muted)" }}>
-              Open the editor demo in your browser — no signup needed. Star the repo on GitHub if you find it useful.
+              Open the editor demo in your browser — no login needed. Star the repo on GitHub if you find it useful.
             </p>
             <div className="mt-6 flex flex-wrap items-center justify-center gap-2.5">
               <Link

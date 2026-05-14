@@ -31,27 +31,24 @@ Required in `.env`:
 - `DATABASE_URL` — PostgreSQL connection string
 - `GOOGLE_ID` / `GOOGLE_SECRET` — NextAuth Google OAuth
 - `NEXTAUTH_SECRET` — NextAuth session secret
+- `NEXTAUTH_URL` — Base URL NextAuth uses for callbacks (e.g. `http://localhost:3000`)
 - `GEMINI_API_KEY` — Google Gemini AI (used for text generation in the editor)
 - `NEXT_PUBLIC_WEBSOCKET_URL` — WebSocket server URL for Yjs real-time collaboration
 - `BACKEND_SERVER_URL` — Backend service for thumbnail upload queue
-- `APP_URL` — Base URL (used in reset-password email links)
-- `RESEND_API_KEY` — Email delivery via Resend
-- `SALT` — bcrypt salt rounds (defaults to 10)
+- `APP_URL` — Base URL
 
 ## Architecture
 
 ### Routes
 - `/` — Marketing landing page (`app/page.tsx` + `app/components/`)
-- `/(auth)` — Sign-in, sign-up, OTP verification, password reset (`app/(auth)/`)
+- `/login` — Single Google-OAuth login page (`app/(auth)/login/`)
 - `/document` — Dashboard: lists all user documents
 - `/writer/[id]` — Rich-text editor for a single document
 
-### Dual Authentication System
-The app supports two independent auth methods:
-1. **NextAuth / Google OAuth** — session stored in `next-auth.session-token` cookie
-2. **Custom JWT auth** — email/password + OTP email verification, token stored in `token` cookie (httpOnly)
+### Authentication
+Google OAuth via NextAuth is the only auth path. The session lives in the `next-auth.session-token` cookie. There is no email/password flow, OTP verification, or password reset.
 
-`useClientSession` (`lib/customHooks/useClientSession.tsx`) unifies both: it first checks the NextAuth session, then falls back to calling `GetUserDetails` which decodes the custom JWT cookie. Returns `null` while loading (used as skeleton signal), or a `{ id, name, email, image }` object. Unauthenticated users get `id: undefined`.
+`useClientSession` (`lib/customHooks/useClientSession.tsx`) wraps `useSession` from `next-auth/react` and returns `null` while loading, or a `{ id, name, email, image }` object. Unauthenticated users get an object with `id: undefined`. The server-side counterpart `getServerSession` (`lib/customHooks/getServerSession.ts`) wraps NextAuth's `getServerSession` with the same shape.
 
 ### Guest Mode
 Unauthenticated users can create and edit documents locally. All guest data lives in `localStorage` (user profile + document list). `lib/guestServices.ts` handles all CRUD. The document page and editor both branch on `session?.id` to decide whether to hit the DB or `localStorage`.

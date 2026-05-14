@@ -27,7 +27,7 @@ export default function AppSidebar({ onCreate, children, breakpoint = "md" }: Ap
     const response = await LogoutAction();
     if (response.success) {
       toast.success("Successfully logged out");
-      router.push("/api/auth/signin");
+      router.push("/login");
     } else {
       toast.error(response.error);
     }
@@ -115,11 +115,11 @@ export default function AppSidebar({ onCreate, children, breakpoint = "md" }: Ap
             </button>
           ) : (
             <button
-              onClick={() => router.push("/api/auth/signin")}
+              onClick={() => router.push("/login")}
               className="text-[11px] font-medium px-2 py-1 rounded-md hover:bg-[var(--lp-paper-2)] transition shrink-0"
               style={{ color: "var(--lp-accent)" }}
             >
-              Sign in
+              Login
             </button>
           )}
         </div>

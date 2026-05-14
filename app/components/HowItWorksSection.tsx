@@ -2,12 +2,12 @@ const STEPS = [
   {
     n: "1",
     t: "Open a doc",
-    b: "Sign in, click new. Or just go straight to the editor demo without an account.",
+    b: "Login, click new. Or just go straight to the editor demo without an account.",
   },
   {
     n: "2",
     t: "Invite people",
-    b: "Share the link. They can comment without an account, or sign in to edit alongside you.",
+    b: "Share the link. They can comment without an account, or login to edit alongside you.",
   },
   {
     n: "3",
