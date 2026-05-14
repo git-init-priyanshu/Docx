@@ -241,7 +241,39 @@
   --tw-prose-th-borders: var(--lp-border);
   --tw-prose-td-borders: var(--lp-border);
 }
-/* Inline style="color:…" from the Color extension still wins (1,0,0) */
+/* Inline `style="color:…"` from the Color extension wins over the prose vars
+   above (1,0,0 wins over our tokens). In dark mode, force "black-ish" inline
+   colors back through `--lp-ink` so legacy content stays readable. Any other
+   color the user intentionally picked is left alone. */
+.dark .tiptap [style*="color: rgb(0, 0, 0)"],
+.dark .tiptap [style*="color: rgb(0,0,0)"],
+.dark .tiptap [style*="color: #000000"],
+.dark .tiptap [style*="color:#000000"],
+.dark .tiptap [style*="color: #000"],
+.dark .tiptap [style*="color:#000"],
+.dark .tiptap [style*="color: black"] {
+  color: var(--lp-ink) !important;
+}
+/* Mirror the inverse in light mode for content authored in dark mode (pure
+   white text would be invisible on the cream paper). */
+.tiptap [style*="color: rgb(255, 255, 255)"],
+.tiptap [style*="color: rgb(255,255,255)"],
+.tiptap [style*="color: #ffffff"],
+.tiptap [style*="color:#ffffff"],
+.tiptap [style*="color: #fff"],
+.tiptap [style*="color:#fff"],
+.tiptap [style*="color: white"] {
+  color: var(--lp-ink) !important;
+}
+.dark .tiptap [style*="color: rgb(255, 255, 255)"],
+.dark .tiptap [style*="color: rgb(255,255,255)"],
+.dark .tiptap [style*="color: #ffffff"],
+.dark .tiptap [style*="color:#ffffff"],
+.dark .tiptap [style*="color: #fff"],
+.dark .tiptap [style*="color:#fff"],
+.dark .tiptap [style*="color: white"] {
+  color: revert !important;
+}
 
 /* Give a remote user a caret  */
 .collaboration-cursor__caret {

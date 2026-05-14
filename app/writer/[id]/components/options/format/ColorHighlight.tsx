@@ -25,7 +25,7 @@ export default function ColorHighlight({
 
   const [isColorPopoverOpen, setIsColorPopoverOpen] = useState(false);
   const [isBgPopoverOpen, setIsBgPopoverOpen] = useState(false);
-  const [fontColor, setFontColor] = useState("#000000");
+  const [fontColor, setFontColor] = useState<string | null>(null);
   const [highlightColor, setHighlightColor] = useState("#fdfb7a");
 
   const onFontColorChange = (hex: string) => {
@@ -62,8 +62,12 @@ export default function ColorHighlight({
     >
       <Baseline
         size={35}
-        color={fontColor}
-        onClick={() => editor?.chain().focus().setColor(fontColor).run()}
+        color={fontColor ?? "currentColor"}
+        onClick={() => {
+          if (!editor) return;
+          if (fontColor) editor.chain().focus().setColor(fontColor).run();
+          else editor.chain().focus().unsetColor().run();
+        }}
         className={`hover:bg-[var(--lp-paper-2)] p-2 rounded ${isBubbleMenuBtn ? "" : "border-r"}`}
       />
       <DropdownMenu open={isColorPopoverOpen}>
@@ -80,12 +84,13 @@ export default function ColorHighlight({
         >
           <div ref={colorPopoverRef}>
             <Input
-              value={fontColor}
+              value={fontColor ?? ""}
+              placeholder="#000000"
               onChange={(e) => setFontColor(e.target.value)}
               className="mb-4"
             />
             <HexColorPicker
-              color={fontColor}
+              color={fontColor ?? "#000000"}
               onChange={onFontColorChange}
               className="mx-auto"
             />
