@@ -118,7 +118,7 @@ export default function LeftSidebar() {
       </div>
 
       {/* Folders */}
-      <div className="px-3 mt-5">
+      {/* <div className="px-3 mt-5">
         <div className="font-mono uppercase tracking-[0.18em] text-[10px] px-2 mb-2 text-[var(--lp-muted)]">
           Folders
         </div>
@@ -135,7 +135,7 @@ export default function LeftSidebar() {
             </li>
           ))}
         </ul>
-      </div>
+      </div> */}
     </AppSidebar>
   );
 }
