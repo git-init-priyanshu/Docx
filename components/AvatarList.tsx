@@ -12,23 +12,22 @@ type AvatarListPropType = {
 
 export default function AvatarList({ users }: AvatarListPropType) {
   return (
-    <div className="flex flex-row-reverse justify-end -space-x-4 space-x-reverse *:ring *:ring-white">
-      {users.map((e, index) => {
-        return (
-          <div key={index}>
-            <div className="relative flex justify-center items-center bg-blue-50 size-8 rounded-full">
-              <p>{getInitials(e.user.name ?? "X")}</p>
-            </div>
-            {e.user.picture ? (
-              <Avatar className="size-8 absolute transform -translate-y-full">
-                <AvatarImage src={e.user.picture} />
-              </Avatar>
-            ) : (
-              <></>
-            )}
-          </div>
-        );
-      })}
+    <div className="flex flex-row-reverse justify-end -space-x-2 space-x-reverse">
+      {users.map((e, index) => (
+        <div
+          key={index}
+          className="relative flex justify-center items-center size-5 rounded-full text-[8px] font-bold ring-2 ring-[var(--lp-card)]"
+          style={{ background: "var(--lp-accent)", color: "white" }}
+        >
+          {e.user.picture ? (
+            <Avatar className="size-5 absolute">
+              <AvatarImage src={e.user.picture} />
+            </Avatar>
+          ) : (
+            getInitials(e.user.name ?? "?")
+          )}
+        </div>
+      ))}
     </div>
   );
 }

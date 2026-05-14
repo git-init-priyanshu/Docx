@@ -1,26 +1,16 @@
-// @ts-nocheck
 import { getServerSession as nextAuthSession } from "next-auth";
 
-import { ReturnType } from "./ReturnType";
-import { GetUserDetails } from "./action";
 import { authOptions } from "../auth";
+import type { ReturnType } from "./ReturnType";
 
 export default async function getServerSession(): Promise<ReturnType> {
   const session = await nextAuthSession(authOptions);
+  const user = session?.user as any;
 
-  if (session)
-    return {
-      id: session.user?.id,
-      name: session.user?.name,
-      email: session.user?.email,
-      image: session.user?.image,
-    };
-
-  const userDetails = await GetUserDetails();
   return {
-    id: userDetails?.id,
-    name: userDetails?.name,
-    email: userDetails?.email,
-    image: userDetails?.picture,
+    id: user?.id,
+    name: user?.name,
+    email: user?.email,
+    image: user?.image,
   };
 }

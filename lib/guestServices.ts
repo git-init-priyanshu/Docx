@@ -28,14 +28,14 @@ export const getGuestUser = () => {
 
   return user;
 }
-export const createGuestDocument = () => {
+export const createGuestDocument = (initialData?: string) => {
   const user = getGuestUser();
 
   const newDocument: Document = {
     id: uuid(),
     userId: user.id,
     name: "Untitled document",
-    data: "",
+    data: initialData ?? "",
     createdAt: new Date(),
     updatedAt: new Date(),
     thumbnail: null,
@@ -55,6 +55,7 @@ export const getAllGuestDocuments = () => {
   const data = documents.map((doc) => {
     return {
       id: doc.id,
+      data: doc.data,
       thumbnail: doc.thumbnail,
       name: doc.name,
       updatedAt: doc.updatedAt,

@@ -1,99 +1,116 @@
+"use client";
+
 import Link from "next/link";
+import { useTheme } from "next-themes";
+import { useEffect, useState } from "react";
+import { Star, Sun, Moon } from "lucide-react";
 import Image from "next/image";
-import * as motion from "framer-motion/client";
-import { Montserrat_Alternates as Montserrat } from "next/font/google";
 
 import logo from "@/public/logo.svg";
-import Github from "@/public/github.png";
-import { GithubIcon } from "lucide-react";
 
-const roboto = Montserrat({
-  weight: "500",
-  style: "normal",
-  subsets: ["cyrillic"],
-});
-export default function Navbar() {
-  return (
-    <>
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 2 }}
-        className="absolute w-full h-52 top-[-18%] left-[50%] transform -translate-x-[50%] blur-[100px] z-10"
-        style={{
-          background:
-            "radial-gradient(circle, rgba(0, 102, 255, 0.3) 70%, transparent 80%)",
-        }}
-      ></motion.div>
-      <nav className="absolute top-5 flex w-full justify-between items-center px-4 md:px-6 lg:px-6 2xl:px-20">
-        <motion.div
-          variants={NavVariant}
-          initial="hidden"
-          animate="visible"
-          transition={{ delay: 0.5 }}
-          className="flex z-10 gap-2 items-end justify-center overflow-hidden"
-        >
-          <Image src={logo} width={45} alt="logo" />
-          <div className="overflow-hidden">
-            <motion.p
-              initial={{
-                x: -100,
-                opacity: 0,
-              }}
-              animate={{
-                x: 0,
-                opacity: 100,
-              }}
-              transition={{
-                delay: 0.5,
-                duration: 0.4,
-                ease: "easeInOut",
-              }}
-              className={`${roboto.className} hidden sm:block text-lg text-neutral-600 `}
-            >
-              DocX
-            </motion.p>
-          </div>
-        </motion.div>
-        <motion.div
-          className="flex gap-4 z-10"
-          initial={{
-            y: -100,
-          }}
-          animate={{
-            y: 0,
-          }}
-          transition={{ delay: 0.5 }}
-        >
-          <Link
-            href="https://github.com/git-init-priyanshu/Docx/"
-            className="z-10 w-fit gap-3 inline-flex h-10 items-center justify-center rounded-md border border-input bg-background px-4 sm:px-8 text-sm font-medium shadow-sm transition-colors hover:bg-accent hover:text-accent-foreground hover:border-blue-200 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
-            prefetch={false}
-          >
-            {/* <Image src={Github} alt="github" className="w-[8%]" /> */}
-            <GithubIcon size={20}/>
-            17 stars
-          </Link>
-          {/* <Link */}
-          {/*   href="/signup" */}
-          {/*   className="z-10 inline-flex h-10 items-center bg-blue-500 justify-center rounded-md px-4 sm:px-8 text-sm font-medium text-primary-foreground shadow transition-colors hover:bg-blue-600 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50" */}
-          {/*   prefetch={false} */}
-          {/* > */}
-          {/*   <Image src={Github} alt="github" className="w-[8%]"/> */}
-          {/* </Link> */}
-        </motion.div>
-      </nav>
-    </>
-  );
+function DocxLogo({ width = 30 }: { width?: number }) {
+  return <Image src={logo} width={width} alt="logo" />;
 }
 
-const NavVariant = {
-  hidden: {
-    y: 10,
-    opacity: 0,
-  },
-  visible: {
-    y: 0,
-    opacity: 1,
-  },
-};
+export default function Navbar() {
+  const { resolvedTheme, setTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => setMounted(true), []);
+
+  const isDark = mounted && resolvedTheme === "dark";
+
+  return (
+    <header
+      className="sticky top-0 z-30 backdrop-blur-md border-b"
+      style={{
+        background: "color-mix(in oklab, var(--lp-paper) 85%, transparent)",
+        borderBottomColor: "var(--lp-border)",
+      }}
+    >
+      <div className="mx-auto w-full max-w-[1080px] px-6 lg:px-8 flex items-center justify-between h-[58px]">
+        <Link href="/" className="flex items-center gap-2">
+          <DocxLogo />
+          <span
+            className="font-semibold text-[19px] tracking-[-0.02em]"
+            style={{ color: "var(--lp-ink)" }}
+          >
+            DocX
+          </span>
+        </Link>
+
+        <nav
+          className="hidden md:flex items-center gap-6 text-[13.5px]"
+          style={{ color: "var(--lp-muted)" }}
+        >
+          <Link
+            href="#features"
+            className="hover:text-[var(--lp-ink)] transition-colors"
+          >
+            Features
+          </Link>
+          <Link
+            href="#how"
+            className="hover:text-[var(--lp-ink)] transition-colors"
+          >
+            How it works
+          </Link>
+          <Link
+            href="/document"
+            className="hover:text-[var(--lp-ink)] transition-colors"
+          >
+            Editor
+          </Link>
+          <Link
+            href="https://github.com/git-init-priyanshu/Docx"
+            className="hover:text-[var(--lp-ink)] transition-colors"
+          >
+            GitHub
+          </Link>
+        </nav>
+
+        <div className="flex items-center gap-2">
+          <Link
+            href="https://github.com/git-init-priyanshu/Docx"
+            className="hidden sm:inline-flex items-center gap-1.5 h-8 px-2.5 rounded-md border text-[12.5px] transition-colors"
+            style={{
+              borderColor: "var(--lp-border)",
+              color: "var(--lp-muted)",
+            }}
+          >
+            <Star className="w-3.5 h-3.5" />
+            <span className="font-mono">18</span>
+          </Link>
+
+          <button
+            onClick={() => setTheme(isDark ? "light" : "dark")}
+            className="h-8 w-8 rounded-md border flex items-center justify-center transition-colors hover:bg-[var(--lp-paper-2)]"
+            style={{
+              borderColor: "var(--lp-border)",
+              color: "var(--lp-muted)",
+            }}
+            aria-label="Toggle theme"
+          >
+            {mounted ? (
+              isDark ? (
+                <Sun className="w-4 h-4" />
+              ) : (
+                <Moon className="w-4 h-4" />
+              )
+            ) : (
+              <Moon className="w-4 h-4" />
+            )}
+          </button>
+
+          <Link
+            href="/document"
+            className="inline-flex items-center h-8 px-3.5 rounded-md text-[12.5px] font-medium transition-opacity hover:opacity-80"
+            style={{ background: "var(--lp-ink)", color: "var(--lp-paper)" }}
+          >
+            Try it
+          </Link>
+        </div>
+      </div>
+    </header>
+  );
+}

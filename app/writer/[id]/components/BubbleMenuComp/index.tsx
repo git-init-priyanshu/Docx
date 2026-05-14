@@ -11,12 +11,14 @@ type BubbleMenuPropType = {
   isHighlighted: boolean;
   bubblePosition: { x: number; y: number };
   generativeTextBubblePosition: { x: number; y: number; width: number };
+  onAuthRequired: () => void;
 };
 export default function BubbleMenuComp({
   editor,
   isHighlighted,
   bubblePosition,
   generativeTextBubblePosition,
+  onAuthRequired,
 }: BubbleMenuPropType) {
   const [isAiActive, setIsAiActive] = useState(false);
   const [isGeneratingText, setIsGeneratingText] = useState(false);
@@ -29,13 +31,14 @@ export default function BubbleMenuComp({
         className={`min-w-max absolute z-10 ${isHighlighted && !isAiActive ? "flex" : "hidden"}`}
         style={{ left: `${bubblePosition.x}px`, top: `${bubblePosition.y}px` }}
       >
-        <div className="flex gap-1 p-2 shadow-md bg-neutral-50 ">
+        <div className="flex gap-1 p-2 shadow-md bg-[var(--lp-card)] text-[var(--lp-ink)]">
           <AskAI
             isHighlighted={isHighlighted}
             isAiActive={isAiActive}
             setIsAiActive={setIsAiActive}
             setIsGeneratingText={setIsGeneratingText}
             setGenerativeTextResult={setGenerativeTextResult}
+            onAuthRequired={onAuthRequired}
           />
           <FormattingBtns editor={editor} isBubbleMenuBtn={true} />
           <ColorHighlight editor={editor} isBubbleMenuBtn={true} />

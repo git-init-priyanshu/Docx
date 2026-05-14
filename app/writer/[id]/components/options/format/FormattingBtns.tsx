@@ -21,7 +21,7 @@ export default function FormattingBtns({
             className={`${
               editor?.isActive(name)
                 ? "bg-blue-500 text-white hover:bg-blue-500"
-                : `hover:bg-slate-100 ${isBubbleMenuBtn ? "bg-neutral-50" : "bg-white"}`
+                : `hover:bg-[var(--lp-paper-2)] bg-[var(--lp-card)]`
             } p-2 rounded ${
               !isBubbleMenuBtn &&
               (i === formattingBtns.length - 1 ? "border-none" : "border-r")

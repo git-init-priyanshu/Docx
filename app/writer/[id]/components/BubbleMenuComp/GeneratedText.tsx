@@ -76,7 +76,7 @@ export default function GeneratedText({
       style={{ left: `${position.x}px`, top: `${position.y}px` }}
     >
       {isGeneratingText ? (
-        <div className="flex gap-2 p-2 shadow-md bg-neutral-50 items-center">
+        <div className="flex gap-2 p-2 shadow-md bg-[var(--lp-card)] text-[var(--lp-ink)] items-center">
           <Sparkles size={20} strokeWidth={1} />
           Generating
           <svg
@@ -142,7 +142,7 @@ export default function GeneratedText({
         </div>
       ) : (
         <DropdownMenu open={isHighlighted && isAiActive}>
-          <DropdownMenuTrigger className="flex flex-col max-w-[30rem] text-left gap-2 p-4 shadow-md bg-neutral-50">
+          <DropdownMenuTrigger className="flex flex-col max-w-[30rem] text-left gap-2 p-4 shadow-md bg-[var(--lp-card)] text-[var(--lp-ink)]">
             <div className="flex items-center gap-2">
               <Sparkles size={15} color="#737373" strokeWidth={1} />
               <p className="text-sm text-neutral-500">Generated Text</p>
@@ -150,17 +150,17 @@ export default function GeneratedText({
             {generativeTextResult}
           </DropdownMenuTrigger>
           <DropdownMenuContent
-            className={`bg-neutral-50 w-full mt-2 ${isAiActive ? "block" : "hidden"}`}
+            className={`bg-[var(--lp-card)] w-full mt-2 ${isAiActive ? "block" : "hidden"}`}
           >
-            <DropdownMenuItem className="flex gap-2 w-full justify-start items-center rounded-md text-sm hover:bg-slate-100 p-1 px-2 cursor-default">
+            <DropdownMenuItem className="flex gap-2 w-full justify-start items-center rounded-md text-sm hover:bg-[var(--lp-paper-2)] p-1 px-2 cursor-default">
               <Check size={15} />
               <span onClick={() => handleAiResponse("accept")}>Accept</span>
             </DropdownMenuItem>
-            <DropdownMenuItem className="flex gap-2 w-full justify-start items-center rounded-md text-sm hover:bg-slate-100 p-1 px-2 cursor-default">
+            <DropdownMenuItem className="flex gap-2 w-full justify-start items-center rounded-md text-sm hover:bg-[var(--lp-paper-2)] p-1 px-2 cursor-default">
               <X size={15} />
               <span onClick={() => handleAiResponse("discard")}>Discard</span>
             </DropdownMenuItem>
-            <DropdownMenuItem className="flex gap-2 w-full justify-start items-center rounded-md text-sm hover:bg-slate-100 p-1 px-2 cursor-default">
+            <DropdownMenuItem className="flex gap-2 w-full justify-start items-center rounded-md text-sm hover:bg-[var(--lp-paper-2)] p-1 px-2 cursor-default">
               <Undo2 size={15} />
               <span onClick={() => handleAiResponse("try_again")}>
                 Try again

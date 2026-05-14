@@ -47,10 +47,10 @@ export const SearchDocAction = async (value: string) => {
   }
 };
 
-export const CreateNewDocument = async () => {
+export const CreateNewDocument = async (initialData?: string) => {
   try {
     const session = await getServerSession();
-    if (session.id)
+    if (!session.id)
       return {
         success: false,
         error: "User is not logged in",
@@ -58,7 +58,7 @@ export const CreateNewDocument = async () => {
 
     const doc = await prisma.document.create({
       data: {
-        data: "",
+        data: initialData ?? "",
         userId: session.id,
         users: {
           create: {
@@ -81,9 +81,7 @@ export const CreateNewDocument = async () => {
 
 export const LogoutAction = async () => {
   try {
-    cookies().delete("token");
     cookies().delete("next-auth.session-token");
-
     return { success: true, data: null };
   } catch (e) {
     console.error(e);

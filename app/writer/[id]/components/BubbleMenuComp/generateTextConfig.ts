@@ -6,6 +6,8 @@ export enum generateTextOptions {
   MAKE_SHORTER = "make_shorter",
   SIMPLIFY_LANGUAGE = "simplify_language",
   TRY_AGAIN = "try_again",
+  SUMMARIZE = "summarize",
+  CUSTOM = "custom",
 }
 
 export const prompts = [
@@ -36,5 +38,9 @@ export const prompts = [
   {
     option: generateTextOptions.TRY_AGAIN,
     prompt: "Rewrite the text with a new variation.",
+  },
+  {
+    option: generateTextOptions.SUMMARIZE,
+    prompt: "Summarise the document in a concise paragraph.",
   },
 ];

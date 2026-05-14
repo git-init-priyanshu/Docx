@@ -26,9 +26,9 @@ import { Button } from "@/components/ui/button";
 import { deleteGuestDocument } from "@/lib/guestServices";
 import LoaderButton from "@/components/LoaderButton";
 import useClientSession from "@/lib/customHooks/useClientSession";
+import { invalidateDocs } from "@/lib/hooks/useDocs";
 
 import { DeleteDocument } from "../actions";
-import { revalidatePath } from "next/cache";
 
 type CardOptionsPropType = {
   docId: string;
@@ -108,6 +108,7 @@ export default function CardOptions({ docId, inputRef }: CardOptionsPropType) {
       const response = await DeleteDocument(docId);
       if (response.success) {
         toast.success(response.data);
+        await invalidateDocs(session.id);
       } else {
         toast.error(response.error);
       }
@@ -115,6 +116,7 @@ export default function CardOptions({ docId, inputRef }: CardOptionsPropType) {
       setIsDeleteModalOpen(false);
     } else {
       deleteGuestDocument(docId);
+      await invalidateDocs();
       setIsDeleting(false);
       setIsDeleteModalOpen(false);
     }
@@ -127,37 +129,42 @@ export default function CardOptions({ docId, inputRef }: CardOptionsPropType) {
         </PopoverTrigger>
         <PopoverContent
           onPointerDownOutside={() => setIsOptionsOpen(false)}
-          className="flex flex-col p-0 py-2 text-left w-min"
+          className="flex flex-col p-0 py-1 text-left w-min"
+          style={{
+            background: "var(--lp-card)",
+            borderColor: "var(--lp-border)",
+          }}
         >
-          {docOptions.map((item, index) => {
-            return (
-              !session?.id && index === 2
-                ? <></>
-                : <Button
-                  key={index}
-                  id={item.title}
-                  variant="ghost"
-                  className="gap-2 justify-start"
-                  onClick={item.onClick}
-                >
-                  <item.icon size={20} color={item.color} strokeWidth={1.5} />
-                  <p className="text-neutral-600">{item.title}</p>
-                </Button>
-            );
-          })}
+          {docOptions.map((item, index) =>
+            (session?.id || index !== 2) && (
+              <Button
+                key={index}
+                id={item.title}
+                variant="ghost"
+                className="gap-2 justify-start item-center text-xs hover:bg-[var(--lp-paper-2)]"
+                style={{ color: "var(--lp-ink)" }}
+                onClick={item.onClick}
+              >
+                <item.icon size={15} color={item.color} strokeWidth={1.5} />
+                <p>{item.title}</p>
+              </Button>
+            )
+          )}
         </PopoverContent>
       </Popover>
 
       <Dialog open={isDeleteModalOpen}>
-        <DialogContent>
+        <DialogContent className="bg-[var(--lp-card)] border-[var(--lp-border)] text-[var(--lp-ink)]">
           <DialogHeader className="relative">
-            <DialogTitle>Delete Document?</DialogTitle>
-            <DialogDescription>
+            <DialogTitle className="text-[var(--lp-ink)]">
+              Delete Document?
+            </DialogTitle>
+            <DialogDescription className="text-[var(--lp-muted)]">
               Are you sure you want to delete this document?
             </DialogDescription>
             <Button
               variant="ghost"
-              className="bg-white z-10 absolute -right-2 -top-6 px-2"
+              className="z-10 absolute -right-2 -top-6 px-2 text-[var(--lp-muted)]"
               onClick={() => setIsDeleteModalOpen(false)}
             >
               <X size={15} />
@@ -166,6 +173,7 @@ export default function CardOptions({ docId, inputRef }: CardOptionsPropType) {
           <div className="flex gap-4">
             <Button
               variant="outline"
+              className="bg-[var(--lp-card)] border-[var(--lp-border)] text-[var(--lp-ink)]"
               onClick={() => setIsDeleteModalOpen(false)}
             >
               Cancel
@@ -174,7 +182,7 @@ export default function CardOptions({ docId, inputRef }: CardOptionsPropType) {
               variant="outline"
               onClickFunc={confirmDeleteDocument}
               isLoading={isDeleting}
-              className="border-red-200 bg-red-100 hover:bg-red-200"
+              className="bg-[color-mix(in_oklab,var(--lp-rose)_15%,var(--lp-card))] border-[color-mix(in_oklab,var(--lp-rose)_40%,var(--lp-border))] text-[var(--lp-rose)]"
             >
               Confirm
             </LoaderButton>

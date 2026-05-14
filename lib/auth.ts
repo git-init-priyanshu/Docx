@@ -3,6 +3,15 @@ import GoogleProvider from "next-auth/providers/google";
 
 import prisma from "@/prisma/prismaClient";
 
+/**
+ * Process-level email → user.id cache. The `jwt` callback runs on every
+ * `getServerSession` call but can't write cookies back from a React Server
+ * Component, so without this cache we'd hit Prisma (Neon cold-start ≈ 5s) on
+ * every page render until the session cookie happens to roll over via the
+ * client `/api/auth/session` endpoint.
+ */
+const userIdByEmail = new Map<string, string>();
+
 export const authOptions: NextAuthOptions = {
   providers: [
     GoogleProvider({
@@ -34,7 +43,12 @@ export const authOptions: NextAuthOptions = {
         if (!email_verified) return false;
 
         try {
-          const username = given_name + family_name;
+          const fromGiven = `${given_name ?? ""}${family_name ?? ""}`;
+          const fallback =
+            (name ?? email?.split("@")[0] ?? "user")
+              .replace(/\s+/g, "")
+              .slice(0, 20) || "user";
+          const username = (fromGiven || fallback).slice(0, 20);
 
           await prisma.user.upsert({
             where: { email },
@@ -53,37 +67,52 @@ export const authOptions: NextAuthOptions = {
 
           return true;
         } catch (e) {
-          console.log(e);
+          console.error("[next-auth] Google signIn upsert failed:", e);
           return false;
         }
       }
       return true;
     },
-    session: async ({ session }: any) => {
-      if (session.user) {
-        const user = await prisma.user.findFirst({
-          where: { email: session.user.email },
+    jwt: async ({ token }: any) => {
+      if (token.id || !token.email) return token;
+
+      const cached = userIdByEmail.get(token.email);
+      if (cached) {
+        token.id = cached;
+        return token;
+      }
+
+      try {
+        const dbUser = await prisma.user.findFirst({
+          where: { email: token.email },
+          select: { id: true },
         });
-        session.user.id = user?.id;
+        if (dbUser) {
+          token.id = dbUser.id;
+          userIdByEmail.set(token.email, dbUser.id);
+        }
+      } catch (e) {
+        console.error("[next-auth] jwt id lookup failed:", e);
+      }
+      return token;
+    },
+    session: ({ session, token }: any) => {
+      if (session.user && token?.id) {
+        session.user.id = token.id;
       }
       return session;
     },
-    redirect({ baseUrl }) {
+    redirect({ url, baseUrl }) {
+      if (url.startsWith("/")) return `${baseUrl}${url}`;
+      try {
+        if (new URL(url).origin === baseUrl) return url;
+      } catch {
+        /* fall through */
+      }
       return `${baseUrl}/document`;
     },
   },
-  cookies: {
-    sessionToken: {
-      name: "next-auth.session-token",
-      options: {
-        httpOnly: true,
-        sameSite: "lax",
-        path: "/",
-        secure: true,
-      },
-    },
-  },
   pages: {
-    signIn: "/signin",
+    signIn: "/login",
   },
 } satisfies NextAuthOptions;

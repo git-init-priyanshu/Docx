@@ -1,57 +1,52 @@
-'use client'
+import prisma from "@/prisma/prismaClient";
+import getServerSession from "@/lib/customHooks/getServerSession";
+import DocumentContent from "./components/DocumentContent";
+import QuickStart from "./components/QuickStart";
 
-import { useEffect, useState } from "react";
+export default async function DocumentPage() {
+  const session = await getServerSession();
 
-import { GetAllDocs } from "./actions";
-import DocCard from "./components/Card/Card";
-import Header from "./components/Header/Header";
-import Onboarding from "./components/Onboarding";
-import useClientSession from "@/lib/customHooks/useClientSession";
-import { getAllGuestDocuments } from "@/lib/guestServices";
+  let initialDocs: {
+    id: string;
+    name: string;
+    data: string | null;
+    updatedAt: Date;
+    users: { user: { name: string; picture: string | null } }[];
+  }[] = [];
 
-export default function Home() {
-  const session = useClientSession();
+  if (session?.id) {
+    initialDocs = await prisma.document.findMany({
+      where: {
+        users: {
+          some: { user: { id: session.id } },
+        },
+      },
+      select: {
+        id: true,
+        name: true,
+        data: true,
+        updatedAt: true,
+        users: {
+          select: {
+            user: {
+              select: { name: true, picture: true },
+            },
+          },
+        },
+      },
+      orderBy: { updatedAt: "desc" },
+    });
+  }
 
-  const [data, setData] = useState<any[] | null>(null);
-
-  useEffect(() => {
-    (async () => {
-      if (session?.id) {
-        const response = await GetAllDocs(session.id);
-        if (response.success) {
-          setData(response.data!);
-        } else {
-          setData([]);
-        }
-      } else {
-        setData(getAllGuestDocuments());
-      }
-    })()
-  }, [session.id])
+  const initialSession = session?.id
+    ? { id: session.id, name: session.name, email: session.email, image: session.image }
+    : null;
 
   return (
-    <main>
-      <Header name={session?.name} image={session?.image} />
-      {data && data.length > 0 ? (
-        <div
-          className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 my-8 max-w-[80vw] mx-auto"
-        >
-          {data.map((doc, index) => {
-            return (
-              <DocCard
-                key={index}
-                docId={doc.id}
-                thumbnail={doc.thumbnail}
-                title={doc.name}
-                updatedAt={doc.updatedAt}
-                users={doc.users}
-              />
-            );
-          })}
-        </div>
-      ) : (
-        <Onboarding />
-      )}
-    </main>
+    <DocumentContent
+      initialDocs={initialDocs}
+      initialSession={initialSession}
+      quickStart={<QuickStart />}
+    />
   );
 }
