@@ -13,6 +13,7 @@ import AskPalette from "./components/AskPalette";
 import Loading from "./components/EditorLoading";
 import BubbleMenuComp from "./components/BubbleMenuComp";
 import LoginPromptModal from "./components/LoginPromptModal";
+import { generateTextOptions } from "./components/BubbleMenuComp/generateTextConfig";
 
 export default function WriterPage() {
   const session = useClientSession();
@@ -22,6 +23,7 @@ export default function WriterPage() {
   const [position, setPosition] = useState({ x: 0, y: 0 });
   const [position2, setPosition2] = useState({ x: 0, y: 0, width: 0 });
   const [askOpen, setAskOpen] = useState(false);
+  const [askInitialOption, setAskInitialOption] = useState<generateTextOptions | undefined>(undefined);
   const [showLoginPrompt, setShowLoginPrompt] = useState(false);
 
   const { editor, docData } = Editor({ setIsSaving });
@@ -33,9 +35,14 @@ export default function WriterPage() {
     (docData.name === "Untitled Document" || docData.name === "Untitled document") &&
     (!docData.data || docData.data === "");
 
-  const openAsk = () => {
+  const openAsk = (option?: generateTextOptions) => {
     if (isGuest) { setShowLoginPrompt(true); return; }
+    setAskInitialOption(option);
     setAskOpen(true);
+  };
+  const closeAsk = () => {
+    setAskOpen(false);
+    setAskInitialOption(undefined);
   };
 
   // ⌘K / Ctrl+K to open the Ask palette
@@ -44,13 +51,14 @@ export default function WriterPage() {
       if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") {
         e.preventDefault();
         if (isGuest) { setShowLoginPrompt(true); return; }
-        setAskOpen((o) => !o);
+        if (askOpen) closeAsk(); else openAsk();
       }
-      if (e.key === "Escape") { setAskOpen(false); setShowLoginPrompt(false); }
+      if (e.key === "Escape") { closeAsk(); setShowLoginPrompt(false); }
     };
     window.addEventListener("keydown", handler);
     return () => window.removeEventListener("keydown", handler);
-  }, [isGuest]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isGuest, askOpen]);
 
   // Bubble menu selection tracking
   useEffect(() => {
@@ -92,10 +100,10 @@ export default function WriterPage() {
           isLoading={!docData}
           isNewDoc={isNewDoc}
           isSaving={isSaving}
-          onAsk={openAsk}
+          onAsk={() => openAsk()}
         />
 
-        <FormatBar editor={editor} />
+        <FormatBar editor={editor} onRewrite={() => openAsk()} />
 
         <div className="flex-1 overflow-y-auto">
           <div className="relative pb-16">
@@ -117,10 +125,19 @@ export default function WriterPage() {
         </div>
       </main>
 
-      <RightRail />
+      <RightRail
+        editor={editor}
+        onAskTranslate={() => openAsk(generateTextOptions.TRANSLATE)}
+        onAuthRequired={() => setShowLoginPrompt(true)}
+      />
 
       {/* ⌘K palette */}
-      <AskPalette open={askOpen} onClose={() => setAskOpen(false)} editor={editor} />
+      <AskPalette
+        open={askOpen}
+        onClose={closeAsk}
+        editor={editor}
+        initialOption={askInitialOption}
+      />
 
       <LoginPromptModal
         open={showLoginPrompt}

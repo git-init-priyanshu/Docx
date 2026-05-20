@@ -5,6 +5,8 @@ export enum generateTextOptions {
   MAKE_LONGER = "make_longer",
   MAKE_SHORTER = "make_shorter",
   SIMPLIFY_LANGUAGE = "simplify_language",
+  CONTINUE_WRITING = "continue_writing",
+  COUNTER_ARGUMENT = "counter_argument",
   TRY_AGAIN = "try_again",
   SUMMARIZE = "summarize",
   CUSTOM = "custom",
@@ -21,7 +23,7 @@ export const prompts = [
   },
   {
     option: generateTextOptions.TRANSLATE,
-    prompt: "Translate the given text to the above mentioned language.",
+    prompt: "Translate the text into the language specified above.",
   },
   {
     option: generateTextOptions.MAKE_LONGER,
@@ -36,11 +38,32 @@ export const prompts = [
     prompt: "Rewrite the text in simpler language to enhance readability.",
   },
   {
+    option: generateTextOptions.CONTINUE_WRITING,
+    prompt:
+      "Continue writing from where the text leaves off, matching the author's voice, tone, and topic. Produce one to two new paragraphs that flow naturally from the existing content.",
+  },
+  {
+    option: generateTextOptions.COUNTER_ARGUMENT,
+    prompt:
+      "Write a thoughtful counter-argument to the text, presenting opposing viewpoints in a balanced tone.",
+  },
+  {
     option: generateTextOptions.TRY_AGAIN,
     prompt: "Rewrite the text with a new variation.",
   },
   {
     option: generateTextOptions.SUMMARIZE,
-    prompt: "Summarise the document in a concise paragraph.",
+    prompt: "Summarise the text in a concise paragraph.",
   },
 ];
+
+export const LANGUAGES = [
+  "English",
+  "Hindi",
+  "Spanish",
+  "French",
+  "German",
+  "Japanese",
+] as const;
+
+export type Language = (typeof LANGUAGES)[number];

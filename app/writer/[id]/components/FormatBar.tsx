@@ -18,7 +18,12 @@ const Divider = () => (
   <span className="w-px h-5 mx-1 shrink-0 bg-[var(--lp-border)]" />
 );
 
-export default function FormatBar({ editor }: { editor: Editor | null }) {
+type FormatBarProps = {
+  editor: Editor | null;
+  onRewrite?: () => void;
+};
+
+export default function FormatBar({ editor, onRewrite }: FormatBarProps) {
   const headingValue = setDefaultStyleValue(editor);
 
   const formatBtns = [
@@ -116,12 +121,6 @@ export default function FormatBar({ editor }: { editor: Editor | null }) {
       </button>
 
       <Divider />
-
-      {/* AI Rewrite */}
-      <button className="h-8 px-2.5 rounded-md flex items-center gap-1.5 text-[12.5px] text-[var(--lp-accent)] transition-colors hover:bg-[var(--lp-border)] shrink-0">
-        <Sparkles className="w-3.5 h-3.5" />
-        <span className="hidden sm:inline">Rewrite</span>
-      </button>
 
       {/* Word count */}
       <div className="ml-auto flex items-center gap-3 font-mono text-[11px] text-[var(--lp-muted)] shrink-0">

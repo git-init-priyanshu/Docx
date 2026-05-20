@@ -132,6 +132,26 @@ export const UpdateThumbnail = async (id: any, thumbnail: string) => {
   }
 };
 
+// Gemini frequently wraps responses in ``` fences or prefaces them with
+// "Sure, here is…". Strip those so the result can be inserted into the doc
+// without polluting the user's content.
+const cleanGeneratedText = (raw: string): string => {
+  let text = raw.trim();
+
+  const fenceMatch = text.match(/^```(?:[a-zA-Z0-9_-]+)?\s*\n([\s\S]*?)\n```$/);
+  if (fenceMatch) text = fenceMatch[1].trim();
+
+  text = text.replace(
+    /^(?:sure[,!.]?\s*|certainly[,!.]?\s*|of course[,!.]?\s*|here(?:'s| is|\s+are)[^:.\n]*[:.]\s*)/i,
+    "",
+  );
+
+  return text.trim();
+};
+
+// Cap input to keep generations responsive and stay within Gemini's quota.
+const MAX_INPUT_CHARS = 20_000;
+
 export const generateText = async (
   option: generateTextOptions,
   text: string,
@@ -139,25 +159,47 @@ export const generateText = async (
   customInstruction?: string,
 ) => {
   try {
-    const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || "");
-    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+    if (!process.env.GEMINI_API_KEY) {
+      return { success: false, error: "AI is not configured on the server" };
+    }
+    const trimmed = (text ?? "").trim();
+    if (!trimmed) {
+      return { success: false, error: "Select some text to use AI" };
+    }
+    const input =
+      trimmed.length > MAX_INPUT_CHARS
+        ? trimmed.slice(0, MAX_INPUT_CHARS)
+        : trimmed;
+
+    const basePrompt = prompts.find((e) => e.option === option)?.prompt;
 
     let prompt: string;
     if (option === generateTextOptions.TRANSLATE) {
-      if (!language) return { success: false, error: "Undefined prompt" };
-      prompt = `Here is the text: ${text} and language: ${language}. ${prompts.find((e) => e.option === option)?.prompt}`;
+      if (!language) return { success: false, error: "Choose a language" };
+      if (!basePrompt) return { success: false, error: "Unknown option" };
+      prompt = `Target language: ${language}\n\nText:\n"""\n${input}\n"""\n\n${basePrompt}`;
     } else if (option === generateTextOptions.CUSTOM) {
-      if (!customInstruction) return { success: false, error: "No instruction provided" };
-      prompt = `Here is the document text: "${text}". Task: ${customInstruction}`;
+      if (!customInstruction)
+        return { success: false, error: "No instruction provided" };
+      prompt = `Document text:\n"""\n${input}\n"""\n\nTask: ${customInstruction}`;
     } else {
-      prompt = `Here is the text: "${text}". ${prompts.find((e) => e.option === option)?.prompt}`;
+      if (!basePrompt) return { success: false, error: "Unknown option" };
+      prompt = `Text:\n"""\n${input}\n"""\n\n${basePrompt}`;
     }
-    if (!prompt) return { success: false, error: "Undefined prompt" };
 
-    const note = "Note: Provide only the required text.";
+    const note =
+      "\n\nRespond with only the resulting text — no preamble, no markdown code fences, no surrounding quotes.";
+
+    const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+    const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
+
     const result = await model.generateContent(prompt + note);
+    const cleaned = cleanGeneratedText(result.response.text());
 
-    return { success: true, data: result.response.text() };
+    if (!cleaned) {
+      return { success: false, error: "AI returned an empty response" };
+    }
+    return { success: true, data: cleaned };
   } catch (e) {
     console.log(e);
     return { success: false, error: "Internal server error" };
