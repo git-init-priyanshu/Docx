@@ -1,8 +1,15 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useTheme } from "next-themes";
 import { Sun, Moon, Sparkles } from "lucide-react";
+
+import { RenameDocument } from "@/app/document/components/Card/actions";
+import useClientSession from "@/lib/customHooks/useClientSession";
+import useDebounce from "@/lib/customHooks/useDebounce";
+import { updateGuestDocument } from "@/lib/guestServices";
+import { invalidateDoc } from "@/lib/hooks/useDoc";
+import { invalidateDocs } from "@/lib/hooks/useDocs";
 
 function DocxLogo({ className = "h-5 w-5" }: { className?: string }) {
   return (
@@ -16,16 +23,54 @@ function DocxLogo({ className = "h-5 w-5" }: { className?: string }) {
 }
 
 type ToolbarProps = {
+  docId: string;
   name: string;
+  isLoading: boolean;
+  isNewDoc: boolean;
   isSaving: boolean;
   onAsk: () => void;
 };
 
-export default function Toolbar({ name, isSaving, onAsk }: ToolbarProps) {
+export default function Toolbar({ docId, name, isLoading, isNewDoc, isSaving, onAsk }: ToolbarProps) {
+  const session = useClientSession();
   const { resolvedTheme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
   useEffect(() => setMounted(true), []);
   const isDark = mounted && resolvedTheme === "dark";
+
+  const [nameValue, setNameValue] = useState(name);
+  const inputRef = useRef<HTMLInputElement>(null);
+  const autoFocusedRef = useRef(false);
+
+  // Don't clobber the user's keystrokes while they're typing — only adopt the
+  // remote name when the input isn't currently focused.
+  useEffect(() => {
+    if (document.activeElement !== inputRef.current) {
+      setNameValue(name);
+    }
+  }, [name]);
+
+  useEffect(() => {
+    if (autoFocusedRef.current || isLoading) return;
+    autoFocusedRef.current = true;
+    if (isNewDoc && inputRef.current) {
+      inputRef.current.focus();
+      inputRef.current.select();
+    }
+  }, [isLoading, isNewDoc]);
+
+  const saveName = async (next: string) => {
+    if (!docId) return;
+    if (session?.id) {
+      await RenameDocument(docId, next);
+      await invalidateDocs(session.id);
+    } else {
+      updateGuestDocument(docId, "name", next);
+      await invalidateDocs();
+    }
+    await invalidateDoc(docId);
+  };
+  const debouncedSave = useDebounce(saveName, 1000);
 
   return (
     <div className="h-[52px] border-b border-[var(--lp-border)] bg-[var(--lp-card)] flex items-center px-4 gap-3 shrink-0">
@@ -39,10 +84,24 @@ export default function Toolbar({ name, isSaving, onAsk }: ToolbarProps) {
       <div className="hidden lg:flex items-center gap-1.5 text-[12.5px] min-w-0">
         <span className="text-[var(--lp-muted)]">Drafts</span>
         <span className="text-[var(--lp-muted)]">/</span>
-        {name ? (
-          <span className="font-medium truncate max-w-[320px] text-[var(--lp-ink)]">{name}</span>
-        ) : (
+        {isLoading ? (
           <span className="w-40 h-4 rounded animate-pulse inline-block bg-[var(--lp-paper-2)]" />
+        ) : (
+          <input
+            ref={inputRef}
+            value={nameValue}
+            onChange={(e) => {
+              setNameValue(e.target.value);
+              debouncedSave(e.target.value);
+            }}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") inputRef.current?.blur();
+            }}
+            placeholder="Untitled"
+            spellCheck={false}
+            aria-label="Document name"
+            className="font-medium min-w-[80px] max-w-[320px] [field-sizing:content] bg-transparent text-[var(--lp-ink)] outline-none rounded px-1.5 -ml-1 transition-colors hover:bg-[var(--lp-paper-2)] focus:bg-[var(--lp-paper-2)] placeholder:text-[var(--lp-muted)]"
+          />
         )}
       </div>
 

@@ -28,6 +28,11 @@ export default function WriterPage() {
 
   const isGuest = session !== null && !session.id;
 
+  const isNewDoc =
+    !!docData &&
+    (docData.name === "Untitled Document" || docData.name === "Untitled document") &&
+    (!docData.data || docData.data === "");
+
   const openAsk = () => {
     if (isGuest) { setShowLoginPrompt(true); return; }
     setAskOpen(true);
@@ -82,7 +87,10 @@ export default function WriterPage() {
 
       <main className="flex-1 flex flex-col min-w-0">
         <Toolbar
+          docId={docData?.id || ""}
           name={docData?.name || ""}
+          isLoading={!docData}
+          isNewDoc={isNewDoc}
           isSaving={isSaving}
           onAsk={openAsk}
         />
