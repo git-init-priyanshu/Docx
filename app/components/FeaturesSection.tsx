@@ -7,28 +7,32 @@ const FEATURES = [
   {
     icon: "sparkle",
     title: "AI helpers",
-    body: "Highlight a paragraph, ask for a rewrite or a summary. Bring your own OpenAI / Anthropic key.",
+    // TODO: re-enable "Bring your own OpenAI / Anthropic key." once BYO-key support ships.
+    body: "Highlight a paragraph, ask for a rewrite or a summary.",
   },
-  {
-    icon: "history",
-    title: "Version history",
-    body: "Every change is saved. Roll back, branch a copy, or compare two versions side-by-side.",
-  },
+  // TODO: enable once version history ships.
+  // {
+  //   icon: "history",
+  //   title: "Version history",
+  //   body: "Every change is saved. Roll back, branch a copy, or compare two versions side-by-side.",
+  // },
   {
     icon: "lock",
     title: "Self-hostable",
     body: "Clone the repo, run `docker compose up`, and it's yours. MIT-licensed, no hidden tiers.",
   },
-  {
-    icon: "layers",
-    title: "Outline view",
-    body: "Drag headings to reorder sections. The document follows along — no copy-paste between blocks.",
-  },
-  {
-    icon: "plug",
-    title: "Open API",
-    body: "REST endpoints for documents, comments, and exports. Webhook on every save.",
-  },
+  // TODO: enable once outline view ships.
+  // {
+  //   icon: "layers",
+  //   title: "Outline view",
+  //   body: "Drag headings to reorder sections. The document follows along — no copy-paste between blocks.",
+  // },
+  // TODO: enable once the public API ships.
+  // {
+  //   icon: "plug",
+  //   title: "Open API",
+  //   body: "REST endpoints for documents, comments, and exports. Webhook on every save.",
+  // },
 ];
 
 function FeatureIcon({ name }: { name: string }) {
@@ -95,7 +99,7 @@ export default function FeaturesSection() {
             className="text-[38px] sm:text-[46px] leading-[1.05] tracking-[-0.03em] font-semibold"
             style={{ color: "var(--lp-ink)" }}
           >
-            Everything you&apos;d expect,<br />and a few things you wouldn&apos;t.
+            Everything you need to write,<br />collaborate, and create with AI.
           </h2>
         </div>
 
