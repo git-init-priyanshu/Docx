@@ -82,6 +82,7 @@ export const CreateNewDocument = async (initialData?: string) => {
 export const LogoutAction = async () => {
   try {
     cookies().delete("next-auth.session-token");
+    cookies().delete("__Secure-next-auth.session-token");
     return { success: true, data: null };
   } catch (e) {
     console.error(e);
