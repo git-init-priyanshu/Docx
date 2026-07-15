@@ -65,7 +65,6 @@ export default function AppSidebar({ onCreate, children, breakpoint = "md" }: Ap
         >
           <Plus className="w-4 h-4" strokeWidth={2} />
           New document
-          <span className="ml-auto font-mono text-[10px] opacity-70">⌘N</span>
         </button>
       </div>
 

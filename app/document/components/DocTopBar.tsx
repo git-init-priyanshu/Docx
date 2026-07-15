@@ -30,6 +30,7 @@ export default function DocTopBar({ q, setQ }: DocTopBarProps) {
   const session = useClientSession();
   const searchRef = useRef<HTMLDivElement>(null);
 
+  const [mounted, setMounted] = useState(false);
   const [isFocused, setIsFocused] = useState(false);
   const [isSearching, setIsSearching] = useState(false);
   const [searchResponse, setSearchResponse] = useState<{
@@ -45,6 +46,8 @@ export default function DocTopBar({ q, setQ }: DocTopBarProps) {
     setSearchResponse(resp as any);
     setIsSearching(false);
   }, 500);
+
+  useEffect(() => setMounted(true), []);
 
   useEffect(() => {
     const handler = (e: MouseEvent) => {
@@ -128,7 +131,7 @@ export default function DocTopBar({ q, setQ }: DocTopBarProps) {
           className="h-9 w-9 rounded-md border border-[var(--lp-border)] flex items-center justify-center transition hover:bg-[var(--lp-paper-2)]"
           aria-label="Toggle theme"
         >
-          {resolvedTheme === "dark" ? (
+          {mounted && resolvedTheme === "dark" ? (
             <Sun className="w-4 h-4 text-[var(--lp-ink)]" />
           ) : (
             <Moon className="w-4 h-4 text-[var(--lp-ink)]" />
