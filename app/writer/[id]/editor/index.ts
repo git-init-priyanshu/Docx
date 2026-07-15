@@ -64,6 +64,21 @@ export const Editor = ({ setIsSaving }: EditorPropType) => {
     };
   }, [provider, ydoc]);
 
+  // Wait for the websocket provider to sync before hydrating from the DB, so a
+  // joining client doesn't stomp newer in-flight content already in the Y.Doc.
+  // Fallback timer keeps offline / ws-down users loading their own content.
+  const [synced, setSynced] = useState(false);
+  useEffect(() => {
+    setSynced(false);
+    const onSync = () => setSynced(true);
+    provider.on("sync", onSync);
+    const fallback = setTimeout(() => setSynced(true), 3000);
+    return () => {
+      provider.off("sync", onSync);
+      clearTimeout(fallback);
+    };
+  }, [docId, provider]);
+
   // Save serialization: never run two persists in parallel. If onUpdate fires
   // again while a save is in flight, we just flip `pendingRef` and re-fire
   // once the current one resolves — using the editor's latest content at that
@@ -108,13 +123,6 @@ export const Editor = ({ setIsSaving }: EditorPropType) => {
 
   const editor = useEditor(
     {
-      onCreate: ({ editor: currentEditor }) => {
-        provider.on("sync", () => {
-          if (currentEditor.isEmpty) {
-            currentEditor.commands.setContent("");
-          }
-        });
-      },
       extensions: [
         ...extensions,
         Collaboration.configure({ document: ydoc }),
@@ -141,11 +149,15 @@ export const Editor = ({ setIsSaving }: EditorPropType) => {
   // different document without wiping in-progress typing on the current one.
   const hydratedDocRef = useRef<string | null>(null);
   useEffect(() => {
-    if (!editor || !docData) return;
+    if (!editor || !docData || !synced) return;
     if (hydratedDocRef.current === docId) return;
-    editor.commands.setContent(docData.data ? JSON.parse(docData.data) : "");
+    // Only load the DB snapshot when peers left the shared doc empty; otherwise
+    // the Y.Doc already holds newer content and hydrating would overwrite it.
+    if (editor.isEmpty) {
+      editor.commands.setContent(docData.data ? JSON.parse(docData.data) : "");
+    }
     hydratedDocRef.current = docId;
-  }, [editor, docData, docId]);
+  }, [editor, docData, docId, synced]);
 
   return { editor, docData, error, isLoading };
 };
