@@ -27,7 +27,7 @@ export const GetAllDocs = async (userId: string) => {
         name: true,
         data: true,
         updatedAt: true,
-        createdBy: true,
+        createdBy: { select: { id: true, name: true, picture: true } },
         users: {
           select: {
             user: {
