@@ -17,7 +17,7 @@ export const DeleteDocument = async (docId: any) => {
     const doc = await prisma.document.findFirst({
       where: {
         id: docId,
-        userId: session.id,
+        users: { some: { userId: session.id } },
       },
     });
     if (!doc) {
@@ -27,15 +27,26 @@ export const DeleteDocument = async (docId: any) => {
       };
     }
 
-    await prisma.document.delete({
+    if (doc.userId === session.id) {
+      await prisma.document.delete({
+        where: {
+          id: docId,
+          userId: session.id,
+        },
+      });
+      revalidatePath("/");
+
+      return { success: true, data: "Document successfully deleted" };
+    }
+
+    await prisma.userOnDocument.delete({
       where: {
-        id: docId,
-        userId: session.id,
+        userId_documentId: { userId: session.id, documentId: docId },
       },
     });
     revalidatePath("/");
 
-    return { success: true, data: "Document successfully deleted" };
+    return { success: true, data: "Removed from your documents" };
   } catch (e) {
     console.log(e);
     return { success: false, error: "Internal server error" };
