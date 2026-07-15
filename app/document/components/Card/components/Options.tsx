@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import {
+  Copy,
   EllipsisVertical,
   FilePenLine,
   Share2,
@@ -23,19 +24,29 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { deleteGuestDocument } from "@/lib/guestServices";
+import {
+  createGuestDocument,
+  deleteGuestDocument,
+  updateGuestDocument,
+} from "@/lib/guestServices";
 import LoaderButton from "@/components/LoaderButton";
 import useClientSession from "@/lib/customHooks/useClientSession";
 import { invalidateDocs } from "@/lib/hooks/useDocs";
 
-import { DeleteDocument } from "../actions";
+import { DeleteDocument, RenameDocument } from "../actions";
+import { CreateNewDocument } from "../../Header/actions";
 
 type CardOptionsPropType = {
   docId: string;
+  data?: string | null;
   inputRef: React.RefObject<HTMLInputElement>;
 };
 
-export default function CardOptions({ docId, inputRef }: CardOptionsPropType) {
+export default function CardOptions({
+  docId,
+  data,
+  inputRef,
+}: CardOptionsPropType) {
   const router = useRouter();
 
   const session = useClientSession();
@@ -52,6 +63,12 @@ export default function CardOptions({ docId, inputRef }: CardOptionsPropType) {
       color: "#48acf9",
       title: "Edit",
       onClick: () => editDocument(),
+    },
+    {
+      icon: Copy,
+      color: "#b78cf9",
+      title: "Duplicate",
+      onClick: () => duplicateDocument(),
     },
     {
       icon: Share2,
@@ -96,6 +113,31 @@ export default function CardOptions({ docId, inputRef }: CardOptionsPropType) {
       });
   };
 
+  const duplicateDocument = async () => {
+    setIsOptionsOpen(false);
+    const currentName = inputRef.current?.value ?? "Untitled document";
+
+    try {
+      if (session?.id) {
+        const response = await CreateNewDocument(data ?? "");
+        if (!response.success || !response.data) {
+          toast.error(response.error);
+          return;
+        }
+        await RenameDocument(response.data.id, `${currentName} (copy)`);
+        await invalidateDocs(session.id);
+      } else {
+        const newDoc = createGuestDocument(data ?? "");
+        updateGuestDocument(newDoc.id, "name", `${currentName} (copy)`);
+        await invalidateDocs();
+      }
+      toast.success("Document duplicated");
+    } catch (e) {
+      console.log(e);
+      toast.error("Couldn't duplicate document");
+    }
+  };
+
   const deleteDocument = async () => {
     setIsOptionsOpen(false);
     setIsDeleteModalOpen(true);
@@ -136,7 +178,7 @@ export default function CardOptions({ docId, inputRef }: CardOptionsPropType) {
           }}
         >
           {docOptions.map((item, index) =>
-            (session?.id || index !== 2) && (
+            (session?.id || item.title !== "Share") && (
               <Button
                 key={index}
                 id={item.title}

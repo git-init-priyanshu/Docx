@@ -103,7 +103,7 @@ export default function DocCardItem({
         <div className="font-mono text-[10.5px] text-[var(--lp-muted)]">{formattedDate}</div>
 
         <span onClick={e => e.stopPropagation()}>
-          <CardOptions docId={docId} inputRef={inputRef} />
+          <CardOptions docId={docId} data={data} inputRef={inputRef} />
         </span>
       </div>
     );
@@ -138,7 +138,7 @@ export default function DocCardItem({
           </div>
           <div className="flex items-center gap-1" onClick={e => e.stopPropagation()}>
             <span className="font-mono text-[10px] text-[var(--lp-muted)]">{formattedDate}</span>
-            <CardOptions docId={docId} inputRef={inputRef} />
+            <CardOptions docId={docId} data={data} inputRef={inputRef} />
           </div>
         </div>
       </div>
