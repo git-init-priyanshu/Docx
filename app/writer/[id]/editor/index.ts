@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useParams } from "next/navigation";
 import { useEditor } from "@tiptap/react";
-import { type Editor as TiptapEditor } from "@tiptap/core";
+import type { Editor as TiptapEditor } from "@tiptap/core";
 import { toast } from "sonner";
 import * as Y from "yjs";
 import { WebsocketProvider } from "y-websocket";
@@ -33,7 +33,7 @@ export const Editor = ({ setIsSaving }: EditorPropType) => {
   // session === null → still loading (pass null to defer the fetch)
   // session !== null → resolved: id is set for authenticated users, undefined for guests
   const userId = session === null ? null : session?.id;
-  const { doc: docData } = useDoc(docId, userId);
+  const { doc: docData, error, isLoading } = useDoc(docId, userId);
 
   useEffect(() => {
     setName(localStorage.getItem("name") || "");
@@ -146,5 +146,5 @@ export const Editor = ({ setIsSaving }: EditorPropType) => {
     hydratedDocRef.current = docId;
   }, [editor, docData, docId]);
 
-  return { editor, docData };
+  return { editor, docData, error, isLoading };
 };
