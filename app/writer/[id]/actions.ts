@@ -159,6 +159,13 @@ export const generateText = async (
   customInstruction?: string,
 ) => {
   try {
+    const session = await getServerSession();
+    if (!session.id)
+      return {
+        success: false,
+        error: "User is not logged in",
+      };
+
     if (!process.env.GEMINI_API_KEY) {
       return { success: false, error: "AI is not configured on the server" };
     }
