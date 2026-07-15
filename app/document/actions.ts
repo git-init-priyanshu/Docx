@@ -17,7 +17,7 @@ export const GetAllDocs = async (userId: string) => {
         users: {
           some: {
             user: {
-              id: userId,
+              id: session.id,
             },
           },
         },
