@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import { EditorContent } from "@tiptap/react";
 
 import useClientSession from "@/lib/customHooks/useClientSession";
@@ -26,9 +27,11 @@ export default function WriterPage() {
   const [askInitialOption, setAskInitialOption] = useState<generateTextOptions | undefined>(undefined);
   const [showLoginPrompt, setShowLoginPrompt] = useState(false);
 
-  const { editor, docData } = Editor({ setIsSaving });
+  const { editor, docData, error, isLoading } = Editor({ setIsSaving });
 
   const isGuest = session !== null && !session.id;
+
+  const notFound = !!error || (!isLoading && !docData);
 
   const isNewDoc =
     !!docData &&
@@ -88,6 +91,22 @@ export default function WriterPage() {
     document.addEventListener("selectionchange", handleSelectionChange);
     return () => document.removeEventListener("selectionchange", handleSelectionChange);
   }, []);
+
+  if (notFound) {
+    return (
+      <div className="h-screen w-screen flex flex-col items-center justify-center gap-4 bg-[var(--lp-paper)] text-center px-6">
+        <p className="text-[var(--lp-ink)] text-lg font-medium">
+          This document doesn&apos;t exist or you don&apos;t have access.
+        </p>
+        <Link
+          href="/document"
+          className="rounded-md border border-[var(--lp-border)] px-4 py-2 text-sm text-[var(--lp-ink)] hover:bg-[var(--lp-card)]"
+        >
+          Back to documents
+        </Link>
+      </div>
+    );
+  }
 
   return (
     <div className="h-screen w-screen flex overflow-hidden bg-[var(--lp-paper)]">
