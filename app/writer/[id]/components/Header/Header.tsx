@@ -5,8 +5,6 @@ import { useTheme } from "next-themes";
 import { Sun, Moon, Sparkles } from "lucide-react";
 import { toast } from "sonner";
 
-import { toast } from "sonner";
-
 import { RenameDocument } from "@/app/document/components/Card/actions";
 import useClientSession from "@/lib/customHooks/useClientSession";
 import useDebounce from "@/lib/customHooks/useDebounce";
