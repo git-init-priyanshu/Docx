@@ -2,6 +2,7 @@
 
 import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 import type { User } from "@prisma/client";
 
 import prettifyDate from "@/helpers/prettifyDates";
@@ -49,7 +50,8 @@ export default function DocCardItem({
   const debounce = useDebounce(async () => {
     if (!inputRef.current) return;
     if (session?.id) {
-      await RenameDocument(docId, inputRef.current.value);
+      const response = await RenameDocument(docId, inputRef.current.value);
+      if (!response.success) toast.error(response.error);
       await invalidateDocs(session.id);
     } else {
       updateGuestDocument(docId, "name", inputRef.current.value);
