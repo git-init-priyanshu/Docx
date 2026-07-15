@@ -11,6 +11,7 @@ export default async function DocumentPage() {
     name: string;
     data: string | null;
     updatedAt: Date;
+    createdBy: { id: string; name: string; picture: string | null };
     users: { user: { name: string; picture: string | null } }[];
   }[] = [];
 
@@ -26,6 +27,7 @@ export default async function DocumentPage() {
         name: true,
         data: true,
         updatedAt: true,
+        createdBy: { select: { id: true, name: true, picture: true } },
         users: {
           select: {
             user: {

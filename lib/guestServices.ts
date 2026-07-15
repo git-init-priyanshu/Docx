@@ -59,7 +59,7 @@ export const getAllGuestDocuments = () => {
       thumbnail: doc.thumbnail,
       name: doc.name,
       updatedAt: doc.updatedAt,
-      createdBy: user.id,
+      createdBy: { id: user.id, name: user.name, picture: user.picture },
       users: [{
         user: {
           name: user.name,
