@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useParams } from "next/navigation";
 import { useEditor } from "@tiptap/react";
-import type { Editor as TiptapEditor } from "@tiptap/core";
+import { type Editor as TiptapEditor } from "@tiptap/core";
 import { toast } from "sonner";
 import * as Y from "yjs";
 import { WebsocketProvider } from "y-websocket";
