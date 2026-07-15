@@ -54,7 +54,7 @@ export const RenameDocument = async (docId: any, newName: string) => {
     const doc = await prisma.document.findFirst({
       where: {
         id: docId,
-        userId: session.id,
+        users: { some: { userId: session.id } },
       },
     });
     if (!doc) {
@@ -67,7 +67,7 @@ export const RenameDocument = async (docId: any, newName: string) => {
     await prisma.document.update({
       where: {
         id: docId,
-        userId: session.id,
+        users: { some: { userId: session.id } },
       },
       data: { name: newName },
     });

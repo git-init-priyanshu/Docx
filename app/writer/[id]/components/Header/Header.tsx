@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useTheme } from "next-themes";
 import { Sun, Moon, Sparkles } from "lucide-react";
+import { toast } from "sonner";
 
 import { RenameDocument } from "@/app/document/components/Card/actions";
 import useClientSession from "@/lib/customHooks/useClientSession";
@@ -62,7 +63,8 @@ export default function Toolbar({ docId, name, isLoading, isNewDoc, isSaving, on
   const saveName = async (next: string) => {
     if (!docId) return;
     if (session?.id) {
-      await RenameDocument(docId, next);
+      const response = await RenameDocument(docId, next);
+      if (!response.success) toast.error(response.error);
       await invalidateDocs(session.id);
     } else {
       updateGuestDocument(docId, "name", next);
