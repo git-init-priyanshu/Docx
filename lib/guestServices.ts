@@ -86,9 +86,9 @@ export const updateGuestDocument = (docId: string, docProp: string, updateValue:
   const index = allDocuments.findIndex((e) => e.id === document.id);
 
   if (docProp === 'thumbnail') {
-    allDocuments.splice(index, 1, { ...document, [docProp]: `data:image/png;base64,${updateValue}` });
+    allDocuments.splice(index, 1, { ...document, [docProp]: `data:image/png;base64,${updateValue}`, updatedAt: new Date() });
   } else {
-    allDocuments.splice(index, 1, { ...document, [docProp]: updateValue });
+    allDocuments.splice(index, 1, { ...document, [docProp]: updateValue, updatedAt: new Date() });
   }
   localStorage.setItem('documents', JSON.stringify(allDocuments));
 }

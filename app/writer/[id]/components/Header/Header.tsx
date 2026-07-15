@@ -5,6 +5,8 @@ import { useTheme } from "next-themes";
 import { Sun, Moon, Sparkles } from "lucide-react";
 import { toast } from "sonner";
 
+import { toast } from "sonner";
+
 import { RenameDocument } from "@/app/document/components/Card/actions";
 import useClientSession from "@/lib/customHooks/useClientSession";
 import useDebounce from "@/lib/customHooks/useDebounce";
@@ -74,6 +76,18 @@ export default function Toolbar({ docId, name, isLoading, isNewDoc, isSaving, on
   };
   const debouncedSave = useDebounce(saveName, 1000);
 
+  const shareDocument = () => {
+    navigator.clipboard
+      .writeText(window.location.href)
+      .then(() => {
+        toast.success("Share link copied to clipboard");
+      })
+      .catch((e) => {
+        console.log(e);
+        toast.error("Couldn't copy link");
+      });
+  };
+
   return (
     <div className="h-[52px] border-b border-[var(--lp-border)] bg-[var(--lp-card)] flex items-center px-4 gap-3 shrink-0">
       {/* Logo — only shows on mobile (sidebar hides on mobile) */}
@@ -140,7 +154,10 @@ export default function Toolbar({ docId, name, isLoading, isNewDoc, isSaving, on
         </button>
 
         {/* Share */}
-        <button className="h-8 px-3 rounded-md text-[12.5px] font-medium transition-opacity hover:opacity-80 bg-[var(--lp-ink)] text-[var(--lp-paper)]">
+        <button
+          onClick={shareDocument}
+          className="h-8 px-3 rounded-md text-[12.5px] font-medium transition-opacity hover:opacity-80 bg-[var(--lp-ink)] text-[var(--lp-paper)]"
+        >
           Share
         </button>
       </div>
