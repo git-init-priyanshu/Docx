@@ -18,6 +18,7 @@ type Doc = {
   name: string;
   data: string | null;
   updatedAt: Date;
+  createdBy?: { id: string; name?: string; picture?: string | null };
   users: { user: { name: string; picture: string | null } }[];
 };
 
@@ -73,8 +74,15 @@ export default function DocumentContent({ initialDocs, initialSession, quickStar
     }
   };
 
+  const isGuest = !session?.id;
+
   const filtered = docs
     .filter(d => !q || d.name.toLowerCase().includes(q.toLowerCase()))
+    .filter(d => {
+      if (folder === "Drafts") return isGuest || d.createdBy?.id === session?.id;
+      if (folder === "Shared") return !isGuest && d.createdBy?.id !== session?.id;
+      return true;
+    })
     .sort((a, b) => {
       if (sort === "alpha") return a.name.localeCompare(b.name);
       return new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime();
@@ -87,6 +95,7 @@ export default function DocumentContent({ initialDocs, initialSession, quickStar
 
   const firstName = session?.name?.split(" ")[0] ?? "there";
   const totalDocs = docs.length;
+  const folderLabel = folder === "Drafts" ? "My documents" : "Shared with me";
 
   return (
     <div className="h-screen w-screen flex overflow-hidden bg-[var(--lp-paper)] text-[var(--lp-ink)]">
@@ -101,10 +110,10 @@ export default function DocumentContent({ initialDocs, initialSession, quickStar
             {/* Page header */}
             <div className="mb-8">
               <div className="font-mono text-[10.5px] uppercase tracking-[0.18em] mb-2 text-[var(--lp-muted)]">
-                {folder === "all" ? "Your workspace" : folder}
+                {folder === "all" ? "Your workspace" : folderLabel}
               </div>
               <h1 className="text-[30px] sm:text-[38px] leading-[1.05] tracking-tight font-semibold text-[var(--lp-ink)]">
-                {folder === "all" ? `Welcome back, ${firstName}.` : folder}
+                {folder === "all" ? `Welcome back, ${firstName}.` : folderLabel}
               </h1>
               <p className="text-[14px] mt-2 text-[var(--lp-muted)]">
                 {folder === "all"
