@@ -2,7 +2,8 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useParams } from "next/navigation";
-import { useEditor, type Editor as TiptapEditor } from "@tiptap/react";
+import { useEditor } from "@tiptap/react";
+import { type Editor as TiptapEditor } from "@tiptap/core";
 import { toast } from "sonner";
 import * as Y from "yjs";
 import { WebsocketProvider } from "y-websocket";
@@ -10,7 +11,7 @@ import Collaboration from "@tiptap/extension-collaboration";
 import CollaborationCursor from "@tiptap/extension-collaboration-cursor";
 
 import { getRandomColor } from "@/helpers/getRandomColor";
-import { updateGuestDocument } from "@/lib/guestServices";
+import { getGuestUser, updateGuestDocument } from "@/lib/guestServices";
 import useClientSession from "@/lib/customHooks/useClientSession";
 import useDebounce from "@/lib/customHooks/useDebounce";
 import { useDoc } from "@/lib/hooks/useDoc";
@@ -35,8 +36,9 @@ export const Editor = ({ setIsSaving }: EditorPropType) => {
   const { doc: docData } = useDoc(docId, userId);
 
   useEffect(() => {
-    setName(localStorage.getItem("name") || "");
-  }, []);
+    if (session === null) return;
+    setName(session.id ? session.name || "" : getGuestUser().name);
+  }, [session]);
 
   // Per-document Yjs collaboration. The room is keyed on the docId, not on
   // the calendar date, so accounts editing different documents never sync
