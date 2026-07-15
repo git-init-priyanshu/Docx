@@ -83,13 +83,13 @@ export default function CardOptions({ docId, inputRef }: CardOptionsPropType) {
 
   const shareDocument = () => {
     navigator.clipboard
-      .writeText(`${process.env.NEXT_PUBLIC_APP_URL}/writer/${docId}`)
+      .writeText(`${window.location.origin}/writer/${docId}`)
       .then(() => {
         toast.success("Share link copied to clipboard");
       })
       .catch((e) => {
         console.log(e);
-        toast.error(e);
+        toast.error("Couldn't copy link");
       })
       .finally(() => {
         setIsOptionsOpen(false);
