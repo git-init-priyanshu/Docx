@@ -1,6 +1,5 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
 import prisma from "@/prisma/prismaClient";
@@ -105,38 +104,6 @@ export const UpdateDocData = async (id: any, data: string) => {
     });
 
     return { success: true, data: "Saved" };
-  } catch (e) {
-    console.log(e);
-    return { success: false, error: "Internal server error" };
-  }
-};
-
-export const UpdateThumbnail = async (id: any, thumbnail: string) => {
-  try {
-    const session = await getServerSession();
-    if (!session.id)
-      return {
-        success: false,
-        error: "User is not logged in",
-      };
-
-    const response = await fetch(
-      `${process.env.BACKEND_SERVER_URL}/push-to-quque`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          docId: id,
-          thumbnail,
-          userId: session.id,
-        }),
-      },
-    );
-    revalidatePath("/");
-
-    return await response.json();
   } catch (e) {
     console.log(e);
     return { success: false, error: "Internal server error" };

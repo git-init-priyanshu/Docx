@@ -18,7 +18,7 @@ const docsKey = (userId?: string) =>
 
 async function fetchDocs(userId?: string): Promise<Doc[]> {
   if (userId) {
-    const res = await GetAllDocs(userId);
+    const res = await GetAllDocs();
     if (!res.success) throw new Error(res.error ?? "Failed to fetch documents");
     return (res.data ?? []) as Doc[];
   }
