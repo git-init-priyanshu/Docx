@@ -120,6 +120,7 @@ export default function WriterPage() {
           isNewDoc={isNewDoc}
           isSaving={isSaving}
           onAsk={() => openAsk()}
+          onAuthRequired={() => setShowLoginPrompt(true)}
         />
 
         <FormatBar editor={editor} onRewrite={() => openAsk()} />
