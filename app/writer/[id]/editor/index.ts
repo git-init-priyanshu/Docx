@@ -64,6 +64,24 @@ export const Editor = ({ setIsSaving }: EditorPropType) => {
     };
   }, [provider, ydoc]);
 
+  // Readiness gate for DB hydration. We only trust the DB snapshot once Yjs has
+  // synced with peers (so we don't clobber their live, unsaved edits with the
+  // debounced-stale DB copy), or once the websocket is unreachable so an offline
+  // document still hydrates from the DB.
+  const [synced, setSynced] = useState(false);
+  useEffect(() => {
+    setSynced(false);
+    const markReady = () => setSynced(true);
+    provider.on("sync", markReady);
+    provider.on("connection-error", markReady);
+    provider.on("connection-close", markReady);
+    return () => {
+      provider.off("sync", markReady);
+      provider.off("connection-error", markReady);
+      provider.off("connection-close", markReady);
+    };
+  }, [provider]);
+
   // Save serialization: never run two persists in parallel. If onUpdate fires
   // again while a save is in flight, we just flip `pendingRef` and re-fire
   // once the current one resolves — using the editor's latest content at that
@@ -108,13 +126,6 @@ export const Editor = ({ setIsSaving }: EditorPropType) => {
 
   const editor = useEditor(
     {
-      onCreate: ({ editor: currentEditor }) => {
-        provider.on("sync", () => {
-          if (currentEditor.isEmpty) {
-            currentEditor.commands.setContent("");
-          }
-        });
-      },
       extensions: [
         ...extensions,
         Collaboration.configure({ document: ydoc }),
@@ -141,11 +152,16 @@ export const Editor = ({ setIsSaving }: EditorPropType) => {
   // different document without wiping in-progress typing on the current one.
   const hydratedDocRef = useRef<string | null>(null);
   useEffect(() => {
-    if (!editor || !docData) return;
+    if (!editor || !docData || !synced) return;
     if (hydratedDocRef.current === docId) return;
-    editor.commands.setContent(docData.data ? JSON.parse(docData.data) : "");
+    // If peers already streamed live content into the shared Yjs doc, keep it —
+    // writing the stale DB snapshot here would broadcast it back and clobber
+    // their unsaved edits. Only hydrate from the DB when the editor is empty.
+    if (editor.isEmpty) {
+      editor.commands.setContent(docData.data ? JSON.parse(docData.data) : "");
+    }
     hydratedDocRef.current = docId;
-  }, [editor, docData, docId]);
+  }, [editor, docData, docId, synced]);
 
   return { editor, docData, error, isLoading };
 };
