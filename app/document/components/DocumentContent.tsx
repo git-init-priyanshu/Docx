@@ -18,6 +18,7 @@ type Doc = {
   name: string;
   data: string | null;
   updatedAt: Date;
+  createdBy: { id: string; name: string; picture: string | null };
   users: { user: { name: string; picture: string | null } }[];
 };
 
@@ -73,7 +74,13 @@ export default function DocumentContent({ initialDocs, initialSession, quickStar
     }
   };
 
+  const isGuest = !userId;
   const filtered = docs
+    .filter(d => {
+      if (folder === "Drafts") return isGuest || d.createdBy.id === userId;
+      if (folder === "Shared") return !isGuest && d.createdBy.id !== userId;
+      return true;
+    })
     .filter(d => !q || d.name.toLowerCase().includes(q.toLowerCase()))
     .sort((a, b) => {
       if (sort === "alpha") return a.name.localeCompare(b.name);
@@ -139,6 +146,7 @@ export default function DocumentContent({ initialDocs, initialSession, quickStar
                       data={d.data}
                       title={d.name}
                       updatedAt={d.updatedAt}
+                      createdBy={d.createdBy}
                       users={d.users}
                       view="grid"
                       colorIndex={i}
@@ -233,6 +241,7 @@ export default function DocumentContent({ initialDocs, initialSession, quickStar
                       data={d.data}
                       title={d.name}
                       updatedAt={d.updatedAt}
+                      createdBy={d.createdBy}
                       users={d.users}
                       view="grid"
                       colorIndex={i}
@@ -251,6 +260,7 @@ export default function DocumentContent({ initialDocs, initialSession, quickStar
                       data={d.data}
                       title={d.name}
                       updatedAt={d.updatedAt}
+                      createdBy={d.createdBy}
                       users={d.users}
                       view="list"
                       colorIndex={i}

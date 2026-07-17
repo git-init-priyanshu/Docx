@@ -10,6 +10,7 @@ type Doc = {
   name: string;
   data: string | null;
   updatedAt: Date;
+  createdBy: { id: string; name: string; picture: string | null };
   users: { user: { name: string; picture: string | null } }[];
 };
 
