@@ -3,7 +3,7 @@
 import getServerSession from "@/lib/customHooks/getServerSession";
 import prisma from "@/prisma/prismaClient";
 
-export const GetAllDocs = async (userId: string) => {
+export const GetAllDocs = async () => {
   try {
     const session = await getServerSession();
     if (!session.id)
