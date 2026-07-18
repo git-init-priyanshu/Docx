@@ -27,6 +27,7 @@ type DocCardItemProps = {
   data: string | null;
   title: string;
   updatedAt: Date;
+  createdBy: { id: string; name: string; picture: string | null };
   users: { user: Pick<User, "name" | "picture"> }[];
   view: "grid" | "list";
   colorIndex: number;
@@ -37,6 +38,7 @@ export default function DocCardItem({
   data,
   title,
   updatedAt,
+  createdBy,
   users,
   view,
   colorIndex,
@@ -59,7 +61,8 @@ export default function DocCardItem({
     }
   }, 1000);
 
-  const ownerName = users[0]?.user?.name ?? "You";
+  const isOwner = !session?.id || createdBy.id === session.id;
+  const ownerName = isOwner ? "You" : createdBy.name;
   const ownerInitial = (ownerName[0] ?? "?").toUpperCase();
   const formattedDate = prettifyDate(String(updatedAt), {
     month: "short",
