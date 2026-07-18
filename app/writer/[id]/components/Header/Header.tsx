@@ -8,9 +8,10 @@ import { toast } from "sonner";
 import { RenameDocument } from "@/app/document/components/Card/actions";
 import useClientSession from "@/lib/customHooks/useClientSession";
 import useDebounce from "@/lib/customHooks/useDebounce";
-import { updateGuestDocument } from "@/lib/guestServices";
+import { getGuestUser, updateGuestDocument } from "@/lib/guestServices";
 import { invalidateDoc } from "@/lib/hooks/useDoc";
 import { invalidateDocs } from "@/lib/hooks/useDocs";
+import getInitials from "@/helpers/getInitials";
 
 function DocxLogo({ className = "h-5 w-5" }: { className?: string }) {
   return (
@@ -30,14 +31,19 @@ type ToolbarProps = {
   isNewDoc: boolean;
   isSaving: boolean;
   onAsk: () => void;
+  onAuthRequired: () => void;
 };
 
-export default function Toolbar({ docId, name, isLoading, isNewDoc, isSaving, onAsk }: ToolbarProps) {
+export default function Toolbar({ docId, name, isLoading, isNewDoc, isSaving, onAsk, onAuthRequired }: ToolbarProps) {
   const session = useClientSession();
   const { resolvedTheme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
   useEffect(() => setMounted(true), []);
   const isDark = mounted && resolvedTheme === "dark";
+
+  // Signed-in users use session.name; guests fall back to their localStorage name.
+  const displayName = session?.name || (mounted && session !== null && !session.id ? getGuestUser().name : "");
+  const displayInitials = displayName ? getInitials(displayName) : "";
 
   const [nameValue, setNameValue] = useState(name);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -75,6 +81,10 @@ export default function Toolbar({ docId, name, isLoading, isNewDoc, isSaving, on
   const debouncedSave = useDebounce(saveName, 1000);
 
   const shareDocument = () => {
+    if (session !== null && !session.id) {
+      onAuthRequired();
+      return;
+    }
     navigator.clipboard
       .writeText(window.location.href)
       .then(() => {
@@ -127,9 +137,18 @@ export default function Toolbar({ docId, name, isLoading, isNewDoc, isSaving, on
       <div className="ml-auto flex items-center gap-2">
         {/* Collab avatar */}
         <div className="hidden sm:flex -space-x-1.5">
-          <span className="w-7 h-7 rounded-full bg-[var(--lp-accent)] text-white text-[11px] font-semibold flex items-center justify-center outline-2 outline-[var(--lp-card)] -outline-offset-1">
-            P
-          </span>
+          {session?.image ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img
+              src={session.image}
+              alt={session.name || "You"}
+              className="w-7 h-7 rounded-full object-cover outline-2 outline-[var(--lp-card)] -outline-offset-1"
+            />
+          ) : (
+            <span className="w-7 h-7 rounded-full bg-[var(--lp-accent)] text-white text-[11px] font-semibold flex items-center justify-center outline-2 outline-[var(--lp-card)] -outline-offset-1">
+              {displayInitials}
+            </span>
+          )}
         </div>
 
         {/* Ask DocX ⌘K */}
