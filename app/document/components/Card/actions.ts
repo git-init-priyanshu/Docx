@@ -64,6 +64,14 @@ export const RenameDocument = async (docId: any, newName: string) => {
         error: "User is not logged in",
       };
 
+    const trimmed = newName.trim();
+    if (!trimmed) {
+      return {
+        success: false,
+        error: "Name cannot be empty",
+      };
+    }
+
     const doc = await prisma.document.findFirst({
       where: {
         id: docId,
@@ -82,7 +90,7 @@ export const RenameDocument = async (docId: any, newName: string) => {
         id: docId,
         users: { some: { userId: session.id } },
       },
-      data: { name: newName },
+      data: { name: trimmed },
     });
     revalidatePath("/");
 

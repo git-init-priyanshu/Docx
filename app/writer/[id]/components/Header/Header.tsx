@@ -68,12 +68,14 @@ export default function Toolbar({ docId, name, isLoading, isNewDoc, isSaving, on
 
   const saveName = async (next: string) => {
     if (!docId) return;
+    const trimmed = next.trim();
+    if (!trimmed) return;
     if (session?.id) {
-      const response = await RenameDocument(docId, next);
+      const response = await RenameDocument(docId, trimmed);
       if (!response.success) toast.error(response.error);
       await invalidateDocs(session.id);
     } else {
-      updateGuestDocument(docId, "name", next);
+      updateGuestDocument(docId, "name", trimmed);
       await invalidateDocs();
     }
     await invalidateDoc(docId);
@@ -120,6 +122,9 @@ export default function Toolbar({ docId, name, isLoading, isNewDoc, isSaving, on
             }}
             onKeyDown={(e) => {
               if (e.key === "Enter") inputRef.current?.blur();
+            }}
+            onBlur={() => {
+              if (!nameValue.trim()) setNameValue(name);
             }}
             placeholder="Untitled"
             spellCheck={false}
