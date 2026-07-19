@@ -31,7 +31,9 @@ export default function WriterPage() {
 
   const isGuest = session !== null && !session.id;
 
-  const notFound = !!error || (!isLoading && !docData);
+  const sessionResolving = session === null;
+
+  const notFound = !!error || (!sessionResolving && !isLoading && !docData);
 
   const isNewDoc =
     !!docData &&
