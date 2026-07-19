@@ -80,6 +80,13 @@ export default function Toolbar({ docId, name, isLoading, isNewDoc, isSaving, on
   };
   const debouncedSave = useDebounce(saveName, 1000);
 
+  // Flush a pending name save on unmount so navigating away within 1s persists it.
+  useEffect(() => {
+    return () => {
+      debouncedSave.flush();
+    };
+  }, [debouncedSave]);
+
   const shareDocument = () => {
     if (session !== null && !session.id) {
       onAuthRequired();

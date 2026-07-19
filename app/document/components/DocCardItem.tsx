@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import type { User } from "@prisma/client";
@@ -60,6 +60,13 @@ export default function DocCardItem({
       await invalidateDocs();
     }
   }, 1000);
+
+  // Flush a pending rename on unmount so it isn't lost within the 1s delay.
+  useEffect(() => {
+    return () => {
+      debounce.flush();
+    };
+  }, [debounce]);
 
   const isOwner = !session?.id || createdBy.id === session.id;
   const ownerName = isOwner ? "You" : createdBy.name;
