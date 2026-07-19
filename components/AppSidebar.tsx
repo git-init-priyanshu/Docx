@@ -4,12 +4,12 @@ import { ReactNode } from "react";
 import Image from "next/image";
 import { Plus, LogOut } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { signOut } from "next-auth/react";
 import { toast } from "sonner";
 
 import logo from "@/public/logo.svg";
 import useClientSession from "@/lib/customHooks/useClientSession";
 import getInitials from "@/helpers/getInitials";
-import { LogoutAction } from "@/app/document/components/Header/actions";
 
 type AppSidebarProps = {
   onCreate: () => void;
@@ -24,13 +24,8 @@ export default function AppSidebar({ onCreate, children, breakpoint = "md" }: Ap
   const initial = session?.name ? getInitials(session.name) : "G";
 
   const logout = async () => {
-    const response = await LogoutAction();
-    if (response.success) {
-      toast.success("Successfully logged out");
-      router.push("/login");
-    } else {
-      toast.error(response.error);
-    }
+    toast.success("Successfully logged out");
+    await signOut({ callbackUrl: "/login" });
   };
 
   const showClass = breakpoint === "lg" ? "lg:flex" : "md:flex";
