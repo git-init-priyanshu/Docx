@@ -74,6 +74,17 @@ export default function DocumentContent({ initialDocs, initialSession, quickStar
     }
   };
 
+  useEffect(() => {
+    const onKeyDown = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "n") {
+        e.preventDefault();
+        createDocument();
+      }
+    };
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  });
+
   const isGuest = !userId;
   const filtered = docs
     .filter(d => {
