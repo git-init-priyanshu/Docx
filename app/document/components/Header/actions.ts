@@ -1,7 +1,5 @@
 "use server";
 
-import { cookies } from "next/headers";
-
 import prisma from "@/prisma/prismaClient";
 import getServerSession from "@/lib/customHooks/getServerSession";
 
@@ -73,17 +71,6 @@ export const CreateNewDocument = async (initialData?: string) => {
     });
 
     return { success: true, data: doc };
-  } catch (e) {
-    console.error(e);
-    return { success: false, error: "Internal server error" };
-  }
-};
-
-export const LogoutAction = async () => {
-  try {
-    cookies().delete("next-auth.session-token");
-    cookies().delete("__Secure-next-auth.session-token");
-    return { success: true, data: null };
   } catch (e) {
     console.error(e);
     return { success: false, error: "Internal server error" };
