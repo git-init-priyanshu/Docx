@@ -106,6 +106,17 @@ export const Editor = ({ setIsSaving }: EditorPropType) => {
 
   const debounce = useDebounce(persist, 1000);
 
+  // Flush any pending debounced save if the user closes the tab before the
+  // 1s delay fires, so the last edit isn't lost.
+  useEffect(() => {
+    const flush = () => debounce.flush();
+    window.addEventListener("beforeunload", flush);
+    return () => {
+      window.removeEventListener("beforeunload", flush);
+      debounce.flush();
+    };
+  }, [debounce]);
+
   const editor = useEditor(
     {
       onCreate: ({ editor: currentEditor }) => {
