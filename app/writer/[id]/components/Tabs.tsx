@@ -1,11 +1,14 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter, useParams } from "next/navigation";
+import { toast } from "sonner";
 import { Search, Layers } from "lucide-react";
 
 import useClientSession from "@/lib/customHooks/useClientSession";
 import { useDocs } from "@/lib/hooks/useDocs";
+import { CreateNewDocument } from "@/app/document/components/Header/actions";
+import { createGuestDocument } from "@/lib/guestServices";
 import AppSidebar from "@/components/AppSidebar";
 
 function relativeTime(date: Date | string): string {
@@ -44,8 +47,35 @@ export default function LeftSidebar() {
 
   const filtered = docs.filter(d => !q || d.name.toLowerCase().includes(q.toLowerCase()));
 
+  const createDocument = async () => {
+    if (session?.id) {
+      const response = await CreateNewDocument();
+      if (response.success) {
+        toast.success("Successfully created new document");
+        router.push(`/writer/${response.data?.id}`);
+      } else {
+        toast.error(response.error);
+      }
+    } else {
+      const doc = createGuestDocument();
+      toast.success("Successfully created new document");
+      router.push(`/writer/${doc.id}`);
+    }
+  };
+
+  useEffect(() => {
+    const onKeyDown = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "n") {
+        e.preventDefault();
+        createDocument();
+      }
+    };
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  });
+
   return (
-    <AppSidebar onCreate={() => router.push("/document")} breakpoint="lg">
+    <AppSidebar onCreate={createDocument} breakpoint="lg">
       {/* Search */}
       <div className="px-3 mt-4">
         <div className="relative">
