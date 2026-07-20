@@ -51,12 +51,14 @@ export default function DocCardItem({
 
   const debounce = useDebounce(async () => {
     if (!inputRef.current) return;
+    const trimmed = inputRef.current.value.trim();
+    if (!trimmed) return;
     if (session?.id) {
-      const response = await RenameDocument(docId, inputRef.current.value);
+      const response = await RenameDocument(docId, trimmed);
       if (!response.success) toast.error(response.error);
       await invalidateDocs(session.id);
     } else {
-      updateGuestDocument(docId, "name", inputRef.current.value);
+      updateGuestDocument(docId, "name", trimmed);
       await invalidateDocs();
     }
   }, 1000);
