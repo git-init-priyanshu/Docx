@@ -1,6 +1,7 @@
 import type { Editor } from "@tiptap/react";
 import { Check, Sparkles, Undo2, X } from "lucide-react";
 
+import { insertGeneratedText } from "../../editor/insertGeneratedText";
 import {
   DropdownMenu,
   DropdownMenuTrigger,
@@ -32,7 +33,7 @@ export default function GeneratedText({
 }: GeneratedTextPropType) {
   const handleAccept = () => {
     if (!editor || !generativeTextResult) return;
-    editor.chain().focus().insertContent(generativeTextResult).run();
+    insertGeneratedText(editor, generativeTextResult);
     setGenerativeTextResult("");
     setIsAiActive(false);
   };
