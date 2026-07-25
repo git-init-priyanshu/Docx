@@ -6,6 +6,7 @@ import { toast } from "sonner";
 import type { Editor } from "@tiptap/react";
 
 import { generateText } from "../actions";
+import { insertGeneratedText } from "../editor/insertGeneratedText";
 import { generateTextOptions, LANGUAGES } from "./BubbleMenuComp/generateTextConfig";
 
 type Suggestion = { label: string; option: generateTextOptions };
@@ -122,16 +123,12 @@ export default function AskPalette({ open, onClose, editor, initialOption }: Ask
   const handleAccept = () => {
     if (!editor || !result) return;
     if (acceptReplacesSelection) {
-      // insertContent replaces the current selection if non-empty.
-      editor.chain().focus().insertContent(result).run();
+      // Replaces the current selection if non-empty.
+      insertGeneratedText(editor, result);
     } else {
       // No selection — append to the end so we don't clobber wherever the
       // caret happens to be.
-      editor
-        .chain()
-        .focus("end")
-        .insertContent(`\n\n${result}`)
-        .run();
+      insertGeneratedText(editor, result, { append: true });
     }
     setResult("");
     onClose();

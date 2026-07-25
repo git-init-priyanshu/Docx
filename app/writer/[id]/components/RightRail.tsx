@@ -7,6 +7,7 @@ import type { Editor } from "@tiptap/react";
 
 import useClientSession from "@/lib/customHooks/useClientSession";
 import { generateText } from "../actions";
+import { insertGeneratedText } from "../editor/insertGeneratedText";
 import { generateTextOptions } from "./BubbleMenuComp/generateTextConfig";
 
 type AIAction = {
@@ -87,7 +88,7 @@ export default function RightRail({
       toast.error(res.error);
       return;
     }
-    editor.chain().focus().insertContent(res.data || "").run();
+    insertGeneratedText(editor, res.data || "");
   };
 
   return (
