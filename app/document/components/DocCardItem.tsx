@@ -63,6 +63,12 @@ export default function DocCardItem({
     }
   }, 1000);
 
+  // Adopt an updated title prop (rename elsewhere, duplicate, collaborator
+  // change) unless the user is actively editing this input.
+  useEffect(() => {
+    if (document.activeElement !== inputRef.current) setName(title);
+  }, [title]);
+
   // Flush a pending rename on unmount so it isn't lost within the 1s delay.
   useEffect(() => {
     return () => {
