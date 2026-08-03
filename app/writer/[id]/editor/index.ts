@@ -119,13 +119,6 @@ export const Editor = ({ setIsSaving }: EditorPropType) => {
 
   const editor = useEditor(
     {
-      onCreate: ({ editor: currentEditor }) => {
-        provider.on("sync", () => {
-          if (currentEditor.isEmpty) {
-            currentEditor.commands.setContent("");
-          }
-        });
-      },
       extensions: [
         ...extensions,
         Collaboration.configure({ document: ydoc }),
@@ -147,16 +140,33 @@ export const Editor = ({ setIsSaving }: EditorPropType) => {
     if (editor) editor.chain().focus().updateUser({ name }).run();
   }, [editor, name]);
 
-  // Hydrate the editor once per document from the server payload. Tracking by
-  // docId rather than a plain boolean lets us re-hydrate when navigating to a
-  // different document without wiping in-progress typing on the current one.
-  const hydratedDocRef = useRef<string | null>(null);
+  // The ydoc is the single source of truth. We only seed the DB payload into
+  // it once the provider has synced (so we know whether the room already holds
+  // content) AND the synced ydoc is genuinely empty. A `seeded` flag stored
+  // inside the ydoc's shared "meta" map means whichever client first connects
+  // to an empty room seeds it; every later client sees non-empty content or
+  // `seeded === true` and never re-inserts, so DB content is never appended on
+  // top of already-synced Yjs content.
   useEffect(() => {
     if (!editor || !docData) return;
-    if (hydratedDocRef.current === docId) return;
-    editor.commands.setContent(docData.data ? JSON.parse(docData.data) : "");
-    hydratedDocRef.current = docId;
-  }, [editor, docData, docId]);
+
+    const meta = ydoc.getMap("meta");
+    const seed = () => {
+      if (editor.isEmpty && !meta.get("seeded") && docData.data) {
+        editor.commands.setContent(JSON.parse(docData.data));
+        meta.set("seeded", true);
+      }
+    };
+
+    if (provider.synced) {
+      seed();
+    } else {
+      provider.on("sync", seed);
+    }
+    return () => {
+      provider.off("sync", seed);
+    };
+  }, [editor, docData, ydoc, provider]);
 
   return { editor, docData, error, isLoading };
 };
