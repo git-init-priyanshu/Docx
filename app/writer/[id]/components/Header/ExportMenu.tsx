@@ -9,7 +9,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown";
-import { toMarkdown, toPlainText } from "../../editor/exportMarkdown";
+import { toMarkdown, toPlainText } from "@/lib/tiptap/markdown";
 
 type ExportMenuProps = {
   editor: TiptapEditor | null;

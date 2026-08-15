@@ -2,10 +2,15 @@
 // JSON (same node shape used by components/DocThumbnail.tsx) and renders clean
 // output. Pure functions — safe to run client-side for guests and signed-in
 // users alike.
+//
+// `renderBlock` and the node types are exported for lib/rag/chunk.ts, which
+// needs to walk the same tree block-by-block instead of collapsing it to one
+// string. Keeping one walker means export and retrieval can never disagree
+// about what a document says.
 
 type TipTapMark = { type: string };
 
-type TipTapNode = {
+export type TipTapNode = {
   type: string;
   attrs?: Record<string, unknown>;
   content?: TipTapNode[];
@@ -13,7 +18,7 @@ type TipTapNode = {
   marks?: TipTapMark[];
 };
 
-type TipTapDoc = { type?: string; content?: TipTapNode[] };
+export type TipTapDoc = { type?: string; content?: TipTapNode[] };
 
 function applyMarks(text: string, marks: TipTapMark[] = []): string {
   let out = text;
@@ -79,7 +84,7 @@ function renderList(
     .join("\n");
 }
 
-function renderBlock(node: TipTapNode, plain: boolean): string {
+export function renderBlock(node: TipTapNode, plain: boolean): string {
   switch (node.type) {
     case "heading": {
       const level = Math.min(
