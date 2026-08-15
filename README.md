@@ -103,6 +103,8 @@ GEMINI_API_KEY="your-gemini-api-key"
 
 # Real-time collaboration
 NEXT_PUBLIC_WEBSOCKET_URL="ws://localhost:1234"
+WS_TOKEN_SECRET="a-random-secret"   # must match on the app and the WebSocket server
+WS_PORT="1234"
 
 # Misc
 BACKEND_SERVER_URL="http://localhost:4000"
@@ -117,11 +119,16 @@ yarn db:run   # runs prisma migrate + generate
 
 ### 4. Start the WebSocket server
 
-In a separate terminal, run a [y-websocket](https://github.com/yjs/y-websocket) server (matching `NEXT_PUBLIC_WEBSOCKET_URL`):
+In a separate terminal, run the bundled server (`server/ws/index.mts`):
 
 ```bash
-npx y-websocket --port 1234
+yarn ws
 ```
+
+It signs nothing and reads no database — it only verifies the signed room token
+the app mints, so `WS_TOKEN_SECRET` must be identical for both processes. Stock
+`npx y-websocket` will not work: it accepts unauthenticated connections, which
+would let anyone holding a document id join that document's room.
 
 ### 5. Run the dev server
 
