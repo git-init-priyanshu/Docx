@@ -118,6 +118,8 @@ export default function WriterPage() {
         <Toolbar
           docId={docData?.id || ""}
           name={docData?.name || ""}
+          data={docData?.data || ""}
+          editor={editor}
           isLoading={!docData}
           isNewDoc={isNewDoc}
           isSaving={isSaving}
