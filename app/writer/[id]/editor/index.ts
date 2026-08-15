@@ -20,10 +20,15 @@ import useClientSession from "@/lib/customHooks/useClientSession";
 import useDebounce from "@/lib/customHooks/useDebounce";
 import { useDoc } from "@/lib/hooks/useDoc";
 import { invalidateVersions } from "@/lib/hooks/useVersions";
+import { ROOM_TOKEN_TTL_MS, roomForDoc } from "@/lib/room";
 
 import { extensions, props } from "./editorConfig";
 import { UpdateDocData } from "../actions";
 import { CreateDocVersion } from "../versions/actions";
+import { MintRoomToken } from "../collaboration/actions";
+
+// Refresh comfortably before expiry so a reconnect never races the deadline.
+const ROOM_TOKEN_REFRESH_MS = ROOM_TOKEN_TTL_MS - 60_000;
 
 type EditorPropType = {
   setIsSaving: React.Dispatch<React.SetStateAction<boolean>>;
@@ -54,21 +59,57 @@ export const Editor = ({ setIsSaving }: EditorPropType) => {
   // doesn't reference it because the dependency *is* the identity tag.
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const ydoc = useMemo(() => new Y.Doc(), [docId]);
-  const provider = useMemo(
-    () =>
-      new WebsocketProvider(
-        process.env.NEXT_PUBLIC_WEBSOCKET_URL as string,
-        `doc.${docId}`,
-        ydoc,
-      ),
-    [docId, ydoc],
-  );
+
+  // Guests get a local Y.Doc and no network provider at all. Their documents
+  // live in localStorage, so nobody can ever join the room — and once AI
+  // requests travel through the room, an unauthenticated room would be a way
+  // around the login gate. The Collaboration extension needs a Y.Doc, not a
+  // provider, so the editor is otherwise unchanged.
+  const provider = useMemo(() => {
+    if (!userId) return null;
+    return new WebsocketProvider(
+      process.env.NEXT_PUBLIC_WEBSOCKET_URL as string,
+      roomForDoc(docId),
+      ydoc,
+      { connect: false },
+    );
+  }, [docId, ydoc, userId]);
+
   useEffect(() => {
     return () => {
-      provider.destroy();
+      provider?.destroy();
       ydoc.destroy();
     };
   }, [provider, ydoc]);
+
+  // The socket carries a short-lived signed token, so connecting has to wait
+  // for the first mint. `provider.url` is a getter over `params`, so refreshing
+  // the token in place is picked up by the next reconnect without tearing the
+  // provider down — a live socket is never interrupted.
+  useEffect(() => {
+    if (!provider) return;
+
+    let cancelled = false;
+
+    const refresh = async () => {
+      const res = await MintRoomToken(docId);
+      if (cancelled) return;
+      if (!res.success || !res.data) {
+        toast.error(res.error ?? "Could not join the collaboration session");
+        return;
+      }
+      provider.params.token = res.data.token;
+      if (!provider.shouldConnect) provider.connect();
+    };
+
+    refresh();
+    const timer = setInterval(refresh, ROOM_TOKEN_REFRESH_MS);
+
+    return () => {
+      cancelled = true;
+      clearInterval(timer);
+    };
+  }, [provider, docId]);
 
   // Save serialization: never run two persists in parallel. If onUpdate fires
   // again while a save is in flight, we just flip `pendingRef` and re-fire
@@ -130,7 +171,7 @@ export const Editor = ({ setIsSaving }: EditorPropType) => {
   const editor = useEditor(
     {
       onCreate: ({ editor: currentEditor }) => {
-        provider.on("sync", () => {
+        provider?.on("sync", () => {
           if (currentEditor.isEmpty) {
             currentEditor.commands.setContent("");
           }
@@ -139,10 +180,16 @@ export const Editor = ({ setIsSaving }: EditorPropType) => {
       extensions: [
         ...extensions,
         Collaboration.configure({ document: ydoc }),
-        CollaborationCursor.configure({
-          provider,
-          user: { name, color: getRandomColor() },
-        }),
+        // Cursors are a property of the network session; without a provider
+        // there are no peers to show one to.
+        ...(provider
+          ? [
+              CollaborationCursor.configure({
+                provider,
+                user: { name, color: getRandomColor() },
+              }),
+            ]
+          : []),
       ],
       editorProps: props,
       content: "",
@@ -153,8 +200,15 @@ export const Editor = ({ setIsSaving }: EditorPropType) => {
     [docId, ydoc, provider],
   );
 
+  // updateUser is registered by CollaborationCursor, which guests don't load.
+  // The provider is not a safe proxy for that: useEditor rebuilds the editor
+  // asynchronously, so right after the session resolves there is a render where
+  // the provider exists but `editor` is still the instance built without the
+  // extension. Ask the editor what it actually supports instead.
   useEffect(() => {
-    if (editor) editor.chain().focus().updateUser({ name }).run();
+    if (!editor) return;
+    if (typeof editor.commands.updateUser !== "function") return;
+    editor.chain().focus().updateUser({ name }).run();
   }, [editor, name]);
 
   // Hydrate the editor once per document from the server payload. Tracking by
