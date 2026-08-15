@@ -18,39 +18,15 @@ export const GetDocDetails = async (id: any) => {
         error: "User is not logged in",
       };
 
-    const existing = await prisma.document.findUnique({
+    // Read-only: opening a document must never grant access to it. Membership
+    // is written by document creation and by an explicit share, so a caller who
+    // is not already in UserOnDocument gets the same answer as for a document
+    // that does not exist.
+    const doc = await prisma.document.findFirst({
       where: {
         id,
-      },
-    });
-    if (!existing)
-      return {
-        success: false,
-        error: "Document does not exist",
-      };
-
-    const doc = await prisma.document.update({
-      where: {
-        id,
-      },
-      data: {
         users: {
-          upsert: {
-            where: {
-              userId_documentId: {
-                documentId: id,
-                userId: session.id,
-              },
-            },
-            update: {},
-            create: {
-              user: {
-                connect: {
-                  id: session.id,
-                },
-              },
-            },
-          },
+          some: { userId: session.id },
         },
       },
     });
