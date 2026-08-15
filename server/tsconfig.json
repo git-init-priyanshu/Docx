@@ -1,0 +1,14 @@
+{
+  "compilerOptions": {
+    "lib": ["esnext"],
+    "types": ["node"],
+    "strict": true,
+    "noEmit": true,
+    "esModuleInterop": true,
+    "module": "nodenext",
+    "moduleResolution": "nodenext",
+    "skipLibCheck": true,
+    "allowImportingTsExtensions": true
+  },
+  "include": ["**/*.ts", "**/*.mts", "../lib/room.ts", "../lib/roomToken.ts"]
+}
