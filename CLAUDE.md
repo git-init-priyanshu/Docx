@@ -21,7 +21,6 @@ yarn format       # Prettier write
 yarn db:migrate   # Run Prisma migrations
 yarn db:generate  # Regenerate Prisma client
 yarn db:run       # migrate + generate (run after schema changes)
-yarn ws           # Authenticated Yjs WebSocket server (separate process)
 ```
 
 There are no automated tests in this project.
@@ -35,8 +34,6 @@ Required in `.env`:
 - `NEXTAUTH_URL` — Base URL NextAuth uses for callbacks (e.g. `http://localhost:3000`)
 - `GEMINI_API_KEY` — Google Gemini AI (used for text generation in the editor)
 - `NEXT_PUBLIC_WEBSOCKET_URL` — WebSocket server URL for Yjs real-time collaboration
-- `WS_TOKEN_SECRET` — HMAC secret for signed room tokens; must match in the Next app and the WebSocket server
-- `WS_PORT` — port the bundled WebSocket server listens on (default `1234`)
 - `BACKEND_SERVER_URL` — Backend service for thumbnail upload queue
 - `APP_URL` — Base URL
 
@@ -59,13 +56,9 @@ Unauthenticated users can create and edit documents locally. All guest data live
 ### Editor (`app/writer/[id]/`)
 - **Tiptap** with `StarterKit`, `Collaboration`, `CollaborationCursor`, `Color`, `Highlight`, `Underline`, `TextAlign`, `FontFamily`, `TextStyle`.
 - **Yjs + y-websocket** for real-time collaboration. `ydoc` and the `WebsocketProvider` are created **per document** inside the editor hook (keyed on `docId`) and destroyed on unmount / navigation. The room name is `doc.${docId}` so collaboration is scoped to each individual document — different documents never sync into one another.
-- **Room auth.** The provider is built with `connect: false` and only connects once `MintRoomToken` (`app/writer/[id]/collaboration/actions.ts`) returns a signed token; a timer re-mints before the 5-minute expiry. `provider.url` is a getter over `params`, so swapping the token in place is picked up by the next reconnect without tearing the provider down. **Guests get a local `Y.Doc` and no provider at all** — their documents live in `localStorage`, so no peer can ever join, and `CollaborationCursor` is omitted for them (its `updateUser` command does not exist without it).
-- Auto-save via a 1-second debounce: on change, calls `UpdateDocData` server action and then `invalidateDoc` to update the SWR cache. Version snapshots ride along with autosave, throttled by `app/writer/[id]/versions/policy.ts`.
+- Auto-save via a 1-second debounce: on change, calls `UpdateDocData` server action and then `invalidateDoc` to update the SWR cache.
 - `⌘K` opens `AskPalette` — a floating command palette for AI text operations.
-- Bubble menu appears on text selection with AI actions (improve writing, fix grammar, translate, summarize, etc.) via `generateText` server action → Gemini 2.5 Flash (`gemini-2.5-flash`).
-
-### WebSocket Server (`server/ws/`)
-A standalone Node process (`yarn ws`), not part of the Next build — it is excluded from the root `tsconfig.json` and has its own. It intercepts the HTTP upgrade, verifies the room token with `lib/roomToken.ts`, checks that the token's `docId` matches the room being joined, and only then hands the socket to y-websocket's `setupWSConnection`. It holds **no database connection**: membership is checked once, by `MintRoomToken`, and the signature carries that decision. Stock `npx y-websocket` must not be used — it accepts unauthenticated connections.
+- Bubble menu appears on text selection with AI actions (improve writing, fix grammar, translate, summarize, etc.) via `generateText` server action → Gemini 1.5 Flash.
 
 ### Data Fetching (SWR)
 - `lib/hooks/useDocs.ts` — fetch all documents for a user; export `invalidateDocs(userId?)` after mutations.
