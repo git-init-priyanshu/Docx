@@ -39,6 +39,8 @@ export const createGuestDocument = (initialData?: string) => {
     data: initialData ?? "",
     createdAt: new Date(),
     updatedAt: new Date(),
+    // Guest documents never reach the server, so they are never indexed.
+    indexedHash: null,
     thumbnail: null,
     deleteUrl: null
   }
