@@ -24,6 +24,7 @@ import { invalidateVersions } from "@/lib/hooks/useVersions";
 import { extensions, props } from "./editorConfig";
 import { UpdateDocData } from "../actions";
 import { CreateDocVersion } from "../versions/actions";
+import { IndexDocument } from "../rag/actions";
 
 type EditorPropType = {
   setIsSaving: React.Dispatch<React.SetStateAction<boolean>>;
@@ -96,8 +97,12 @@ export const Editor = ({ setIsSaving }: EditorPropType) => {
           toast.error(response.error);
         } else {
           const version = await CreateDocVersion(docId, data);
-          if (version.success && version.data !== "skipped")
+          if (version.success && version.data !== "skipped") {
             invalidateVersions(docId);
+            // Not awaited: embedding takes seconds and the save is already
+            // durable. A dropped call is retried by the next snapshot.
+            IndexDocument(docId).catch(() => {});
+          }
         }
       } else {
         updateGuestDocument(docId, "data", data);
