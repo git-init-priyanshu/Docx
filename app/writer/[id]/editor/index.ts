@@ -11,13 +11,19 @@ import Collaboration from "@tiptap/extension-collaboration";
 import CollaborationCursor from "@tiptap/extension-collaboration-cursor";
 
 import { getRandomColor } from "@/helpers/getRandomColor";
-import { getGuestUser, updateGuestDocument } from "@/lib/guestServices";
+import {
+  createGuestVersion,
+  getGuestUser,
+  updateGuestDocument,
+} from "@/lib/guestServices";
 import useClientSession from "@/lib/customHooks/useClientSession";
 import useDebounce from "@/lib/customHooks/useDebounce";
 import { useDoc } from "@/lib/hooks/useDoc";
+import { invalidateVersions } from "@/lib/hooks/useVersions";
 
 import { extensions, props } from "./editorConfig";
 import { UpdateDocData } from "../actions";
+import { CreateDocVersion } from "../versions/actions";
 
 type EditorPropType = {
   setIsSaving: React.Dispatch<React.SetStateAction<boolean>>;
@@ -80,18 +86,22 @@ export const Editor = ({ setIsSaving }: EditorPropType) => {
     setIsSaving(true);
 
     try {
+      const data = JSON.stringify(currentEditor.getJSON());
+
+      // Version snapshots ride along with autosave; the throttle that decides
+      // whether a save actually becomes a snapshot lives in versions/policy.
       if (session?.id) {
-        const response = await UpdateDocData(
-          params.id as string,
-          JSON.stringify(currentEditor.getJSON()),
-        );
-        if (!response.success) toast.error(response.error);
+        const response = await UpdateDocData(docId, data);
+        if (!response.success) {
+          toast.error(response.error);
+        } else {
+          const version = await CreateDocVersion(docId, data);
+          if (version.success && version.data !== "skipped")
+            invalidateVersions(docId);
+        }
       } else {
-        updateGuestDocument(
-          params.id as string,
-          "data",
-          JSON.stringify(currentEditor.getJSON()),
-        );
+        updateGuestDocument(docId, "data", data);
+        if (createGuestVersion(docId, data)) invalidateVersions(docId);
       }
     } finally {
       inFlightRef.current = false;
