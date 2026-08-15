@@ -40,7 +40,19 @@ model Document {
   thumbnail String?
   deleteUrl String?
 
-  users UserOnDocument[]
+  users    UserOnDocument[]
+  versions DocumentVersion[]
+}
+
+model DocumentVersion {
+  id          String   @id @default(uuid())
+  documentId  String
+  document    Document @relation(fields: [documentId], references: [id], onDelete: Cascade)
+  data        String
+  createdById String?
+  createdAt   DateTime @default(now())
+
+  @@index([documentId, createdAt])
 }
 
 model UserOnDocument {
