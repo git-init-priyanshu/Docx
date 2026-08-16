@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useParams } from "next/navigation";
 import { useEditor } from "@tiptap/react";
 import { type Editor as TiptapEditor } from "@tiptap/core";
@@ -30,6 +30,14 @@ type EditorPropType = {
   setIsSaving: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
+// docId is carried alongside so effects can tell a live session from one that
+// belongs to the document we just navigated away from.
+type CollabSession = {
+  docId: string;
+  ydoc: Y.Doc;
+  provider: WebsocketProvider;
+};
+
 export const Editor = ({ setIsSaving }: EditorPropType) => {
   const params = useParams();
   const docId = params.id as string;
@@ -47,29 +55,32 @@ export const Editor = ({ setIsSaving }: EditorPropType) => {
     setName(session.id ? session.name || "" : getGuestUser().name);
   }, [session]);
 
-  // Per-document Yjs collaboration. The room is keyed on the docId, not on
-  // the calendar date, so accounts editing different documents never sync
-  // into each other's content. ydoc + provider are scoped to this docId and
-  // torn down on unmount / navigation to a different doc.
-  // Lifecycle is keyed on docId — eslint doesn't see that the factory body
-  // doesn't reference it because the dependency *is* the identity tag.
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  const ydoc = useMemo(() => new Y.Doc(), [docId]);
-  const provider = useMemo(
-    () =>
-      new WebsocketProvider(
-        process.env.NEXT_PUBLIC_WEBSOCKET_URL as string,
-        `doc.${docId}`,
-        ydoc,
-      ),
-    [docId, ydoc],
-  );
+  // Per-document Yjs collaboration. The room is keyed on the docId, so
+  // accounts editing different documents never sync into each other's content.
+  //
+  // Creation and teardown must live in the same effect. Building these with
+  // useMemo and destroying them from a separate cleanup breaks under React
+  // strict mode: the component mounts, unmounts and mounts again, the first
+  // cleanup destroys the provider, and useMemo then hands the second mount the
+  // same already-destroyed objects. The socket never syncs and the room stays
+  // empty for everyone.
+  const [collab, setCollab] = useState<CollabSession | null>(null);
+
   useEffect(() => {
+    const ydoc = new Y.Doc();
+    const provider = new WebsocketProvider(
+      process.env.NEXT_PUBLIC_WEBSOCKET_URL as string,
+      `doc.${docId}`,
+      ydoc,
+    );
+    setCollab({ docId, ydoc, provider });
+
     return () => {
       provider.destroy();
       ydoc.destroy();
+      setCollab(null);
     };
-  }, [provider, ydoc]);
+  }, [docId]);
 
   // Save serialization: never run two persists in parallel. If onUpdate fires
   // again while a save is in flight, we just flip `pendingRef` and re-fire
@@ -132,46 +143,81 @@ export const Editor = ({ setIsSaving }: EditorPropType) => {
     };
   }, [debounce]);
 
+  // The Yjs room, not the database row, is the live state once anyone is
+  // connected. Seeding has to wait for sync to finish, or we cannot tell an
+  // empty room from one whose content simply has not arrived yet.
+  const [isSynced, setIsSynced] = useState(false);
+  useEffect(() => {
+    if (!collab) {
+      setIsSynced(false);
+      return;
+    }
+    // Read the current value rather than assuming false: against a fast server
+    // the provider can finish syncing before React commits this effect, and the
+    // event would already have fired with nobody listening.
+    setIsSynced(collab.provider.synced);
+    const onSync = (synced: boolean) => setIsSynced(synced);
+    collab.provider.on("sync", onSync);
+    return () => {
+      collab.provider.off("sync", onSync);
+    };
+  }, [collab]);
+
   const editor = useEditor(
     {
-      onCreate: ({ editor: currentEditor }) => {
-        provider.on("sync", () => {
-          if (currentEditor.isEmpty) {
-            currentEditor.commands.setContent("");
-          }
-        });
-      },
-      extensions: [
-        ...extensions,
-        Collaboration.configure({ document: ydoc }),
-        CollaborationCursor.configure({
-          provider,
-          user: { name, color: getRandomColor() },
-        }),
-      ],
+      extensions: collab
+        ? [
+            ...extensions,
+            Collaboration.configure({ document: collab.ydoc }),
+            CollaborationCursor.configure({
+              provider: collab.provider,
+              user: { name, color: getRandomColor() },
+            }),
+          ]
+        : extensions,
       editorProps: props,
-      content: "",
+      // No `content` here on purpose. With Collaboration the editor's initial
+      // content is written into the shared Y.Doc, so every client that mounts
+      // would apply its own copy. Content comes from the room, or from the
+      // one-time seed below when the room is empty.
       onUpdate({ editor }) {
         debounce(editor);
       },
     },
-    [docId, ydoc, provider],
+    [docId, collab],
   );
 
   useEffect(() => {
-    if (editor) editor.chain().focus().updateUser({ name }).run();
-  }, [editor, name]);
+    // updateUser comes from CollaborationCursor. useEditor rebuilds the editor
+    // one commit after the collaboration session appears, so there is a render
+    // where collab exists but this editor was still built without the cursor
+    // extension — test for the command rather than for the session.
+    if (!editor || typeof editor.commands.updateUser !== "function") return;
+    editor.chain().focus().updateUser({ name }).run();
+  }, [editor, collab, name]);
 
-  // Hydrate the editor once per document from the server payload. Tracking by
-  // docId rather than a plain boolean lets us re-hydrate when navigating to a
-  // different document without wiping in-progress typing on the current one.
+  // Seed the room from the database only when it is genuinely empty. With the
+  // Collaboration extension, setContent is a Yjs transaction rather than a
+  // local assignment: running it against a room that already holds content
+  // appends the stored copy on top of the live one, and every peer that does
+  // it broadcasts another copy. That is the same bug in both directions —
+  // duplicated text, and a peer's stale database payload overwriting edits
+  // that another peer just made.
+  //
+  // Tracking by docId rather than a plain boolean lets us seed again when
+  // navigating to a different document without wiping the current one.
   const hydratedDocRef = useRef<string | null>(null);
   useEffect(() => {
-    if (!editor || !docData) return;
+    if (!editor || !docData || !isSynced) return;
+    if (!collab || collab.docId !== docId) return;
     if (hydratedDocRef.current === docId) return;
-    editor.commands.setContent(docData.data ? JSON.parse(docData.data) : "");
     hydratedDocRef.current = docId;
-  }, [editor, docData, docId]);
+
+    if (collab.ydoc.getXmlFragment("default").length > 0) return;
+    if (!docData.data) return;
+
+    editor.commands.setContent(JSON.parse(docData.data));
+  }, [editor, docData, docId, isSynced, collab]);
 
   return { editor, docData, error, isLoading };
 };
