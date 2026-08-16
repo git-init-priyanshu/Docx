@@ -31,6 +31,14 @@ model User {
   aiUsage     AiUsage[]
 }
 
+/// Who can open a document without already being a collaborator on it.
+/// `NONE` means the id alone grants nothing; `EDIT` means anyone holding the
+/// link may open and edit, and joins as a collaborator when they do.
+enum LinkAccess {
+  NONE
+  EDIT
+}
+
 model Document {
   id        String   @id @default(uuid())
   name      String   @default("Untitled Document")
@@ -41,6 +49,8 @@ model Document {
   createdBy User     @relation(fields: [userId], references: [id], name: "CreatedDocuments")
   thumbnail String?
   deleteUrl String?
+
+  linkAccess LinkAccess @default(NONE)
 
   // Hash of `data` as of the last fully successful index. A mismatch against
   // the current data means the chunks are stale — indexing failed, or the
