@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { useTheme } from "next-themes";
 import { Sun, Moon, Sparkles } from "lucide-react";
 import { toast } from "sonner";
+import { type Editor as TiptapEditor } from "@tiptap/core";
 
 import { RenameDocument } from "@/app/document/components/Card/actions";
 import useClientSession from "@/lib/customHooks/useClientSession";
@@ -12,6 +13,7 @@ import { getGuestUser, updateGuestDocument } from "@/lib/guestServices";
 import { invalidateDoc } from "@/lib/hooks/useDoc";
 import { invalidateDocs } from "@/lib/hooks/useDocs";
 import getInitials from "@/helpers/getInitials";
+import ExportMenu from "./ExportMenu";
 
 function DocxLogo({ className = "h-5 w-5" }: { className?: string }) {
   return (
@@ -27,6 +29,8 @@ function DocxLogo({ className = "h-5 w-5" }: { className?: string }) {
 type ToolbarProps = {
   docId: string;
   name: string;
+  data: string;
+  editor: TiptapEditor | null;
   isLoading: boolean;
   isNewDoc: boolean;
   isSaving: boolean;
@@ -34,7 +38,7 @@ type ToolbarProps = {
   onAuthRequired: () => void;
 };
 
-export default function Toolbar({ docId, name, isLoading, isNewDoc, isSaving, onAsk, onAuthRequired }: ToolbarProps) {
+export default function Toolbar({ docId, name, data, editor, isLoading, isNewDoc, isSaving, onAsk, onAuthRequired }: ToolbarProps) {
   const session = useClientSession();
   const { resolvedTheme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
@@ -172,6 +176,9 @@ export default function Toolbar({ docId, name, isLoading, isNewDoc, isSaving, on
           <span>Ask DocX</span>
           <span className="font-mono text-[10px] ml-1 text-[var(--lp-muted)]">⌘K</span>
         </button>
+
+        {/* Export */}
+        <ExportMenu editor={editor} fallbackData={data} name={name} />
 
         {/* Theme toggle */}
         <button

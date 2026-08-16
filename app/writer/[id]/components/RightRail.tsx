@@ -9,6 +9,7 @@ import useClientSession from "@/lib/customHooks/useClientSession";
 import { generateText } from "../actions";
 import { insertGeneratedText } from "../editor/insertGeneratedText";
 import { generateTextOptions } from "./BubbleMenuComp/generateTextConfig";
+import HistoryTab from "./HistoryTab";
 
 type AIAction = {
   label: string;
@@ -190,13 +191,7 @@ export default function RightRail({
       )}
 
       {/* History tab */}
-      {tab === "history" && (
-        <div className="p-4 flex flex-col gap-3">
-          <p className="text-[12.5px] text-[var(--lp-muted)]">
-            Document history is coming soon.
-          </p>
-        </div>
-      )}
+      {tab === "history" && <HistoryTab editor={editor} />}
     </aside>
   );
 }

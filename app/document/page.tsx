@@ -1,5 +1,6 @@
 import prisma from "@/prisma/prismaClient";
 import getServerSession from "@/lib/customHooks/getServerSession";
+import AskBar from "@/components/AskBar/AskBar";
 import DocumentContent from "./components/DocumentContent";
 import QuickStart from "./components/QuickStart";
 
@@ -45,10 +46,13 @@ export default async function DocumentPage() {
     : null;
 
   return (
-    <DocumentContent
-      initialDocs={initialDocs}
-      initialSession={initialSession}
-      quickStart={<QuickStart />}
-    />
+    <>
+      <DocumentContent
+        initialDocs={initialDocs}
+        initialSession={initialSession}
+        quickStart={<QuickStart />}
+      />
+      <AskBar />
+    </>
   );
 }

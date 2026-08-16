@@ -26,7 +26,9 @@ model User {
   joinedAt         DateTime   @default(now())
   createdDocs      Document[] @relation("CreatedDocuments")
 
-  documents UserOnDocument[]
+  documents   UserOnDocument[]
+  chatThreads ChatThread[]
+  aiUsage     AiUsage[]
 }
 
 model Document {
@@ -40,7 +42,83 @@ model Document {
   thumbnail String?
   deleteUrl String?
 
-  users UserOnDocument[]
+  // Hash of `data` as of the last fully successful index. A mismatch against
+  // the current data means the chunks are stale — indexing failed, or the
+  // document was written by a path that does not index.
+  indexedHash String?
+
+  users    UserOnDocument[]
+  versions DocumentVersion[]
+  chunks   DocumentChunk[]
+}
+
+/// Retrieval unit for the chat feature. `embedding` and `tsv` are Postgres
+/// types Prisma cannot express, so they are created by raw SQL in the
+/// migration and are invisible to the generated client — every read and write
+/// of them goes through $queryRaw in lib/rag. `tsv` is a generated column
+/// maintained by Postgres itself, so it can never drift from `content`.
+model DocumentChunk {
+  id          String                      @id @default(uuid())
+  documentId  String
+  document    Document                    @relation(fields: [documentId], references: [id], onDelete: Cascade)
+  ordinal     Int
+  headingPath String
+  content     String
+  contentHash String
+  embedding   Unsupported("vector(768)")?
+  tsv         Unsupported("tsvector")?
+  createdAt   DateTime                    @default(now())
+
+  @@unique([documentId, ordinal])
+  @@index([documentId])
+}
+
+model ChatThread {
+  id        String        @id @default(uuid())
+  userId    String
+  user      User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title     String        @default("New chat")
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+  messages  ChatMessage[]
+
+  @@index([userId, updatedAt])
+}
+
+model ChatMessage {
+  id        String     @id @default(uuid())
+  threadId  String
+  thread    ChatThread @relation(fields: [threadId], references: [id], onDelete: Cascade)
+  role      String
+  content   String
+  // Chunk ids that grounded this answer, in the order they were cited.
+  citations Json?
+  createdAt DateTime   @default(now())
+
+  @@index([threadId, createdAt])
+}
+
+/// One row per AI call. Backs the rolling-window rate limit, and doubles as
+/// the usage record later eval work reads from.
+model AiUsage {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  action    String
+  createdAt DateTime @default(now())
+
+  @@index([userId, createdAt])
+}
+
+model DocumentVersion {
+  id          String   @id @default(uuid())
+  documentId  String
+  document    Document @relation(fields: [documentId], references: [id], onDelete: Cascade)
+  data        String
+  createdById String?
+  createdAt   DateTime @default(now())
+
+  @@index([documentId, createdAt])
 }
 
 model UserOnDocument {

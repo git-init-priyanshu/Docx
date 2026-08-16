@@ -5,7 +5,9 @@ import Link from "next/link";
 import { EditorContent } from "@tiptap/react";
 
 import useClientSession from "@/lib/customHooks/useClientSession";
+import AskBar from "@/components/AskBar/AskBar";
 import { Editor } from "./editor";
+import { useScrollToSection } from "./editor/useScrollToSection";
 import Toolbar from "./components/Header/Header";
 import LeftSidebar from "./components/Tabs";
 import FormatBar from "./components/FormatBar";
@@ -28,6 +30,8 @@ export default function WriterPage() {
   const [showLoginPrompt, setShowLoginPrompt] = useState(false);
 
   const { editor, docData, error, isLoading } = Editor({ setIsSaving });
+
+  useScrollToSection(editor, !!docData);
 
   const isGuest = session !== null && !session.id;
 
@@ -118,6 +122,8 @@ export default function WriterPage() {
         <Toolbar
           docId={docData?.id || ""}
           name={docData?.name || ""}
+          data={docData?.data || ""}
+          editor={editor}
           isLoading={!docData}
           isNewDoc={isNewDoc}
           isSaving={isSaving}
@@ -165,6 +171,8 @@ export default function WriterPage() {
         open={showLoginPrompt}
         onClose={() => setShowLoginPrompt(false)}
       />
+
+      <AskBar />
     </div>
   );
 }

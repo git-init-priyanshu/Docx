@@ -2,6 +2,7 @@ import { uuidv4 as uuid } from "lib0/random.js";
 
 import Avatar from "@/public/profilepic_placeholder.png"
 import type { Document, User } from ".prisma/client";
+import { MAX_VERSIONS, shouldSnapshot } from "@/app/writer/[id]/versions/policy";
 
 export const createGuestUser = () => {
   const user = {
@@ -38,6 +39,8 @@ export const createGuestDocument = (initialData?: string) => {
     data: initialData ?? "",
     createdAt: new Date(),
     updatedAt: new Date(),
+    // Guest documents never reach the server, so they are never indexed.
+    indexedHash: null,
     thumbnail: null,
     deleteUrl: null
   }
@@ -101,4 +104,37 @@ export const deleteGuestDocument = (docId: string) => {
 
   allDocuments.splice(index, 1);
   localStorage.setItem('documents', JSON.stringify(allDocuments));
+
+  localStorage.removeItem(versionsKey(docId));
+}
+
+type GuestVersion = { id: string; data: string; createdAt: string };
+
+const versionsKey = (docId: string) => `versions:${docId}`;
+
+// Newest first, matching the ordering GetDocVersions returns for signed-in users.
+export const getGuestVersions = (docId: string): GuestVersion[] =>
+  JSON.parse(localStorage.getItem(versionsKey(docId)) || '[]');
+
+export const createGuestVersion = (docId: string, data: string) => {
+  const versions = getGuestVersions(docId);
+  if (!shouldSnapshot(versions[0], data)) return false;
+
+  const next = [
+    { id: uuid(), data, createdAt: new Date().toISOString() },
+    ...versions,
+  ].slice(0, MAX_VERSIONS);
+
+  localStorage.setItem(versionsKey(docId), JSON.stringify(next));
+
+  return true;
+}
+
+export const restoreGuestVersion = (docId: string, versionId: string) => {
+  const version = getGuestVersions(docId).find((e) => e.id === versionId);
+  if (!version) return;
+
+  updateGuestDocument(docId, 'data', version.data);
+
+  return version.data;
 }
