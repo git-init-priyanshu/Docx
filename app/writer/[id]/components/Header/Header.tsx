@@ -14,6 +14,7 @@ import { invalidateDoc } from "@/lib/hooks/useDoc";
 import { invalidateDocs } from "@/lib/hooks/useDocs";
 import getInitials from "@/helpers/getInitials";
 import ExportMenu from "./ExportMenu";
+import ShareDialog from "./ShareDialog";
 
 function DocxLogo({ className = "h-5 w-5" }: { className?: string }) {
   return (
@@ -92,22 +93,6 @@ export default function Toolbar({ docId, name, data, editor, isLoading, isNewDoc
       debouncedSave.flush();
     };
   }, [debouncedSave]);
-
-  const shareDocument = () => {
-    if (session !== null && !session.id) {
-      onAuthRequired();
-      return;
-    }
-    navigator.clipboard
-      .writeText(window.location.href)
-      .then(() => {
-        toast.success("Share link copied to clipboard");
-      })
-      .catch((e) => {
-        console.log(e);
-        toast.error("Couldn't copy link");
-      });
-  };
 
   return (
     <div className="h-[52px] border-b border-[var(--lp-border)] bg-[var(--lp-card)] flex items-center px-4 gap-3 shrink-0">
@@ -190,12 +175,12 @@ export default function Toolbar({ docId, name, data, editor, isLoading, isNewDoc
         </button>
 
         {/* Share */}
-        <button
-          onClick={shareDocument}
-          className="h-8 px-3 rounded-md text-[12.5px] font-medium transition-opacity hover:opacity-80 bg-[var(--lp-ink)] text-[var(--lp-paper)]"
-        >
-          Share
-        </button>
+        <ShareDialog
+          docId={docId}
+          name={name}
+          isGuest={session !== null && !session.id}
+          onAuthRequired={onAuthRequired}
+        />
       </div>
     </div>
   );
