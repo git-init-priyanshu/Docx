@@ -42,7 +42,8 @@ export const createGuestDocument = (initialData?: string) => {
     // Guest documents never reach the server, so they are never indexed.
     indexedHash: null,
     thumbnail: null,
-    deleteUrl: null
+    deleteUrl: null,
+    linkAccess: "NONE"
   }
 
   const allDocuments: Document[] = JSON.parse(localStorage.getItem('documents') || '[]');
