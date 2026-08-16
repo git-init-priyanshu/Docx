@@ -33,6 +33,8 @@ import LoaderButton from "@/components/LoaderButton";
 import useClientSession from "@/lib/customHooks/useClientSession";
 import { invalidateDocs } from "@/lib/hooks/useDocs";
 
+import { GetSharing } from "@/app/writer/[id]/sharing/actions";
+
 import { DeleteDocument, RenameDocument } from "../actions";
 import { CreateNewDocument } from "../../Header/actions";
 
@@ -98,19 +100,33 @@ export default function CardOptions({
     router.push(`/writer/${docId}`);
   };
 
-  const shareDocument = () => {
-    navigator.clipboard
-      .writeText(`${window.location.origin}/writer/${docId}`)
-      .then(() => {
-        toast.success("Share link copied to clipboard");
-      })
-      .catch((e) => {
-        console.log(e);
-        toast.error("Couldn't copy link");
-      })
-      .finally(() => {
-        setIsOptionsOpen(false);
-      });
+  const shareDocument = async () => {
+    setIsOptionsOpen(false);
+
+    const response = await GetSharing(docId);
+    if (!response.success || !response.data) {
+      toast.error(response.error);
+      return;
+    }
+
+    // A link is only worth copying once link access is on — otherwise it
+    // resolves to "does not exist" for whoever receives it.
+    if (response.data.linkAccess === "NONE") {
+      toast.warning(
+        "Link sharing is off. Open the document and turn on “Anyone with the link”.",
+      );
+      return;
+    }
+
+    try {
+      await navigator.clipboard.writeText(
+        `${window.location.origin}/writer/${docId}`,
+      );
+      toast.success("Link copied — anyone with it can edit");
+    } catch (e) {
+      console.log(e);
+      toast.error("Couldn't copy link");
+    }
   };
 
   const duplicateDocument = async () => {
