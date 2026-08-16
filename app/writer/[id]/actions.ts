@@ -4,6 +4,7 @@ import { GoogleGenerativeAI } from "@google/generative-ai";
 
 import prisma from "@/prisma/prismaClient";
 import getServerSession from "@/lib/customHooks/getServerSession";
+import { joinViaLink, resolveDocumentAccess } from "@/lib/documentAccess";
 import {
   generateTextOptions,
   prompts,
@@ -18,25 +19,20 @@ export const GetDocDetails = async (id: any) => {
         error: "User is not logged in",
       };
 
-    // Read-only: opening a document must never grant access to it. Membership
-    // is written by document creation and by an explicit share, so a caller who
-    // is not already in UserOnDocument gets the same answer as for a document
-    // that does not exist.
-    const doc = await prisma.document.findFirst({
-      where: {
-        id,
-        users: {
-          some: { userId: session.id },
-        },
-      },
-    });
-    if (!doc)
+    // Opening a document grants access only when the owner has shared its link.
+    // A caller who is neither a collaborator nor holding a shared link gets the
+    // same answer as for a document that does not exist, so ids cannot be
+    // probed for existence.
+    const access = await resolveDocumentAccess(id, session.id);
+    if (!access)
       return {
         success: false,
         error: "Document does not exist",
       };
 
-    return { success: true, data: doc };
+    if (!access.isMember) await joinViaLink(id, session.id);
+
+    return { success: true, data: access.document };
   } catch (e) {
     console.log(e);
     return { success: false, error: "Internal server error" };
