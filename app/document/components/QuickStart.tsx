@@ -1,6 +1,7 @@
 import DocThumbnail from "@/components/DocThumbnail";
 import { TEMPLATES } from "@/lib/templates";
 import NewDocButton from "./NewDocButton";
+import ImportGoogleDoc from "./ImportGoogleDoc";
 
 export default function QuickStart() {
   return (
@@ -14,6 +15,7 @@ export default function QuickStart() {
             Pick a template
           </h2>
         </div>
+        <ImportGoogleDoc />
       </div>
 
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
