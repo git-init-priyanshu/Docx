@@ -45,7 +45,10 @@ export const SearchDocAction = async (value: string) => {
   }
 };
 
-export const CreateNewDocument = async (initialData?: string) => {
+export const CreateNewDocument = async (
+  initialData?: string,
+  name?: string,
+) => {
   try {
     const session = await getServerSession();
     if (!session.id)
@@ -57,6 +60,8 @@ export const CreateNewDocument = async (initialData?: string) => {
     const doc = await prisma.document.create({
       data: {
         data: initialData ?? "",
+        // Left unset when absent so the schema default applies.
+        ...(name?.trim() ? { name: name.trim() } : {}),
         userId: session.id,
         users: {
           create: {
