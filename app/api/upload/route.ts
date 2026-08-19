@@ -22,6 +22,12 @@ export async function POST(request: Request) {
       body,
       request,
       onBeforeGenerateToken: async (_pathname, clientPayload) => {
+        // Checked explicitly because the failure is otherwise indistinguishable
+        // from a rejected upload: the client only ever reports "Failed to
+        // retrieve the client token", whatever went wrong here.
+        if (!process.env.BLOB_READ_WRITE_TOKEN)
+          throw new Error("BLOB_READ_WRITE_TOKEN is not set");
+
         const session = await getServerSession();
         if (!session?.id) throw new Error("Sign in to upload images");
 
@@ -44,6 +50,11 @@ export async function POST(request: Request) {
 
     return NextResponse.json(result);
   } catch (error) {
+    // Logged rather than only returned: the client library replaces whatever
+    // this responds with by its own generic message, so an unlogged reason is
+    // a reason nobody ever sees.
+    console.error("[upload] token request failed:", error);
+
     return NextResponse.json(
       { error: error instanceof Error ? error.message : "Upload failed" },
       { status: 400 },
