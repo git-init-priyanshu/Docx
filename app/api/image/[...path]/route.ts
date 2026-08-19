@@ -1,13 +1,14 @@
 import { NextResponse } from "next/server";
-import { issueSignedToken, presignUrl } from "@vercel/blob";
 
 import getServerSession from "@/lib/customHooks/getServerSession";
 import { resolveDocumentAccess } from "@/lib/documentAccess";
 import { documentIdFromBlobPath } from "@/lib/images/paths";
+import { IMAGE_LINK_TTL_MS, signedImageUrl } from "@/lib/images/signedRead";
 
-// Long enough for a slow page to finish loading its images, short enough that a
-// copied URL is worthless by the time it is pasted anywhere.
-const LINK_TTL_MS = 5 * 60 * 1000;
+// Kept under the life of the URL it points at, so a cached redirect can never
+// hand out one that has already expired. The cost is that access revoked in
+// this window is not felt until it lapses.
+const REDIRECT_CACHE_SECONDS = Math.floor(IMAGE_LINK_TTL_MS / 1000) - 60;
 
 /**
  * Serves an uploaded image to whoever is allowed to read the document it
@@ -37,27 +38,11 @@ export async function GET(
   const pathname = params.path.join("/");
 
   try {
-    const signedToken = await issueSignedToken({
-      // Explicit for the same reason as the upload route: left out, the SDK
-      // prefers VERCEL_OIDC_TOKEN whenever BLOB_STORE_ID is set, which fails
-      // anywhere OIDC is not enabled.
-      token: process.env.BLOB_READ_WRITE_TOKEN,
-      pathname,
-      operations: ["get"],
-      validUntil: Date.now() + LINK_TTL_MS,
-    });
-
-    const { presignedUrl } = await presignUrl(signedToken, {
-      operation: "get",
-      pathname,
-      access: "private",
-    });
-
-    return NextResponse.redirect(presignedUrl, {
+    return NextResponse.redirect(await signedImageUrl(pathname), {
       status: 307,
-      // The destination expires, so a cached redirect would outlive what it
-      // points at. Blob sets its own caching on the image behind it.
-      headers: { "Cache-Control": "private, no-store" },
+      headers: {
+        "Cache-Control": `private, max-age=${REDIRECT_CACHE_SECONDS}`,
+      },
     });
   } catch (error) {
     console.error("[image] could not sign a read for", pathname, error);
