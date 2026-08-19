@@ -1,6 +1,7 @@
 "use client";
 
 import useSWR, { mutate } from "swr";
+import type { DocumentSource } from "@prisma/client";
 
 import { GetAllDocs } from "@/app/document/actions";
 import { getAllGuestDocuments } from "@/lib/guestServices";
@@ -10,6 +11,8 @@ type Doc = {
   name: string;
   data: string | null;
   updatedAt: Date;
+  // Absent on guest documents, which are only ever created locally.
+  source?: DocumentSource;
   createdBy: { id: string; name: string; picture: string | null };
   users: { user: { name: string; picture: string | null } }[];
 };

@@ -4,6 +4,7 @@ import { useState, useEffect, type ReactNode } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { LayoutGrid, List } from "lucide-react";
+import type { DocumentSource } from "@prisma/client";
 
 import { CreateNewDocument } from "./Header/actions";
 import { createGuestDocument } from "@/lib/guestServices";
@@ -18,6 +19,8 @@ type Doc = {
   name: string;
   data: string | null;
   updatedAt: Date;
+  // Absent on guest documents, which are only ever created locally.
+  source?: DocumentSource;
   createdBy: { id: string; name: string; picture: string | null };
   users: { user: { name: string; picture: string | null } }[];
 };
@@ -90,6 +93,7 @@ export default function DocumentContent({ initialDocs, initialSession, quickStar
     .filter(d => {
       if (folder === "Drafts") return isGuest || d.createdBy.id === userId;
       if (folder === "Shared") return !isGuest && d.createdBy.id !== userId;
+      if (folder === "Imported") return d.source === "GOOGLE_DOCS";
       return true;
     })
     .filter(d => !q || d.name.toLowerCase().includes(q.toLowerCase()))
@@ -157,6 +161,7 @@ export default function DocumentContent({ initialDocs, initialSession, quickStar
                       data={d.data}
                       title={d.name}
                       updatedAt={d.updatedAt}
+                      source={d.source}
                       createdBy={d.createdBy}
                       users={d.users}
                       view="grid"
@@ -252,6 +257,7 @@ export default function DocumentContent({ initialDocs, initialSession, quickStar
                       data={d.data}
                       title={d.name}
                       updatedAt={d.updatedAt}
+                      source={d.source}
                       createdBy={d.createdBy}
                       users={d.users}
                       view="grid"
@@ -271,6 +277,7 @@ export default function DocumentContent({ initialDocs, initialSession, quickStar
                       data={d.data}
                       title={d.name}
                       updatedAt={d.updatedAt}
+                      source={d.source}
                       createdBy={d.createdBy}
                       users={d.users}
                       view="list"

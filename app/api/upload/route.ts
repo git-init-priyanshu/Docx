@@ -8,6 +8,7 @@ import {
 import getServerSession from "@/lib/customHooks/getServerSession";
 import { resolveDocumentAccess } from "@/lib/documentAccess";
 import { ALLOWED_CONTENT_TYPES, MAX_UPLOAD_BYTES } from "@/lib/images/constants";
+import { isBlobPathFor } from "@/lib/images/paths";
 
 /**
  * Issues the short-lived presigned URL the browser uploads with.
@@ -46,6 +47,14 @@ export async function POST(request: Request) {
         // as opening one: a collaborator, or link access being on.
         const access = await resolveDocumentAccess(clientPayload, session.id);
         if (!access) throw new Error("No access to that document");
+
+        // The path is what the image route later reads the document id back
+        // out of, so a token is only ever signed for a path that agrees with
+        // the document just checked — otherwise anyone could write into
+        // another document's folder and have it served to that document's
+        // readers.
+        if (!isBlobPathFor(pathname, clientPayload))
+          throw new Error("Upload path does not belong to that document");
 
         const token = await issueSignedToken({
           // Passed explicitly so the credential does not depend on the

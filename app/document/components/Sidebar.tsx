@@ -1,13 +1,14 @@
 "use client";
 
-import { Layers2, PenLine, Users } from "lucide-react";
+import { Import, Layers2, PenLine, Users } from "lucide-react";
 
 import AppSidebar from "@/components/AppSidebar";
 
 const FOLDERS = [
-  { id: "all",    label: "All documents",  Icon: Layers2 },
-  { id: "Drafts", label: "Drafts",          Icon: PenLine },
-  { id: "Shared", label: "Shared with me",  Icon: Users   },
+  { id: "all",      label: "All documents",   Icon: Layers2 },
+  { id: "Drafts",   label: "Drafts",          Icon: PenLine },
+  { id: "Shared",   label: "Shared with me",  Icon: Users   },
+  { id: "Imported", label: "Imported",        Icon: Import  },
 ];
 
 type SidebarProps = {

@@ -3,7 +3,8 @@
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import type { User } from "@prisma/client";
+import { Import } from "lucide-react";
+import type { DocumentSource, User } from "@prisma/client";
 
 import prettifyDate from "@/helpers/prettifyDates";
 import useClientSession from "@/lib/customHooks/useClientSession";
@@ -27,17 +28,29 @@ type DocCardItemProps = {
   data: string | null;
   title: string;
   updatedAt: Date;
+  source?: DocumentSource;
   createdBy: { id: string; name: string; picture: string | null };
   users: { user: Pick<User, "name" | "picture"> }[];
   view: "grid" | "list";
   colorIndex: number;
 };
 
+// Imported content was written in another editor, so a stray margin or an odd
+// font is likely something the conversion did rather than something the writer
+// chose. Saying where a document came from is what makes that legible.
+const ImportedBadge = () => (
+  <span className="inline-flex items-center gap-1 h-[18px] px-1.5 rounded font-mono uppercase tracking-wider text-[9px] shrink-0 border border-[var(--lp-border)] bg-[color-mix(in_oklab,var(--lp-accent)_10%,var(--lp-card))] text-[var(--lp-muted)]">
+    <Import className="w-2.5 h-2.5" strokeWidth={2} />
+    Imported
+  </span>
+);
+
 export default function DocCardItem({
   docId,
   data,
   title,
   updatedAt,
+  source,
   createdBy,
   users,
   view,
@@ -76,6 +89,7 @@ export default function DocCardItem({
     };
   }, [debounce]);
 
+  const isImported = source === "GOOGLE_DOCS";
   const isOwner = !session?.id || createdBy.id === session.id;
   const ownerName = isOwner ? "You" : createdBy.name;
   const ownerInitial = (ownerName[0] ?? "?").toUpperCase();
@@ -109,6 +123,7 @@ export default function DocCardItem({
               onChange={e => { setName(e.target.value); debounce(e.target.value); }}
             />
           </div>
+          {isImported && <ImportedBadge />}
         </div>
 
         {/* Owner */}
@@ -144,13 +159,16 @@ export default function DocCardItem({
 
       {/* Card footer */}
       <div className="p-3">
-        <input
-          ref={inputRef}
-          value={name}
-          className="text-[13px] font-medium truncate w-full bg-transparent border-none outline-none focus:bg-[var(--lp-paper-2)] focus:px-1 rounded transition text-[var(--lp-ink)]"
-          onClick={e => e.stopPropagation()}
-          onChange={e => { setName(e.target.value); debounce(e.target.value); }}
-        />
+        <div className="flex items-center gap-1.5">
+          <input
+            ref={inputRef}
+            value={name}
+            className="text-[13px] font-medium truncate flex-1 min-w-0 bg-transparent border-none outline-none focus:bg-[var(--lp-paper-2)] focus:px-1 rounded transition text-[var(--lp-ink)]"
+            onClick={e => e.stopPropagation()}
+            onChange={e => { setName(e.target.value); debounce(e.target.value); }}
+          />
+          {isImported && <ImportedBadge />}
+        </div>
         <div className="flex items-center justify-between mt-1.5">
           <div className="flex items-center gap-1.5">
             <AvatarList users={users} />
