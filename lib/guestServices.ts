@@ -43,7 +43,10 @@ export const createGuestDocument = (initialData?: string) => {
     indexedHash: null,
     thumbnail: null,
     deleteUrl: null,
-    linkAccess: "NONE"
+    linkAccess: "NONE",
+    // Importing from Google Docs needs a session, so a guest document is
+    // always one someone started here.
+    source: "BLANK"
   }
 
   const allDocuments: Document[] = JSON.parse(localStorage.getItem('documents') || '[]');
