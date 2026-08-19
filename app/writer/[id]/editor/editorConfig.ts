@@ -2,6 +2,7 @@ import StarterKit from "@tiptap/starter-kit";
 import Highlight from "@tiptap/extension-highlight";
 import TextAlign from "@tiptap/extension-text-align";
 import { TableKit } from "@tiptap/extension-table";
+import Image from "@tiptap/extension-image";
 import { Color, FontFamily, TextStyle } from "@tiptap/extension-text-style";
 
 import { cn } from "@/lib/utils";
@@ -30,6 +31,13 @@ export const extensions = [
   // ordinary document change and reaches collaborators through Yjs like any
   // other edit.
   TableKit.configure({ table: { resizable: true } }),
+  // `inline` matches how Google Docs models images — as content within a
+  // paragraph — which keeps the importer a straight element-for-element map.
+  //
+  // `allowBase64` is what lets a guest's image survive: with no session there
+  // is no upload token, so their images are data URIs, and the extension
+  // strips those on parse otherwise.
+  Image.configure({ inline: true, allowBase64: true }),
 ];
 
 export const props = {

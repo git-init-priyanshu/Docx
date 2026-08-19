@@ -35,6 +35,7 @@ Required in `.env`:
 - `GEMINI_API_KEY` — Google Gemini AI (used for text generation in the editor)
 - `NEXT_PUBLIC_WEBSOCKET_URL` — WebSocket server URL for Yjs real-time collaboration
 - `BACKEND_SERVER_URL` — Backend service for thumbnail upload queue
+- `BLOB_READ_WRITE_TOKEN` — Vercel Blob store, for editor image uploads
 - `APP_URL` — Base URL
 
 ## Architecture

@@ -21,7 +21,10 @@ import useDebounce from "@/lib/customHooks/useDebounce";
 import { useDoc } from "@/lib/hooks/useDoc";
 import { invalidateVersions } from "@/lib/hooks/useVersions";
 
+import { resolveImageSrc } from "@/lib/images/upload";
+
 import { extensions, props } from "./editorConfig";
+import { ImageUpload } from "./imageUpload";
 import { UpdateDocData } from "../actions";
 import { CreateDocVersion } from "../versions/actions";
 import { IndexDocument } from "../rag/actions";
@@ -163,18 +166,30 @@ export const Editor = ({ setIsSaving }: EditorPropType) => {
     };
   }, [collab]);
 
+  // useEditor is not rebuilt when the session resolves, so the upload path
+  // reads the current value instead of closing over whatever it was when the
+  // editor was built — otherwise signing in mid-visit still writes data URIs.
+  const isSignedInRef = useRef(false);
+  isSignedInRef.current = Boolean(session?.id);
+
   const editor = useEditor(
     {
-      extensions: collab
-        ? [
-            ...extensions,
-            Collaboration.configure({ document: collab.ydoc }),
-            CollaborationCaret.configure({
-              provider: collab.provider,
-              user: { name, color: getRandomColor() },
-            }),
-          ]
-        : extensions,
+      extensions: [
+        ...extensions,
+        ImageUpload.configure({
+          upload: (file) => resolveImageSrc(file, docId, isSignedInRef.current),
+          onError: (message) => toast.error(message),
+        }),
+        ...(collab
+          ? [
+              Collaboration.configure({ document: collab.ydoc }),
+              CollaborationCaret.configure({
+                provider: collab.provider,
+                user: { name, color: getRandomColor() },
+              }),
+            ]
+          : []),
+      ],
       editorProps: props,
       // Next renders this on the server first, and rendering the editor during
       // that pass would mismatch the client's tree on hydration.

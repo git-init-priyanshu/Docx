@@ -104,6 +104,9 @@ GEMINI_API_KEY="your-gemini-api-key"
 # Real-time collaboration
 NEXT_PUBLIC_WEBSOCKET_URL="ws://localhost:1234"
 
+# Image uploads (Vercel Blob)
+BLOB_READ_WRITE_TOKEN="vercel_blob_rw_..."
+
 # Misc
 BACKEND_SERVER_URL="http://localhost:4000"
 APP_URL="http://localhost:3000"
