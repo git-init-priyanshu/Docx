@@ -1,6 +1,7 @@
 import StarterKit from "@tiptap/starter-kit";
 import Highlight from "@tiptap/extension-highlight";
 import TextAlign from "@tiptap/extension-text-align";
+import { TableKit } from "@tiptap/extension-table";
 import { Color, FontFamily, TextStyle } from "@tiptap/extension-text-style";
 
 import { cn } from "@/lib/utils";
@@ -25,6 +26,10 @@ export const extensions = [
   TextAlign.configure({
     types: ["heading", "paragraph"],
   }),
+  // Column widths are stored as a colwidth attr on each cell, so a drag is an
+  // ordinary document change and reaches collaborators through Yjs like any
+  // other edit.
+  TableKit.configure({ table: { resizable: true } }),
 ];
 
 export const props = {
