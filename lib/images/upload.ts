@@ -1,6 +1,7 @@
 import { uploadPresigned } from "@vercel/blob/client";
 
 import { ALLOWED_CONTENT_TYPES, MAX_UPLOAD_BYTES } from "./constants";
+import { blobPathname, imageSrc } from "./paths";
 
 export const isSupportedImage = (file: File) =>
   ALLOWED_CONTENT_TYPES.includes(file.type);
@@ -72,11 +73,15 @@ export const resolveImageSrc = async (
   // Presigned rather than the older client-token upload: this store rejects
   // that path, and the rejection arrives without CORS headers so the browser
   // reports it as a CORS error instead of the 4xx it is.
-  const blob = await uploadPresigned(file.name, file, {
-    access: "public",
+  //
+  // The store is private — it refuses a public write outright — so the returned
+  // storage URL is not something an <img> can load. The document points at the
+  // image route instead, which serves it to readers of this document.
+  const blob = await uploadPresigned(blobPathname(docId, file.name), file, {
+    access: "private",
     handleUploadUrl: "/api/upload",
     clientPayload: docId,
   });
 
-  return blob.url;
+  return imageSrc(blob.pathname);
 };
