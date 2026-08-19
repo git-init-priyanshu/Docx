@@ -83,6 +83,26 @@ function ThumbnailNode({ node }: { node: TipTapNode }) {
         </div>
       );
 
+    case "image": {
+      const src = node.attrs?.src as string | undefined;
+      if (!src) return null;
+      return (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img
+          src={src}
+          alt=""
+          style={{
+            maxWidth: "100%",
+            maxHeight: 90,
+            objectFit: "cover",
+            borderRadius: 4,
+            marginBottom: 8,
+            display: "block",
+          }}
+        />
+      );
+    }
+
     // Only the top-left corner survives at this scale, so the preview shows
     // enough rows and columns to read as a table and stops there.
     case "table":

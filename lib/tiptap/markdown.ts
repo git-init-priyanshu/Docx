@@ -44,12 +44,23 @@ function applyMarks(text: string, marks: TipTapMark[] = []): string {
   return out;
 }
 
+const altOf = (node: TipTapNode) => (node.attrs?.alt as string) || "image";
+
+// A guest's image is a data URI holding the whole encoded file. Writing that
+// out would bury a document's words under a megabyte of base64, in an exported
+// file and in an embedding alike, so only the alt text survives.
+const imageMarkdown = (node: TipTapNode) => {
+  const src = (node.attrs?.src as string) ?? "";
+  return `![${altOf(node)}](${src.startsWith("data:") ? "" : src})`;
+};
+
 // Render the inline content of a block node to Markdown (text + marks + breaks).
 function renderInline(nodes: TipTapNode[] = []): string {
   return nodes
     .map((node) => {
       if (node.type === "hardBreak") return "  \n";
       if (node.type === "text") return applyMarks(node.text ?? "", node.marks);
+      if (node.type === "image") return imageMarkdown(node);
       return renderInline(node.content);
     })
     .join("");
@@ -61,6 +72,7 @@ function plainInline(nodes: TipTapNode[] = []): string {
     .map((node) => {
       if (node.type === "hardBreak") return "\n";
       if (node.type === "text") return node.text ?? "";
+      if (node.type === "image") return altOf(node);
       return plainInline(node.content);
     })
     .join("");
