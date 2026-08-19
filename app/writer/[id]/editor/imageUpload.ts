@@ -2,10 +2,10 @@ import { Extension } from "@tiptap/core";
 import { Plugin, PluginKey, type EditorState } from "@tiptap/pm/state";
 import { Decoration, DecorationSet } from "@tiptap/pm/view";
 
-import { isSupportedImage } from "@/lib/images/upload";
+import { isSupportedImage, type UploadedImage } from "@/lib/images/upload";
 
 export type ImageUploadOptions = {
-  upload: (file: File) => Promise<string>;
+  upload: (file: File) => Promise<UploadedImage>;
   onError: (message: string) => void;
 };
 
@@ -148,7 +148,7 @@ export const ImageUpload = Extension.create<ImageUploadOptions>({
             );
 
             upload(file)
-              .then((src) => {
+              .then(({ src, thumbData, width, height }) => {
                 const pos = placeholderPos(view.state, id);
                 if (pos === null) return;
 
@@ -156,7 +156,7 @@ export const ImageUpload = Extension.create<ImageUploadOptions>({
                   .chain()
                   .insertContentAt(pos, {
                     type: "image",
-                    attrs: { src, alt: file.name },
+                    attrs: { src, thumbData, width, height, alt: file.name },
                   })
                   .run();
               })

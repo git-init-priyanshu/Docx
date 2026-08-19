@@ -7,6 +7,25 @@ import { Color, FontFamily, TextStyle } from "@tiptap/extension-text-style";
 
 import { cn } from "@/lib/utils";
 
+// The editor always shows the full image; the small copy exists only so a
+// dashboard thumbnail does not have to download it. `rendered: false` keeps it
+// out of the HTML while leaving it in the document JSON, which is what the
+// preview is built from.
+//
+// Width and height do reach the HTML, where they reserve the right amount of
+// space before the image loads. They are also what lets a preview draw the
+// picture at the size it has in the document rather than an arbitrary one.
+const ImageWithThumbnail = Image.extend({
+  addAttributes() {
+    return {
+      ...this.parent?.(),
+      thumbData: { default: null, rendered: false },
+      width: { default: null },
+      height: { default: null },
+    };
+  },
+});
+
 export const extensions = [
   StarterKit.configure({
     // Undo/redo is Yjs's job once Collaboration is attached; the local history
@@ -37,7 +56,7 @@ export const extensions = [
   // `allowBase64` is what lets a guest's image survive: with no session there
   // is no upload token, so their images are data URIs, and the extension
   // strips those on parse otherwise.
-  Image.configure({ inline: true, allowBase64: true }),
+  ImageWithThumbnail.configure({ inline: true, allowBase64: true }),
 ];
 
 export const props = {
