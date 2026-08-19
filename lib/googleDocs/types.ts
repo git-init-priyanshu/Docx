@@ -79,9 +79,25 @@ export type Paragraph = {
   bullet?: Bullet;
 };
 
+/**
+ * A cell holds structural elements of its own, so a table can contain lists,
+ * headings and further tables. The type is recursive for that reason.
+ */
+export type TableCell = {
+  content?: StructuralElement[];
+};
+
+export type TableRow = {
+  tableCells?: TableCell[];
+};
+
+export type Table = {
+  tableRows?: TableRow[];
+};
+
 export type StructuralElement = {
   paragraph?: Paragraph;
-  table?: object;
+  table?: Table;
   tableOfContents?: object;
   sectionBreak?: object;
 };

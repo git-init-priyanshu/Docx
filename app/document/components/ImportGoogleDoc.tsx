@@ -20,15 +20,12 @@ const plural = (count: number, noun: string) =>
   `${count} ${noun}${count === 1 ? "" : "s"}`;
 
 /**
- * The editor has no node for tables or images, so they are lost on import.
- * Saying so beats letting someone discover it in a document they trusted.
+ * The editor has no node for images, so they are lost on import. Saying so
+ * beats letting someone discover it in a document they trusted.
  */
-const describeDropped = ({ tables, images }: DroppedContent) => {
-  const parts: string[] = [];
-  if (tables > 0) parts.push(plural(tables, "table"));
-  if (images > 0) parts.push(plural(images, "image"));
-  if (parts.length === 0) return null;
-  return `${parts.join(" and ")} could not be imported`;
+const describeDropped = ({ images }: DroppedContent) => {
+  if (images === 0) return null;
+  return `${plural(images, "image")} could not be imported`;
 };
 
 export default function ImportGoogleDoc() {
