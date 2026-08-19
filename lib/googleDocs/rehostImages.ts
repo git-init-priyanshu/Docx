@@ -1,5 +1,6 @@
 import { put } from "@vercel/blob";
 
+import { blobPathname, imageSrc } from "@/lib/images/paths";
 import type { TiptapNode } from "./toTiptap";
 
 // Enough at once to keep an image-heavy import inside a function timeout,
@@ -43,8 +44,13 @@ const pruneEmptyImages = (node: TiptapNode): TiptapNode => {
  * never reaches the server, so there is no authenticated fetch to forward. The
  * URLs are pre-signed and need no credentials, and an image that turns out to
  * need them simply fails and is reported.
+ *
+ * `docId` is the id the imported document is about to be created with. Images
+ * are stored under it and served through the image route, exactly as an image
+ * uploaded in the editor is, so nothing downstream has to know where a picture
+ * came from.
  */
-export const rehostImages = async (doc: TiptapNode) => {
+export const rehostImages = async (doc: TiptapNode, docId: string) => {
   const images = collectImages(doc);
   if (images.length === 0) return { doc, failed: 0 };
 
@@ -62,17 +68,21 @@ export const rehostImages = async (doc: TiptapNode) => {
       const extension = EXTENSIONS[blob.type];
       if (!extension) throw new Error(`unsupported type ${blob.type}`);
 
-      const { url } = await put(`imported-${index + 1}.${extension}`, blob, {
-        // Explicit for the same reason as the upload route: without it the SDK
-        // prefers VERCEL_OIDC_TOKEN whenever BLOB_STORE_ID is set, and OIDC is
-        // not enabled in every environment.
-        token: process.env.BLOB_READ_WRITE_TOKEN,
-        access: "public",
-        addRandomSuffix: true,
-        contentType: blob.type,
-      });
+      const stored = await put(
+        blobPathname(docId, `imported-${index + 1}.${extension}`),
+        blob,
+        {
+          // Explicit for the same reason as the upload route: without it the
+          // SDK prefers VERCEL_OIDC_TOKEN whenever BLOB_STORE_ID is set, and
+          // OIDC is not enabled in every environment.
+          token: process.env.BLOB_READ_WRITE_TOKEN,
+          access: "private",
+          addRandomSuffix: true,
+          contentType: blob.type,
+        },
+      );
 
-      node.attrs = { ...node.attrs, src: url };
+      node.attrs = { ...node.attrs, src: imageSrc(stored.pathname) };
     } catch {
       failed += 1;
       node.attrs = { ...node.attrs, src: "" };
