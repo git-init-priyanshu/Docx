@@ -39,6 +39,14 @@ enum LinkAccess {
   EDIT
 }
 
+// Where a document's first version came from. Imported documents are worth
+// telling apart: their content was written somewhere else, so a formatting
+// oddity is likely an import artefact rather than something someone typed.
+enum DocumentSource {
+  BLANK
+  GOOGLE_DOCS
+}
+
 model Document {
   id        String   @id @default(uuid())
   name      String   @default("Untitled Document")
@@ -50,7 +58,8 @@ model Document {
   thumbnail String?
   deleteUrl String?
 
-  linkAccess LinkAccess @default(NONE)
+  linkAccess LinkAccess     @default(NONE)
+  source     DocumentSource @default(BLANK)
 
   // Hash of `data` as of the last fully successful index. A mismatch against
   // the current data means the chunks are stale — indexing failed, or the
