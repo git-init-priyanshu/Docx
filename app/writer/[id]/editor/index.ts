@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useParams } from "next/navigation";
 import { useEditor } from "@tiptap/react";
 import { type Editor as TiptapEditor } from "@tiptap/core";
@@ -21,7 +21,10 @@ import useDebounce from "@/lib/customHooks/useDebounce";
 import { useDoc } from "@/lib/hooks/useDoc";
 import { invalidateVersions } from "@/lib/hooks/useVersions";
 
+import { resolveImageSrc } from "@/lib/images/upload";
+
 import { extensions, props } from "./editorConfig";
+import { ImageUpload } from "./imageUpload";
 import { UpdateDocData } from "../actions";
 import { CreateDocVersion } from "../versions/actions";
 import { IndexDocument } from "../rag/actions";
@@ -163,18 +166,30 @@ export const Editor = ({ setIsSaving }: EditorPropType) => {
     };
   }, [collab]);
 
+  // useEditor is not rebuilt when the session resolves, so the upload path
+  // reads the current value instead of closing over whatever it was when the
+  // editor was built — otherwise signing in mid-visit still writes data URIs.
+  const isSignedInRef = useRef(false);
+  isSignedInRef.current = Boolean(session?.id);
+
   const editor = useEditor(
     {
-      extensions: collab
-        ? [
-            ...extensions,
-            Collaboration.configure({ document: collab.ydoc }),
-            CollaborationCaret.configure({
-              provider: collab.provider,
-              user: { name, color: getRandomColor() },
-            }),
-          ]
-        : extensions,
+      extensions: [
+        ...extensions,
+        ImageUpload.configure({
+          upload: (file) => resolveImageSrc(file, docId, isSignedInRef.current),
+          onError: (message) => toast.error(message),
+        }),
+        ...(collab
+          ? [
+              Collaboration.configure({ document: collab.ydoc }),
+              CollaborationCaret.configure({
+                provider: collab.provider,
+                user: { name, color: getRandomColor() },
+              }),
+            ]
+          : []),
+      ],
       editorProps: props,
       // Next renders this on the server first, and rendering the editor during
       // that pass would mismatch the client's tree on hydration.
@@ -190,14 +205,41 @@ export const Editor = ({ setIsSaving }: EditorPropType) => {
     [docId, collab],
   );
 
+  // updateUser comes from CollaborationCaret. useEditor rebuilds the editor one
+  // commit after the collaboration session appears, so there is a render where
+  // collab exists but this editor was still built without the caret extension —
+  // test for the command rather than for the session.
+  const applyUserName = useCallback(
+    (target: TiptapEditor) => {
+      if (typeof target.commands.updateUser !== "function") return;
+      target.chain().focus().updateUser({ name }).run();
+    },
+    [name],
+  );
+
   useEffect(() => {
-    // updateUser comes from CollaborationCaret. useEditor rebuilds the editor
-    // one commit after the collaboration session appears, so there is a render
-    // where collab exists but this editor was still built without the caret
-    // extension — test for the command rather than for the session.
-    if (!editor || typeof editor.commands.updateUser !== "function") return;
-    editor.chain().focus().updateUser({ name }).run();
-  }, [editor, collab, name]);
+    if (!editor) return;
+
+    // Under `immediatelyRender: false` the editor object exists a beat before
+    // its view does, and until then it has no command manager — `commands`
+    // reads straight through and throws, unlike `chain()`, which guards. The
+    // editor identity does not change when the view arrives, so waiting on the
+    // create event is the only way to hear about it.
+    const apply = () => {
+      if (editor.isDestroyed) return;
+      applyUserName(editor);
+    };
+
+    if (editor.isInitialized) {
+      apply();
+      return;
+    }
+
+    editor.on("create", apply);
+    return () => {
+      editor.off("create", apply);
+    };
+  }, [editor, applyUserName]);
 
   // Seed the room from the database only when it is genuinely empty. With the
   // Collaboration extension, setContent is a Yjs transaction rather than a
@@ -211,7 +253,7 @@ export const Editor = ({ setIsSaving }: EditorPropType) => {
   // navigating to a different document without wiping the current one.
   const hydratedDocRef = useRef<string | null>(null);
   useEffect(() => {
-    if (!editor || !docData || !isSynced) return;
+    if (!editor || editor.isDestroyed || !docData || !isSynced) return;
     if (!collab || collab.docId !== docId) return;
     if (hydratedDocRef.current === docId) return;
     hydratedDocRef.current = docId;

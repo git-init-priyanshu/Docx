@@ -319,6 +319,37 @@
   color: revert !important;
 }
 
+.tiptap img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 4px;
+  display: block;
+  margin: 0.75rem 0;
+}
+
+.tiptap img.ProseMirror-selectednode {
+  outline: 2px solid var(--lp-accent);
+}
+
+/* Shown only while an upload is in flight. This is a decoration rather than a
+   node, so it is never part of the document and never reaches collaborators. */
+.image-upload-placeholder {
+  display: inline-block;
+  width: 1.1em;
+  height: 1.1em;
+  vertical-align: text-bottom;
+  border: 2px solid var(--lp-border);
+  border-top-color: var(--lp-accent);
+  border-radius: 50%;
+  animation: lp-spin 0.7s linear infinite;
+}
+
+@keyframes lp-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
 /* Tables. `table-layout: fixed` is what makes the colwidth attr written by the
    resize handles actually decide column width. */
 .tiptap table {
