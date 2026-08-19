@@ -1,4 +1,4 @@
-import { upload } from "@vercel/blob/client";
+import { uploadPresigned } from "@vercel/blob/client";
 
 import { ALLOWED_CONTENT_TYPES, MAX_UPLOAD_BYTES } from "./constants";
 
@@ -69,7 +69,10 @@ export const resolveImageSrc = async (
   if (file.size > MAX_UPLOAD_BYTES)
     throw new Error("Images must be under 5MB");
 
-  const blob = await upload(file.name, file, {
+  // Presigned rather than the older client-token upload: this store rejects
+  // that path, and the rejection arrives without CORS headers so the browser
+  // reports it as a CORS error instead of the 4xx it is.
+  const blob = await uploadPresigned(file.name, file, {
     access: "public",
     handleUploadUrl: "/api/upload",
     clientPayload: docId,
