@@ -27,6 +27,7 @@ import { Button } from "@/components/ui/button";
 import {
   createGuestDocument,
   deleteGuestDocument,
+  getGuestDocumentDetails,
   updateGuestDocument,
 } from "@/lib/guestServices";
 import LoaderButton from "@/components/LoaderButton";
@@ -35,18 +36,15 @@ import { invalidateDocs } from "@/lib/hooks/useDocs";
 
 import { GetSharing } from "@/app/writer/[id]/sharing/actions";
 
-import { DeleteDocument, RenameDocument } from "../actions";
-import { CreateNewDocument } from "../../Header/actions";
+import { DeleteDocument, DuplicateDocument, RenameDocument } from "../actions";
 
 type CardOptionsPropType = {
   docId: string;
-  data?: string | null;
   inputRef: React.RefObject<HTMLInputElement>;
 };
 
 export default function CardOptions({
   docId,
-  data,
   inputRef,
 }: CardOptionsPropType) {
   const router = useRouter();
@@ -135,15 +133,16 @@ export default function CardOptions({
 
     try {
       if (session?.id) {
-        const response = await CreateNewDocument(data ?? "");
-        if (!response.success || !response.data) {
+        const response = await DuplicateDocument(docId);
+        if (!response.success) {
           toast.error(response.error);
           return;
         }
-        await RenameDocument(response.data.id, `${currentName} (copy)`);
         await invalidateDocs(session.id);
       } else {
-        const newDoc = createGuestDocument(data ?? "");
+        const newDoc = createGuestDocument(
+          getGuestDocumentDetails(docId)?.data ?? "",
+        );
         updateGuestDocument(newDoc.id, "name", `${currentName} (copy)`);
         await invalidateDocs();
       }

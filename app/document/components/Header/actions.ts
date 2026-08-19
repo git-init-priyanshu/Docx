@@ -4,6 +4,7 @@ import type { DocumentSource } from "@prisma/client";
 
 import prisma from "@/prisma/prismaClient";
 import getServerSession from "@/lib/customHooks/getServerSession";
+import { previewOf } from "@/lib/documents/preview";
 
 export const SearchDocAction = async (value: string) => {
   const session = await getServerSession();
@@ -71,6 +72,7 @@ export const CreateNewDocument = async (
     const doc = await prisma.document.create({
       data: {
         data: initialData ?? "",
+        preview: previewOf(initialData),
         // Left unset when absent so the schema default applies.
         ...(name?.trim() ? { name: name.trim() } : {}),
         ...(options?.id ? { id: options.id } : {}),

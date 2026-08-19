@@ -5,6 +5,7 @@ import { GoogleGenerativeAI } from "@google/generative-ai";
 import prisma from "@/prisma/prismaClient";
 import getServerSession from "@/lib/customHooks/getServerSession";
 import { joinViaLink, resolveDocumentAccess } from "@/lib/documentAccess";
+import { previewOf } from "@/lib/documents/preview";
 import {
   generateTextOptions,
   prompts,
@@ -48,6 +49,9 @@ export const UpdateDocData = async (id: any, data: string) => {
     };
 
   try {
+    // Only the existence check is wanted here. Selecting the whole row pulled
+    // the document's body back out of the database on every autosave, which on
+    // a long document is the largest thing a keystroke can cost.
     const doc = await prisma.document.findFirst({
       where: {
         id,
@@ -55,6 +59,7 @@ export const UpdateDocData = async (id: any, data: string) => {
           some: { userId: session.id },
         },
       },
+      select: { id: true },
     });
     if (!doc)
       return {
@@ -71,6 +76,7 @@ export const UpdateDocData = async (id: any, data: string) => {
       },
       data: {
         data: data,
+        preview: previewOf(data),
         updatedAt: new Date(),
       },
     });

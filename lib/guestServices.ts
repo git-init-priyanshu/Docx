@@ -46,7 +46,10 @@ export const createGuestDocument = (initialData?: string) => {
     linkAccess: "NONE",
     // Importing from Google Docs needs a session, so a guest document is
     // always one someone started here.
-    source: "BLANK"
+    source: "BLANK",
+    // Only stored documents need a preview, to keep a list of them off the
+    // wire. A guest's documents are already on this machine.
+    preview: null
   }
 
   const allDocuments: Document[] = JSON.parse(localStorage.getItem('documents') || '[]');
@@ -62,13 +65,15 @@ export const getAllGuestDocuments = () => {
   const data = documents.map((doc) => {
     return {
       id: doc.id,
-      data: doc.data,
-      thumbnail: doc.thumbnail,
+      // Reading the whole body costs nothing here — it never leaves the
+      // machine — so the thumbnail draws straight from it.
+      preview: doc.data,
       name: doc.name,
       updatedAt: doc.updatedAt,
       createdBy: { id: user.id, name: user.name, picture: user.picture },
       users: [{
         user: {
+          id: user.id,
           name: user.name,
           picture: user.picture
         }
