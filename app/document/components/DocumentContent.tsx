@@ -4,26 +4,15 @@ import { useState, useEffect, type ReactNode } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { LayoutGrid, List } from "lucide-react";
-import type { DocumentSource } from "@prisma/client";
 
 import { CreateNewDocument } from "./Header/actions";
 import { createGuestDocument } from "@/lib/guestServices";
 import useClientSession from "@/lib/customHooks/useClientSession";
 import { useDocs } from "@/lib/hooks/useDocs";
+import type { DocSummary as Doc } from "@/lib/types/document";
 import Sidebar from "./Sidebar";
 import DocTopBar from "./DocTopBar";
 import DocCardItem from "./DocCardItem";
-
-type Doc = {
-  id: string;
-  name: string;
-  data: string | null;
-  updatedAt: Date;
-  // Absent on guest documents, which are only ever created locally.
-  source?: DocumentSource;
-  createdBy: { id: string; name: string; picture: string | null };
-  users: { user: { name: string; picture: string | null } }[];
-};
 
 type Session = {
   id: string | null | undefined;
@@ -158,7 +147,7 @@ export default function DocumentContent({ initialDocs, initialSession, quickStar
                     <DocCardItem
                       key={d.id}
                       docId={d.id}
-                      data={d.data}
+                      preview={d.preview}
                       title={d.name}
                       updatedAt={d.updatedAt}
                       source={d.source}
@@ -254,7 +243,7 @@ export default function DocumentContent({ initialDocs, initialSession, quickStar
                     <DocCardItem
                       key={d.id}
                       docId={d.id}
-                      data={d.data}
+                      preview={d.preview}
                       title={d.name}
                       updatedAt={d.updatedAt}
                       source={d.source}
@@ -274,7 +263,7 @@ export default function DocumentContent({ initialDocs, initialSession, quickStar
                     <DocCardItem
                       key={d.id}
                       docId={d.id}
-                      data={d.data}
+                      preview={d.preview}
                       title={d.name}
                       updatedAt={d.updatedAt}
                       source={d.source}

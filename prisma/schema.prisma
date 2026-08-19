@@ -61,6 +61,10 @@ model Document {
   linkAccess LinkAccess     @default(NONE)
   source     DocumentSource @default(BLANK)
 
+  // The top of `data`, kept so listing documents never has to read their
+  // bodies. Written beside every write of `data`; see lib/documents/preview.ts.
+  preview String?
+
   // Hash of `data` as of the last fully successful index. A mismatch against
   // the current data means the chunks are stale — indexing failed, or the
   // document was written by a path that does not index.

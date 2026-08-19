@@ -1,5 +1,6 @@
 import prisma from "@/prisma/prismaClient";
 import getServerSession from "@/lib/customHooks/getServerSession";
+import type { DocSummary } from "@/lib/types/document";
 import AskBar from "@/components/AskBar/AskBar";
 import DocumentContent from "./components/DocumentContent";
 import QuickStart from "./components/QuickStart";
@@ -7,14 +8,7 @@ import QuickStart from "./components/QuickStart";
 export default async function DocumentPage() {
   const session = await getServerSession();
 
-  let initialDocs: {
-    id: string;
-    name: string;
-    data: string | null;
-    updatedAt: Date;
-    createdBy: { id: string; name: string; picture: string | null };
-    users: { user: { name: string; picture: string | null } }[];
-  }[] = [];
+  let initialDocs: DocSummary[] = [];
 
   if (session?.id) {
     initialDocs = await prisma.document.findMany({
@@ -26,13 +20,14 @@ export default async function DocumentPage() {
       select: {
         id: true,
         name: true,
-        data: true,
+        preview: true,
         updatedAt: true,
+        source: true,
         createdBy: { select: { id: true, name: true, picture: true } },
         users: {
           select: {
             user: {
-              select: { name: true, picture: true },
+              select: { id: true, name: true, picture: true },
             },
           },
         },

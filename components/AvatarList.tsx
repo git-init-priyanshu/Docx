@@ -6,7 +6,7 @@ import getInitials from "@/helpers/getInitials";
 
 type AvatarListPropType = {
   users: {
-    user: Pick<User, "name" | "picture">;
+    user: Pick<User, "id" | "name" | "picture">;
   }[];
 };
 
@@ -25,9 +25,9 @@ export default function AvatarList({ users }: AvatarListPropType) {
           +{overflow}
         </div>
       )}
-      {visible.map((e, index) => (
+      {visible.map((e) => (
         <div
-          key={e.user.name ?? index}
+          key={e.user.id}
           className="relative flex justify-center items-center size-5 rounded-full text-[8px] font-bold ring-2 ring-[var(--lp-card)] shrink-0"
           style={{ background: "var(--lp-accent)", color: "white" }}
         >

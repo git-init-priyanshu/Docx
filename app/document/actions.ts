@@ -25,7 +25,7 @@ export const GetAllDocs = async () => {
       select: {
         id: true,
         name: true,
-        data: true,
+        preview: true,
         updatedAt: true,
         source: true,
         createdBy: { select: { id: true, name: true, picture: true } },
@@ -33,6 +33,7 @@ export const GetAllDocs = async () => {
           select: {
             user: {
               select: {
+                id: true,
                 name: true,
                 picture: true,
               },

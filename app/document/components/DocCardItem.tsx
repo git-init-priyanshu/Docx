@@ -25,12 +25,12 @@ const DOC_COLORS = [
 
 type DocCardItemProps = {
   docId: string;
-  data: string | null;
+  preview: string | null;
   title: string;
   updatedAt: Date;
   source?: DocumentSource;
   createdBy: { id: string; name: string; picture: string | null };
-  users: { user: Pick<User, "name" | "picture"> }[];
+  users: { user: Pick<User, "id" | "name" | "picture"> }[];
   view: "grid" | "list";
   colorIndex: number;
 };
@@ -47,7 +47,7 @@ const ImportedBadge = () => (
 
 export default function DocCardItem({
   docId,
-  data,
+  preview,
   title,
   updatedAt,
   source,
@@ -138,7 +138,7 @@ export default function DocCardItem({
         <div className="font-mono text-[10.5px] text-[var(--lp-muted)]">{formattedDate}</div>
 
         <span onClick={e => e.stopPropagation()}>
-          <CardOptions docId={docId} data={data} inputRef={inputRef} />
+          <CardOptions docId={docId} inputRef={inputRef} />
         </span>
       </div>
     );
@@ -151,7 +151,7 @@ export default function DocCardItem({
     >
       {/* Thumbnail area */}
       <DocThumbnail
-        data={data}
+        data={preview}
         accentColor={color}
         className="border-b border-[var(--lp-border)]"
         style={{ aspectRatio: "4/3.2" }}
@@ -176,7 +176,7 @@ export default function DocCardItem({
           </div>
           <div className="flex items-center gap-1" onClick={e => e.stopPropagation()}>
             <span className="font-mono text-[10px] text-[var(--lp-muted)]">{formattedDate}</span>
-            <CardOptions docId={docId} data={data} inputRef={inputRef} />
+            <CardOptions docId={docId} inputRef={inputRef} />
           </div>
         </div>
       </div>
