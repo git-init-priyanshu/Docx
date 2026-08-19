@@ -1,28 +1,25 @@
-import { Color } from "@tiptap/extension-color";
 import StarterKit from "@tiptap/starter-kit";
 import Highlight from "@tiptap/extension-highlight";
-import Link from "@tiptap/extension-link";
-import Underline from "@tiptap/extension-underline";
 import TextAlign from "@tiptap/extension-text-align";
-import FontFamily from "@tiptap/extension-font-family";
-import TextStyle from "@tiptap/extension-text-style";
+import { Color, FontFamily, TextStyle } from "@tiptap/extension-text-style";
 
 import { cn } from "@/lib/utils";
 
 export const extensions = [
   StarterKit.configure({
-    history: false,
+    // Undo/redo is Yjs's job once Collaboration is attached; the local history
+    // plugin would fight it over the same transactions.
+    undoRedo: false,
     heading: {
       levels: [1, 2, 3, 4, 5, 6],
     },
+    // Imported documents carry hyperlinks; without this mark they would arrive
+    // as plain text. openOnClick stays off so a click places the caret instead
+    // of navigating away mid-edit.
+    link: { openOnClick: false, autolink: false },
   }),
   Color.configure({ types: [TextStyle.name] }),
   Highlight.configure({ multicolor: true }),
-  // Imported documents carry hyperlinks; without this mark they would arrive
-  // as plain text. openOnClick stays off so a click places the caret instead
-  // of navigating away mid-edit.
-  Link.configure({ openOnClick: false, autolink: false }),
-  Underline,
   TextStyle,
   FontFamily,
   TextAlign.configure({
