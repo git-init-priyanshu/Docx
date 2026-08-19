@@ -8,7 +8,7 @@ import { toast } from "sonner";
 import * as Y from "yjs";
 import { WebsocketProvider } from "y-websocket";
 import Collaboration from "@tiptap/extension-collaboration";
-import CollaborationCursor from "@tiptap/extension-collaboration-cursor";
+import CollaborationCaret from "@tiptap/extension-collaboration-caret";
 
 import { getRandomColor } from "@/helpers/getRandomColor";
 import {
@@ -169,13 +169,16 @@ export const Editor = ({ setIsSaving }: EditorPropType) => {
         ? [
             ...extensions,
             Collaboration.configure({ document: collab.ydoc }),
-            CollaborationCursor.configure({
+            CollaborationCaret.configure({
               provider: collab.provider,
               user: { name, color: getRandomColor() },
             }),
           ]
         : extensions,
       editorProps: props,
+      // Next renders this on the server first, and rendering the editor during
+      // that pass would mismatch the client's tree on hydration.
+      immediatelyRender: false,
       // No `content` here on purpose. With Collaboration the editor's initial
       // content is written into the shared Y.Doc, so every client that mounts
       // would apply its own copy. Content comes from the room, or from the
@@ -188,9 +191,9 @@ export const Editor = ({ setIsSaving }: EditorPropType) => {
   );
 
   useEffect(() => {
-    // updateUser comes from CollaborationCursor. useEditor rebuilds the editor
+    // updateUser comes from CollaborationCaret. useEditor rebuilds the editor
     // one commit after the collaboration session appears, so there is a render
-    // where collab exists but this editor was still built without the cursor
+    // where collab exists but this editor was still built without the caret
     // extension — test for the command rather than for the session.
     if (!editor || typeof editor.commands.updateUser !== "function") return;
     editor.chain().focus().updateUser({ name }).run();
