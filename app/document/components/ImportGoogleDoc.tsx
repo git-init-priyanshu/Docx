@@ -20,16 +20,12 @@ const plural = (count: number, noun: string) =>
   `${count} ${noun}${count === 1 ? "" : "s"}`;
 
 /**
- * The editor has no node for tables or images, so they are lost on import.
- * Saying so beats letting someone discover it in a document they trusted.
+ * Images are copied out of Google during the import, and some do not make it:
+ * a drawing or chart has no image behind it at all, and a copy can fail. Saying
+ * so beats letting someone discover it in a document they trusted.
  */
-const describeDropped = ({ tables, images }: DroppedContent) => {
-  const parts: string[] = [];
-  if (tables > 0) parts.push(plural(tables, "table"));
-  if (images > 0) parts.push(plural(images, "image"));
-  if (parts.length === 0) return null;
-  return `${parts.join(" and ")} could not be imported`;
-};
+const describeLost = (count: number) =>
+  count === 0 ? null : `${plural(count, "image")} could not be imported`;
 
 export default function ImportGoogleDoc() {
   const router = useRouter();
@@ -68,7 +64,7 @@ export default function ImportGoogleDoc() {
       // snapshot, since indexedHash still disagrees with the content.
       IndexDocument(response.data.id).catch(() => {});
 
-      const lost = describeDropped(dropped);
+      const lost = describeLost(dropped.images + (response.failedImages ?? 0));
       toast.success(
         lost ? `Imported — ${lost}` : `Imported “${picked.file.name}”`,
       );

@@ -5,6 +5,7 @@ import type {
   Paragraph,
   RgbColor,
   StructuralElement,
+  Table,
   TextStyle,
 } from "./types";
 
@@ -26,7 +27,6 @@ export type TiptapNode = {
  * rather than dropped in silence.
  */
 export type DroppedContent = {
-  tables: number;
   images: number;
 };
 
@@ -139,6 +139,35 @@ type Block = {
   list: ListPosition | null;
 };
 
+/**
+ * The `src` here is Google's short-lived `contentUri`, replaced with a durable
+ * one by the re-hosting pass before the document is saved.
+ *
+ * An inline object that carries no image at all — a drawing, a chart, an
+ * equation — has nothing to point at and is counted as dropped.
+ */
+const imageNodeFor = (
+  inlineObjectId: string | undefined,
+  source: GoogleDoc,
+  dropped: DroppedContent,
+): TiptapNode | null => {
+  const embedded = inlineObjectId
+    ? source.inlineObjects?.[inlineObjectId]?.inlineObjectProperties
+        ?.embeddedObject
+    : undefined;
+
+  const src = embedded?.imageProperties?.contentUri;
+  if (!src) {
+    dropped.images += 1;
+    return null;
+  }
+
+  return {
+    type: "image",
+    attrs: { src, alt: embedded.description || embedded.title || "" },
+  };
+};
+
 const paragraphToBlock = (
   paragraph: Paragraph,
   source: GoogleDoc,
@@ -154,7 +183,12 @@ const paragraphToBlock = (
       continue;
     }
     if (element.inlineObjectElement) {
-      dropped.images += 1;
+      const image = imageNodeFor(
+        element.inlineObjectElement.inlineObjectId,
+        source,
+        dropped,
+      );
+      if (image) content.push(image);
       continue;
     }
     if (!element.textRun?.content) continue;
@@ -260,17 +294,56 @@ const nestLists = (blocks: Block[]) => {
   return content;
 };
 
-export const toTiptap = (source: GoogleDoc): ImportResult => {
-  const dropped: DroppedContent = { tables: 0, images: 0 };
-  const baseline = source.namedStyles?.styles?.find(
-    (style) => style.namedStyleType === "NORMAL_TEXT",
-  )?.textStyle;
+/**
+ * A cell holds structural elements of its own, so this recurses back through
+ * the same walker the body uses — which is what lets a cell carry lists,
+ * headings and further tables.
+ *
+ * Google has no notion of a header row: the first row is data like any other,
+ * so every cell is imported as a plain one.
+ */
+function tableToNode(
+  table: Table,
+  source: GoogleDoc,
+  baseline: TextStyle | undefined,
+  dropped: DroppedContent,
+): TiptapNode | null {
+  const rows = table.tableRows ?? [];
+  if (rows.length === 0) return null;
 
+  return {
+    type: "table",
+    content: rows.map((row) => ({
+      type: "tableRow",
+      content: (row.tableCells ?? []).map((cell) => {
+        const content = elementsToNodes(
+          cell.content ?? [],
+          source,
+          baseline,
+          dropped,
+        );
+        return {
+          type: "tableCell",
+          // A cell must hold at least one block, and Google emits empty cells.
+          content: content.length > 0 ? content : [{ type: "paragraph" }],
+        };
+      }),
+    })),
+  };
+}
+
+function elementsToNodes(
+  elements: StructuralElement[],
+  source: GoogleDoc,
+  baseline: TextStyle | undefined,
+  dropped: DroppedContent,
+): TiptapNode[] {
   const blocks: Block[] = [];
 
-  for (const element of source.body?.content ?? ([] as StructuralElement[])) {
+  for (const element of elements) {
     if (element.table) {
-      dropped.tables += 1;
+      const node = tableToNode(element.table, source, baseline, dropped);
+      if (node) blocks.push({ node, list: null });
       continue;
     }
     if (!element.paragraph) continue;
@@ -279,7 +352,21 @@ export const toTiptap = (source: GoogleDoc): ImportResult => {
     if (block) blocks.push(block);
   }
 
-  const content = nestLists(blocks);
+  return nestLists(blocks);
+}
+
+export const toTiptap = (source: GoogleDoc): ImportResult => {
+  const dropped: DroppedContent = { images: 0 };
+  const baseline = source.namedStyles?.styles?.find(
+    (style) => style.namedStyleType === "NORMAL_TEXT",
+  )?.textStyle;
+
+  const content = elementsToNodes(
+    source.body?.content ?? [],
+    source,
+    baseline,
+    dropped,
+  );
 
   return {
     doc: {

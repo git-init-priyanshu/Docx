@@ -319,6 +319,85 @@
   color: revert !important;
 }
 
+.tiptap img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 4px;
+  display: block;
+  margin: 0.75rem 0;
+}
+
+.tiptap img.ProseMirror-selectednode {
+  outline: 2px solid var(--lp-accent);
+}
+
+/* Shown only while an upload is in flight. This is a decoration rather than a
+   node, so it is never part of the document and never reaches collaborators. */
+.image-upload-placeholder {
+  display: inline-block;
+  width: 1.1em;
+  height: 1.1em;
+  vertical-align: text-bottom;
+  border: 2px solid var(--lp-border);
+  border-top-color: var(--lp-accent);
+  border-radius: 50%;
+  animation: lp-spin 0.7s linear infinite;
+}
+
+@keyframes lp-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Tables. `table-layout: fixed` is what makes the colwidth attr written by the
+   resize handles actually decide column width. */
+.tiptap table {
+  border-collapse: collapse;
+  table-layout: fixed;
+  width: 100%;
+  margin: 1rem 0;
+  overflow: hidden;
+}
+
+.tiptap table td,
+.tiptap table th {
+  border: 1px solid var(--lp-border);
+  padding: 0.4rem 0.6rem;
+  vertical-align: top;
+  position: relative;
+  min-width: 1em;
+}
+
+.tiptap table th {
+  background: var(--lp-paper-2);
+  font-weight: 600;
+  text-align: left;
+}
+
+.tiptap table .selectedCell::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: color-mix(in oklab, var(--lp-accent) 16%, transparent);
+  pointer-events: none;
+}
+
+/* Sits over the cell's right border and is only visible while dragging. */
+.tiptap table .column-resize-handle {
+  position: absolute;
+  right: -2px;
+  top: 0;
+  bottom: -2px;
+  width: 4px;
+  background: var(--lp-accent);
+  pointer-events: none;
+}
+
+.tiptap.resize-cursor {
+  cursor: col-resize;
+}
+
 /* Give a remote user a caret  */
 .collaboration-carets__caret {
   border-left: 1px solid #0d0d0d;

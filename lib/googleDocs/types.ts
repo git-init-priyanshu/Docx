@@ -79,9 +79,25 @@ export type Paragraph = {
   bullet?: Bullet;
 };
 
+/**
+ * A cell holds structural elements of its own, so a table can contain lists,
+ * headings and further tables. The type is recursive for that reason.
+ */
+export type TableCell = {
+  content?: StructuralElement[];
+};
+
+export type TableRow = {
+  tableCells?: TableCell[];
+};
+
+export type Table = {
+  tableRows?: TableRow[];
+};
+
 export type StructuralElement = {
   paragraph?: Paragraph;
-  table?: object;
+  table?: Table;
   tableOfContents?: object;
   sectionBreak?: object;
 };
@@ -91,6 +107,22 @@ export type StructuralElement = {
  * `glyphType` (DECIMAL, UPPER_ALPHA, ...) while bulleted levels carry a
  * literal `glyphSymbol` such as "●".
  */
+/**
+ * Images are stored once per document and referenced by id from the paragraph.
+ * `contentUri` is a short-lived download URL — Google documents it as valid for
+ * around 30 minutes — so anything keeping the image has to copy the bytes
+ * during the import rather than store the link.
+ */
+export type InlineObject = {
+  inlineObjectProperties?: {
+    embeddedObject?: {
+      title?: string;
+      description?: string;
+      imageProperties?: { contentUri?: string };
+    };
+  };
+};
+
 export type NestingLevel = {
   glyphType?: string;
   glyphSymbol?: string;
@@ -109,5 +141,6 @@ export type GoogleDoc = {
   title?: string;
   body?: { content?: StructuralElement[] };
   lists?: Record<string, List>;
+  inlineObjects?: Record<string, InlineObject>;
   namedStyles?: { styles?: NamedStyle[] };
 };

@@ -3,6 +3,8 @@
 import { Editor } from "@tiptap/react";
 import { List, ListOrdered, Quote, Undo, Redo, Sparkles } from "lucide-react";
 import { setDefaultStyleValue, onFontStyleChange } from "./options/format/functions";
+import TableControls from "./TableControls";
+import ImageButton from "./ImageButton";
 
 const HEADING_OPTIONS = [
   { value: "normal", label: "Body" },
@@ -119,6 +121,11 @@ export default function FormatBar({ editor, onRewrite }: FormatBarProps) {
       >
         <Quote className="w-4 h-4" />
       </button>
+
+      <Divider />
+
+      <TableControls editor={editor} />
+      <ImageButton editor={editor} />
 
       <Divider />
 

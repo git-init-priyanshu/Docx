@@ -83,6 +83,59 @@ function ThumbnailNode({ node }: { node: TipTapNode }) {
         </div>
       );
 
+    case "image": {
+      const src = node.attrs?.src as string | undefined;
+      if (!src) return null;
+      return (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img
+          src={src}
+          alt=""
+          style={{
+            maxWidth: "100%",
+            maxHeight: 90,
+            objectFit: "cover",
+            borderRadius: 4,
+            marginBottom: 8,
+            display: "block",
+          }}
+        />
+      );
+    }
+
+    // Only the top-left corner survives at this scale, so the preview shows
+    // enough rows and columns to read as a table and stops there.
+    case "table":
+      return (
+        <div style={{ marginBottom: 8, display: "grid", gap: 1 }}>
+          {(node.content ?? []).slice(0, 4).map((row, r) => (
+            <div key={r} style={{ display: "flex", gap: 1 }}>
+              {(row.content ?? []).slice(0, 4).map((cell, c) => (
+                <div
+                  key={c}
+                  style={{
+                    flex: 1,
+                    minWidth: 0,
+                    border: "1px solid var(--lp-border)",
+                    padding: "2px 4px",
+                    fontSize: 11,
+                    lineHeight: 1.3,
+                    color: "var(--lp-ink)",
+                    opacity: cell.type === "tableHeader" ? 1 : 0.75,
+                    fontWeight: cell.type === "tableHeader" ? 600 : 400,
+                    overflow: "hidden",
+                    whiteSpace: "nowrap",
+                    textOverflow: "ellipsis",
+                  }}
+                >
+                  {extractText(cell.content)}
+                </div>
+              ))}
+            </div>
+          ))}
+        </div>
+      );
+
     case "codeBlock":
       return (
         <div
