@@ -63,6 +63,10 @@ export const rehostImages = async (doc: TiptapNode) => {
       if (!extension) throw new Error(`unsupported type ${blob.type}`);
 
       const { url } = await put(`imported-${index + 1}.${extension}`, blob, {
+        // Explicit for the same reason as the upload route: without it the SDK
+        // prefers VERCEL_OIDC_TOKEN whenever BLOB_STORE_ID is set, and OIDC is
+        // not enabled in every environment.
+        token: process.env.BLOB_READ_WRITE_TOKEN,
         access: "public",
         addRandomSuffix: true,
         contentType: blob.type,
