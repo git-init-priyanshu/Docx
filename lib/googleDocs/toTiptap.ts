@@ -139,6 +139,35 @@ type Block = {
   list: ListPosition | null;
 };
 
+/**
+ * The `src` here is Google's short-lived `contentUri`, replaced with a durable
+ * one by the re-hosting pass before the document is saved.
+ *
+ * An inline object that carries no image at all — a drawing, a chart, an
+ * equation — has nothing to point at and is counted as dropped.
+ */
+const imageNodeFor = (
+  inlineObjectId: string | undefined,
+  source: GoogleDoc,
+  dropped: DroppedContent,
+): TiptapNode | null => {
+  const embedded = inlineObjectId
+    ? source.inlineObjects?.[inlineObjectId]?.inlineObjectProperties
+        ?.embeddedObject
+    : undefined;
+
+  const src = embedded?.imageProperties?.contentUri;
+  if (!src) {
+    dropped.images += 1;
+    return null;
+  }
+
+  return {
+    type: "image",
+    attrs: { src, alt: embedded.description || embedded.title || "" },
+  };
+};
+
 const paragraphToBlock = (
   paragraph: Paragraph,
   source: GoogleDoc,
@@ -154,7 +183,12 @@ const paragraphToBlock = (
       continue;
     }
     if (element.inlineObjectElement) {
-      dropped.images += 1;
+      const image = imageNodeFor(
+        element.inlineObjectElement.inlineObjectId,
+        source,
+        dropped,
+      );
+      if (image) content.push(image);
       continue;
     }
     if (!element.textRun?.content) continue;

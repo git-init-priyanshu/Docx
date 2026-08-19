@@ -2,20 +2,37 @@
 
 import { CreateNewDocument } from "../components/Header/actions";
 import { CreateDocVersion } from "@/app/writer/[id]/versions/actions";
+import { rehostImages } from "@/lib/googleDocs/rehostImages";
+import type { TiptapNode } from "@/lib/googleDocs/toTiptap";
 
 /**
  * Creates a document from content converted in the browser.
  *
- * A version snapshot is written straight away so history has an "as imported"
+ * Images arrive pointing at Google's short-lived `contentUri`, so they are
+ * copied into Blob storage here — before the document is written, so nothing is
+ * ever saved holding a link that expires within the hour.
+ *
+ * A version snapshot follows straight away so history has an "as imported"
  * baseline to restore to. Indexing is deliberately left to the caller: it takes
  * seconds, and work started but not awaited inside a server action is not
  * guaranteed to survive the response on a serverless host.
  */
 export const ImportDocument = async (name: string, data: string) => {
-  const created = await CreateNewDocument(data, name);
-  if (!created.success || !created.data) return created;
+  let doc: TiptapNode;
+  try {
+    doc = JSON.parse(data) as TiptapNode;
+  } catch {
+    return { success: false as const, error: "That document could not be read" };
+  }
 
-  await CreateDocVersion(created.data.id, data);
+  const rehosted = await rehostImages(doc);
+  const stored = JSON.stringify(rehosted.doc);
 
-  return created;
+  const created = await CreateNewDocument(stored, name);
+  if (!created.success || !created.data)
+    return { ...created, failedImages: rehosted.failed };
+
+  await CreateDocVersion(created.data.id, stored);
+
+  return { ...created, failedImages: rehosted.failed };
 };
