@@ -84,6 +84,41 @@ function renderList(
     .join("\n");
 }
 
+// A pipe table cannot hold a newline or a bare pipe inside a cell, so cell
+// content is flattened onto one line. Colspans have no pipe representation
+// either and simply render as a single cell.
+function renderTable(node: TipTapNode, plain: boolean): string {
+  const rows = (node.content ?? []).map((row) =>
+    (row.content ?? []).map((cell) => {
+      const text = (cell.content ?? [])
+        .map((child) => renderBlock(child, plain))
+        .join(" ")
+        .replace(/\s*\n\s*/g, " ")
+        .trim();
+      return plain ? text : text.replace(/\|/g, "\\|");
+    }),
+  );
+  if (rows.length === 0) return "";
+
+  // Retrieval wants the cell text, not the table syntax, so plain output is
+  // just the values a reader would scan.
+  if (plain) return rows.map((cells) => cells.join("\t")).join("\n");
+
+  const width = Math.max(...rows.map((cells) => cells.length));
+  const line = (cells: string[]) =>
+    `| ${Array.from({ length: width }, (_, i) => cells[i] ?? "").join(" | ")} |`;
+
+  // Markdown has no headerless table — the delimiter row is what makes it a
+  // table at all. Google Docs in turn has no header concept, so its tables
+  // arrive as plain cells; promoting the first row reads far better than
+  // emitting a blank one, and the row is still shown either way.
+  return [
+    line(rows[0]),
+    line(Array.from({ length: width }, () => "---")),
+    ...rows.slice(1).map(line),
+  ].join("\n");
+}
+
 export function renderBlock(node: TipTapNode, plain: boolean): string {
   switch (node.type) {
     case "heading": {
@@ -112,6 +147,8 @@ export function renderBlock(node: TipTapNode, plain: boolean): string {
         .map((line) => `> ${line}`)
         .join("\n");
     }
+    case "table":
+      return renderTable(node, plain);
     case "codeBlock": {
       const code = plainInline(node.content);
       if (plain) return code;

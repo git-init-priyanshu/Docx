@@ -42,6 +42,29 @@ export const hashDocument = (data: string) => sha256(data);
 export const embeddingInput = (headingPath: string, content: string) =>
   `${headingPath}\n\n${content}`;
 
+// A pipe table holds almost no sentence boundaries, so the generic splitter
+// would slice it mid-row and leave every piece after the first with no header
+// to say what its columns mean. Split on rows and repeat the header instead.
+function splitTable(markdown: string): string[] {
+  const [header, divider, ...rows] = markdown.split("\n");
+  if (divider === undefined) return [markdown];
+
+  const heading = `${header}\n${divider}`;
+  const pieces: string[] = [];
+  let current = heading;
+
+  for (const row of rows) {
+    if (current !== heading && current.length + row.length + 1 > TARGET_CHARS) {
+      pieces.push(current);
+      current = heading;
+    }
+    current += `\n${row}`;
+  }
+
+  pieces.push(current);
+  return pieces;
+}
+
 // A single block can exceed the target on its own — a wall-of-text paragraph,
 // or a long code block. Prefer sentence boundaries, and only cut mid-sentence
 // when one sentence is somehow longer than the hard ceiling.
@@ -151,7 +174,14 @@ export function chunkDocument(documentName: string, data: string): Chunk[] {
     }
 
     const rendered = renderBlock(node, false).trim();
-    if (rendered) push(rendered, true);
+    if (!rendered) continue;
+
+    if (node.type === "table") {
+      for (const piece of splitTable(rendered)) push(piece, true);
+      continue;
+    }
+
+    push(rendered, true);
   }
 
   flush();
