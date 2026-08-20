@@ -1,5 +1,8 @@
-import { useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import type { Editor } from "@tiptap/react";
+import { BubbleMenu } from "@tiptap/react/menus";
+import { isTextSelection } from "@tiptap/core";
+import type { EditorState } from "@tiptap/pm/state";
 import { toast } from "sonner";
 
 import AskAI from "./AskAI";
@@ -11,16 +14,13 @@ import { generateTextOptions } from "./generateTextConfig";
 
 type BubbleMenuPropType = {
   editor: Editor | null;
-  isHighlighted: boolean;
-  bubblePosition: { x: number; y: number };
-  generativeTextBubblePosition: { x: number; y: number; width: number };
+  scrollTarget: HTMLElement | null;
   onAuthRequired: () => void;
 };
+
 export default function BubbleMenuComp({
   editor,
-  isHighlighted,
-  bubblePosition,
-  generativeTextBubblePosition,
+  scrollTarget,
   onAuthRequired,
 }: BubbleMenuPropType) {
   const [isAiActive, setIsAiActive] = useState(false);
@@ -63,36 +63,96 @@ export default function BubbleMenuComp({
     runGeneration(lastOption, lastLanguage);
   };
 
-  if (!editor) return;
+  // These three are compared by identity: the component dispatches a
+  // ProseMirror transaction to re-configure the plugin whenever any of them
+  // changes, so fresh literals would mean a transaction on every render.
+  const appendTo = useCallback(() => document.body, []);
+
+  const options = useMemo(
+    () => ({
+      placement: "top" as const,
+      offset: 8,
+      strategy: "fixed" as const,
+      // The editor scrolls inside a div rather than the window, which is what
+      // the plugin watches by default.
+      ...(scrollTarget ? { scrollTarget } : {}),
+    }),
+    [scrollTarget],
+  );
+
+  // Only a run of selected text gets a formatting toolbar.
+  //
+  // Testing `!selection.empty` alone was not enough: dragging a block makes a
+  // NodeSelection, which is not empty, so the menu appeared over a drag that
+  // had selected no text. The plugin does hide itself on `dragstart`, but only
+  // listens on the editor's own DOM, and the drag handle is a separate element
+  // portalled outside it — so that never fires here.
+  //
+  // The `isAiActive` branch comes first because the AI panel replaces the
+  // toolbar in place, and has to survive the editor losing focus to the
+  // dropdown that started the generation.
+  const shouldShow = useCallback(
+    ({
+      editor: current,
+      state,
+      from,
+      to,
+    }: {
+      editor: Editor;
+      state: EditorState;
+      from: number;
+      to: number;
+    }) => {
+      if (isAiActive) return true;
+      if (!current.isEditable) return false;
+
+      const { selection } = state;
+      if (selection.empty || !isTextSelection(selection)) return false;
+
+      return state.doc.textBetween(from, to, " ").trim().length > 0;
+    },
+    [isAiActive],
+  );
+
+  if (!editor) return null;
+
   return (
-    <>
-      <div
-        className={`min-w-max absolute z-10 ${isHighlighted && !isAiActive ? "flex" : "hidden"}`}
-        style={{ left: `${bubblePosition.x}px`, top: `${bubblePosition.y}px` }}
-      >
-        <div className="flex gap-1 p-2 shadow-md bg-[var(--lp-card)] text-[var(--lp-ink)]">
+    <BubbleMenu
+      editor={editor}
+      // Rendered into the body so the toolbar is never clipped by the scroll
+      // container, and positioned with `fixed` to match.
+      appendTo={appendTo}
+      options={options}
+      shouldShow={shouldShow}
+      // Scroll is wired to the same debounced handler as window resize, which
+      // is trailing-edge — at the 60ms default the menu sits still through a
+      // scroll and only catches up once it stops. Zero keeps the callback but
+      // drops the wait, so it repositions per scroll event.
+      resizeDelay={0}
+      className="z-50"
+    >
+      {isAiActive ? (
+        <GeneratedText
+          editor={editor}
+          setIsAiActive={setIsAiActive}
+          isGeneratingText={isGeneratingText}
+          generativeTextResult={generativeTextResult}
+          setGenerativeTextResult={setGenerativeTextResult}
+          onTryAgain={tryAgain}
+        />
+      ) : (
+        <div className="flex items-center gap-0.5 rounded-lg border border-[var(--lp-border)] bg-[var(--lp-card)] p-1 text-[var(--lp-ink)] shadow-lg">
           <AskAI
-            isHighlighted={isHighlighted}
-            isAiActive={isAiActive}
             hasPrevious={!!lastOption}
             onGenerate={runGeneration}
             onAuthRequired={onAuthRequired}
           />
+          <span className="mx-0.5 h-5 w-px shrink-0 bg-[var(--lp-border)]" />
           <FormattingBtns editor={editor} isBubbleMenuBtn={true} />
+          <span className="mx-0.5 h-5 w-px shrink-0 bg-[var(--lp-border)]" />
           <ColorHighlight editor={editor} isBubbleMenuBtn={true} />
         </div>
-      </div>
-      <GeneratedText
-        editor={editor}
-        isHighlighted={isHighlighted}
-        isAiActive={isAiActive}
-        setIsAiActive={setIsAiActive}
-        isGeneratingText={isGeneratingText}
-        generativeTextResult={generativeTextResult}
-        setGenerativeTextResult={setGenerativeTextResult}
-        onTryAgain={tryAgain}
-        position={generativeTextBubblePosition}
-      />
-    </>
+      )}
+    </BubbleMenu>
   );
 }

@@ -30,16 +30,12 @@ import useClientSession from "@/lib/customHooks/useClientSession";
 import { generateTextOptions, LANGUAGES } from "./generateTextConfig";
 
 type AskAIPropType = {
-  isHighlighted: boolean;
-  isAiActive: boolean;
   hasPrevious: boolean;
   onGenerate: (option: generateTextOptions, language?: string) => void;
   onAuthRequired: () => void;
 };
 
 export default function AskAI({
-  isHighlighted,
-  isAiActive,
   hasPrevious,
   onGenerate,
   onAuthRequired,
@@ -59,15 +55,13 @@ export default function AskAI({
       <DropdownMenuTrigger asChild>
         <Button
           variant="ghost"
-          className="flex cursor-pointer bg-[var(--lp-card)] text-[var(--lp-ink)] rounded gap-1 p-2 w-fit items-center hover:bg-[var(--lp-paper-2)]"
+          className="flex h-8 w-fit cursor-pointer items-center gap-1.5 rounded-md bg-transparent px-2 text-[12.5px] font-medium text-[var(--lp-ink)] hover:bg-[var(--lp-paper-2)]"
         >
-          <Sparkles size={16} />
+          <Sparkles size={14} className="text-[var(--lp-accent)]" />
           Ask AI
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent
-        className={`w-56 bg-[var(--lp-card)] text-[var(--lp-ink)] ${isHighlighted && !isAiActive ? "block" : "hidden"}`}
-      >
+      <DropdownMenuContent className="w-56 bg-[var(--lp-card)] text-[var(--lp-ink)]">
         <DropdownMenuGroup>
           <DropdownMenuLabel className="font-medium text-[var(--lp-muted)]">
             Suggested

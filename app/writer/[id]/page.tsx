@@ -14,6 +14,7 @@ import FormatBar from "./components/FormatBar";
 import RightRail from "./components/RightRail";
 import AskPalette from "./components/AskPalette";
 import Loading from "./components/EditorLoading";
+import BlockHandle from "./components/BlockHandle";
 import BubbleMenuComp from "./components/BubbleMenuComp";
 import LoginPromptModal from "./components/LoginPromptModal";
 import { generateTextOptions } from "./components/BubbleMenuComp/generateTextConfig";
@@ -22,9 +23,9 @@ export default function WriterPage() {
   const session = useClientSession();
 
   const [isSaving, setIsSaving] = useState(false);
-  const [isHighlighted, setIsHighlighted] = useState(false);
-  const [position, setPosition] = useState({ x: 0, y: 0 });
-  const [position2, setPosition2] = useState({ x: 0, y: 0, width: 0 });
+  // The bubble menu is rendered into the body, so Floating UI has to be told
+  // which element actually scrolls in order to keep it anchored.
+  const [scrollTarget, setScrollTarget] = useState<HTMLElement | null>(null);
   const [askOpen, setAskOpen] = useState(false);
   const [askInitialOption, setAskInitialOption] = useState<generateTextOptions | undefined>(undefined);
   const [showLoginPrompt, setShowLoginPrompt] = useState(false);
@@ -69,35 +70,6 @@ export default function WriterPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isGuest, askOpen]);
 
-  // Bubble menu selection tracking
-  useEffect(() => {
-    const handleSelectionChange = () => {
-      const selection = window.getSelection();
-      if (!selection) return;
-
-      setIsHighlighted(selection.toString().length > 0);
-
-      const editorEl = document.getElementsByClassName("tiptap")[0];
-      if (!editorEl || !selection.rangeCount) return;
-
-      const editorRect = editorEl.getBoundingClientRect();
-      const selectionRect = selection.getRangeAt(0).getBoundingClientRect();
-
-      setPosition({
-        x: selectionRect.left - editorRect.left + selectionRect.width / 2,
-        y: selectionRect.top - editorRect.top - 60,
-      });
-      setPosition2({
-        x: selectionRect.left - editorRect.left + selectionRect.width / 2,
-        y: selectionRect.top - editorRect.top + selectionRect.height + 20,
-        width: selectionRect.width,
-      });
-    };
-
-    document.addEventListener("selectionchange", handleSelectionChange);
-    return () => document.removeEventListener("selectionchange", handleSelectionChange);
-  }, []);
-
   if (notFound) {
     return (
       <div className="h-screen w-screen flex flex-col items-center justify-center gap-4 bg-[var(--lp-paper)] text-center px-6">
@@ -133,19 +105,18 @@ export default function WriterPage() {
 
         <FormatBar editor={editor} onRewrite={() => openAsk()} />
 
-        <div className="flex-1 overflow-y-auto">
-          <div className="relative pb-16">
+        <div ref={setScrollTarget} className="flex-1 overflow-y-auto">
+          <div className="relative px-4 pb-24 sm:px-8">
             {!docData ? (
               <Loading />
             ) : (
               <>
                 <BubbleMenuComp
                   editor={editor}
-                  isHighlighted={isHighlighted}
-                  bubblePosition={position}
-                  generativeTextBubblePosition={position2}
+                  scrollTarget={scrollTarget}
                   onAuthRequired={() => setShowLoginPrompt(true)}
                 />
+                <BlockHandle editor={editor} />
                 <EditorContent editor={editor} />
               </>
             )}

@@ -2,34 +2,26 @@ import type { Editor } from "@tiptap/react";
 import { Check, Sparkles, Undo2, X } from "lucide-react";
 
 import { insertGeneratedText } from "../../editor/insertGeneratedText";
-import {
-  DropdownMenu,
-  DropdownMenuTrigger,
-  DropdownMenuContent,
-  DropdownMenuItem,
-} from "@/components/ui/dropdown";
 
 type GeneratedTextPropType = {
   editor: Editor | null;
-  isHighlighted: boolean;
-  isAiActive: boolean;
   setIsAiActive: React.Dispatch<React.SetStateAction<boolean>>;
   isGeneratingText: boolean;
   generativeTextResult: string;
   setGenerativeTextResult: React.Dispatch<React.SetStateAction<string>>;
   onTryAgain: () => void;
-  position: { x: number; y: number; width: number };
 };
+
+const ACTION_CLASS =
+  "flex items-center gap-1.5 rounded-md px-2 py-1 text-[12.5px] text-[var(--lp-ink)] transition-colors hover:bg-[var(--lp-paper-2)]";
+
 export default function GeneratedText({
   editor,
-  isHighlighted,
-  isAiActive,
   setIsAiActive,
   isGeneratingText,
   generativeTextResult,
   setGenerativeTextResult,
   onTryAgain,
-  position,
 }: GeneratedTextPropType) {
   const handleAccept = () => {
     if (!editor || !generativeTextResult) return;
@@ -43,54 +35,45 @@ export default function GeneratedText({
     setIsAiActive(false);
   };
 
+  if (isGeneratingText) {
+    return (
+      <div className="flex items-center gap-2 rounded-lg border border-[var(--lp-border)] bg-[var(--lp-card)] px-3 py-2 text-[var(--lp-ink)] shadow-lg">
+        <Sparkles size={15} className="animate-pulse text-[var(--lp-accent)]" />
+        <span className="text-[13px] text-[var(--lp-muted)]">Generating…</span>
+      </div>
+    );
+  }
+
   return (
-    <div
-      className={`absolute z-10 ${isAiActive ? "block" : "hidden"}`}
-      style={{ left: `${position.x}px`, top: `${position.y}px` }}
-    >
-      {isGeneratingText ? (
-        <div className="flex gap-2 p-2 shadow-md bg-[var(--lp-card)] text-[var(--lp-ink)] items-center rounded">
-          <Sparkles size={16} className="animate-pulse text-[var(--lp-accent)]" />
-          <span className="text-sm">Generating…</span>
-        </div>
-      ) : (
-        <DropdownMenu open={isHighlighted && isAiActive}>
-          <DropdownMenuTrigger className="flex flex-col max-w-[30rem] text-left gap-2 p-4 shadow-md bg-[var(--lp-card)] text-[var(--lp-ink)] rounded">
-            <div className="flex items-center gap-2">
-              <Sparkles size={15} className="text-[var(--lp-accent)]" strokeWidth={1.5} />
-              <p className="text-sm text-[var(--lp-muted)]">Generated text</p>
-            </div>
-            <p className="text-[13px] leading-relaxed whitespace-pre-wrap">
-              {generativeTextResult}
-            </p>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent
-            className={`bg-[var(--lp-card)] w-full mt-2 ${isAiActive ? "block" : "hidden"}`}
-          >
-            <DropdownMenuItem
-              onClick={handleAccept}
-              className="flex gap-2 w-full justify-start items-center rounded-md text-sm hover:bg-[var(--lp-paper-2)] p-1 px-2 cursor-pointer"
-            >
-              <Check size={15} />
-              Accept
-            </DropdownMenuItem>
-            <DropdownMenuItem
-              onClick={handleDiscard}
-              className="flex gap-2 w-full justify-start items-center rounded-md text-sm hover:bg-[var(--lp-paper-2)] p-1 px-2 cursor-pointer"
-            >
-              <X size={15} />
-              Discard
-            </DropdownMenuItem>
-            <DropdownMenuItem
-              onClick={onTryAgain}
-              className="flex gap-2 w-full justify-start items-center rounded-md text-sm hover:bg-[var(--lp-paper-2)] p-1 px-2 cursor-pointer"
-            >
-              <Undo2 size={15} />
-              Try again
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      )}
+    <div className="flex w-[min(30rem,90vw)] flex-col rounded-lg border border-[var(--lp-border)] bg-[var(--lp-card)] text-[var(--lp-ink)] shadow-lg">
+      <div className="flex items-center gap-2 border-b border-[var(--lp-border)] px-3 py-2">
+        <Sparkles size={14} className="text-[var(--lp-accent)]" strokeWidth={1.5} />
+        <span className="font-mono text-[10px] uppercase tracking-wider text-[var(--lp-muted)]">
+          Generated
+        </span>
+      </div>
+
+      <p className="max-h-64 overflow-y-auto whitespace-pre-wrap px-3 py-2.5 text-[13px] leading-relaxed">
+        {generativeTextResult}
+      </p>
+
+      <div className="flex items-center gap-1 border-t border-[var(--lp-border)] px-2 py-1.5">
+        <button onClick={handleAccept} className={ACTION_CLASS}>
+          <Check size={14} />
+          Accept
+        </button>
+        <button onClick={onTryAgain} className={ACTION_CLASS}>
+          <Undo2 size={14} />
+          Try again
+        </button>
+        <button
+          onClick={handleDiscard}
+          className={`${ACTION_CLASS} ml-auto text-[var(--lp-muted)]`}
+        >
+          <X size={14} />
+          Discard
+        </button>
+      </div>
     </div>
   );
 }
