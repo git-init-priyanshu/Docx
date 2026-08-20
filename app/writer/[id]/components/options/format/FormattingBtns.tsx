@@ -1,7 +1,9 @@
+import type { Editor } from "@tiptap/react";
+
 import { formattingBtns } from "./textEditorOptions";
 
 type FormattingBtnsPropType = {
-  editor: any;
+  editor: Editor | null;
   isBubbleMenuBtn: boolean;
 };
 export default function FormattingBtns({
@@ -10,24 +12,30 @@ export default function FormattingBtns({
 }: FormattingBtnsPropType) {
   return (
     <div
-      className={`flex cursor-pointer rounded w-fit ${isBubbleMenuBtn ? "gap-1" : "border col-span-6 sm:col-span-4 lg:col-span-3 lg:mb-0"} `}
+      className={`flex w-fit cursor-pointer rounded ${isBubbleMenuBtn ? "gap-0.5" : "border col-span-6 sm:col-span-4 lg:col-span-3 lg:mb-0"}`}
     >
       {formattingBtns.map(({ func, name, Icon }, i) => {
+        const isActive = editor?.isActive(name);
         return (
           <button
             key={name}
-            // @ts-ignore
-            onClick={() => editor?.chain().focus()[func]().run()}
+            onClick={() =>
+              (editor?.chain().focus() as Record<string, any> | undefined)
+                ?.[func]?.()
+                .run()
+            }
+            aria-pressed={isActive}
             className={`${
-              editor?.isActive(name)
-                ? "bg-blue-500 text-white hover:bg-blue-500"
-                : `hover:bg-[var(--lp-paper-2)] bg-[var(--lp-card)]`
-            } p-2 rounded ${
-              !isBubbleMenuBtn &&
-              (i === formattingBtns.length - 1 ? "border-none" : "border-r")
+              isActive
+                ? "bg-[color-mix(in_oklab,var(--lp-accent)_18%,transparent)] text-[var(--lp-accent)]"
+                : "bg-transparent text-[var(--lp-ink)] hover:bg-[var(--lp-paper-2)]"
+            } transition-colors ${
+              isBubbleMenuBtn
+                ? "flex h-8 w-8 items-center justify-center rounded-md"
+                : `p-2 rounded ${i === formattingBtns.length - 1 ? "border-none" : "border-r"}`
             }`}
           >
-            <Icon size={18} />
+            <Icon size={isBubbleMenuBtn ? 15 : 18} />
           </button>
         );
       })}
