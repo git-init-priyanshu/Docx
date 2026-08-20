@@ -1,24 +1,30 @@
+const Line = ({ width }: { width: string }) => (
+  <div
+    className="h-3 animate-pulse rounded bg-[var(--lp-paper-2)]"
+    style={{ width }}
+  />
+);
+
+// Geometry is kept in step with `props.attributes` in editorConfig, so the real
+// document does not jump into place when it replaces this.
 export default function Loading() {
   return (
-    <div
-      className="w-[816.3px] mx-auto my-4 rounded-md p-24 lp-doc-shadow"
-      style={{ background: "var(--lp-card)", border: "1px solid var(--lp-border)" }}
-    >
-      <div className="h-3 w-24 rounded animate-pulse mb-5" style={{ background: "var(--lp-paper-2)" }} />
-      <div className="h-10 w-80 rounded animate-pulse mb-2" style={{ background: "var(--lp-paper-2)" }} />
-      <div className="h-3 w-48 rounded animate-pulse mb-8" style={{ background: "var(--lp-paper-2)" }} />
+    <div className="mx-auto my-6 w-full max-w-[860px] rounded-lg border border-[var(--lp-border)] bg-[var(--lp-card)] px-6 py-10 lp-doc-shadow sm:px-12 sm:py-14 md:px-20">
+      <div className="mb-5 h-3 w-24 animate-pulse rounded bg-[var(--lp-paper-2)]" />
+      <div className="mb-3 h-9 w-3/5 animate-pulse rounded bg-[var(--lp-paper-2)]" />
+      <div className="mb-8 h-3 w-2/5 animate-pulse rounded bg-[var(--lp-paper-2)]" />
 
-      <div className="h-3 w-32 rounded animate-pulse mb-3" style={{ background: "var(--lp-paper-2)" }} />
-      <div className="space-y-2 mb-6">
-        {[560, 612, 490, 582, 530].map((w, i) => (
-          <div key={i} className="h-3 rounded animate-pulse" style={{ width: w, background: "var(--lp-paper-2)" }} />
+      <div className="mb-3 h-3 w-1/4 animate-pulse rounded bg-[var(--lp-paper-2)]" />
+      <div className="mb-6 space-y-2">
+        {["92%", "100%", "80%", "95%", "87%"].map((width) => (
+          <Line key={width} width={width} />
         ))}
       </div>
 
-      <div className="h-3 w-28 rounded animate-pulse mb-3" style={{ background: "var(--lp-paper-2)" }} />
+      <div className="mb-3 h-3 w-1/5 animate-pulse rounded bg-[var(--lp-paper-2)]" />
       <div className="space-y-2">
-        {[420, 500, 380].map((w, i) => (
-          <div key={i} className="h-3 rounded animate-pulse" style={{ width: w, background: "var(--lp-paper-2)" }} />
+        {["69%", "82%", "62%"].map((width) => (
+          <Line key={width} width={width} />
         ))}
       </div>
     </div>

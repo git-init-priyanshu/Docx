@@ -526,3 +526,128 @@
   background: var(--lp-paper-2);
   color: var(--lp-ink);
 }
+
+/* ─── Editor: writing surface ─────────────────────────────────────────────── */
+/* `prose` sets a generic article rhythm — large heading margins, a 65ch      */
+/* measure, decorative quote marks. A document editor wants tighter vertical  */
+/* spacing than an article, because the reader is also the writer and every   */
+/* extra gap is a line they have to scroll past.                              */
+.lp-editor {
+  font-size: 16.5px;
+  line-height: 1.7;
+  letter-spacing: -0.003em;
+}
+
+.lp-editor > :first-child {
+  margin-top: 0;
+}
+
+.lp-editor p {
+  margin: 0.6em 0;
+}
+
+.lp-editor h1,
+.lp-editor h2,
+.lp-editor h3,
+.lp-editor h4,
+.lp-editor h5,
+.lp-editor h6 {
+  letter-spacing: -0.02em;
+  line-height: 1.25;
+  margin-bottom: 0.35em;
+  scroll-margin-top: 2rem;
+}
+
+.lp-editor h1 { font-size: 2em;    font-weight: 700; margin-top: 1.6em; }
+.lp-editor h2 { font-size: 1.5em;  font-weight: 650; margin-top: 1.5em; }
+.lp-editor h3 { font-size: 1.25em; font-weight: 650; margin-top: 1.35em; }
+.lp-editor h4 { font-size: 1.08em; font-weight: 650; margin-top: 1.25em; }
+.lp-editor h5,
+.lp-editor h6 { font-size: 1em;    font-weight: 650; margin-top: 1.2em; }
+
+.lp-editor ul,
+.lp-editor ol {
+  margin: 0.6em 0;
+  padding-inline-start: 1.5em;
+}
+.lp-editor li {
+  margin: 0.2em 0;
+}
+.lp-editor li p {
+  margin: 0;
+}
+
+/* prose renders quotes italic and wraps them in typographic quote marks,
+   which reads as a pull quote rather than as a block the user just made. */
+.lp-editor blockquote {
+  margin: 0.9em 0;
+  padding-inline-start: 1em;
+  border-inline-start: 3px solid var(--lp-border);
+  font-style: normal;
+  font-weight: 400;
+  color: var(--lp-ink);
+}
+.lp-editor blockquote p:first-of-type::before,
+.lp-editor blockquote p:last-of-type::after {
+  content: none;
+}
+
+/* Same reason: prose adds literal backticks around inline code. */
+.lp-editor :not(pre) > code {
+  background: var(--lp-paper-2);
+  border: 1px solid var(--lp-border);
+  border-radius: 4px;
+  padding: 0.1em 0.35em;
+  font-size: 0.875em;
+  font-weight: 500;
+}
+.lp-editor :not(pre) > code::before,
+.lp-editor :not(pre) > code::after {
+  content: none;
+}
+
+.lp-editor pre {
+  background: var(--lp-paper-2);
+  border: 1px solid var(--lp-border);
+  border-radius: 8px;
+  color: var(--lp-ink);
+  font-size: 0.875em;
+  line-height: 1.6;
+  margin: 0.9em 0;
+  padding: 0.85em 1em;
+}
+
+.lp-editor hr {
+  border: none;
+  border-top: 1px solid var(--lp-border);
+  margin: 1.6em 0;
+}
+
+.lp-editor a {
+  text-decoration-thickness: 1px;
+  text-underline-offset: 2px;
+}
+
+.lp-editor ::selection {
+  background: color-mix(in oklab, var(--lp-accent) 22%, transparent);
+}
+
+/* ─── Editor: placeholders ────────────────────────────────────────────────── */
+/* Floated with zero height so the hint sits on the caret's line without
+   taking part in layout — the block stays exactly as tall as it was. */
+.lp-editor .is-empty::before {
+  content: attr(data-placeholder);
+  float: left;
+  height: 0;
+  pointer-events: none;
+  color: var(--lp-muted);
+  opacity: 0.65;
+}
+
+/* ─── Editor: block handle ────────────────────────────────────────────────── */
+/* Visibility is the plugin's — it toggles `style.visibility` as the pointer
+   moves between blocks, so anything here that also hides the element would
+   never be undone. Only the dragging state is ours. */
+.lp-block-handle[data-dragging="true"] {
+  opacity: 0.6;
+}

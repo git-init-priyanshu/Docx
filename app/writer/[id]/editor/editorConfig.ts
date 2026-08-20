@@ -4,8 +4,10 @@ import TextAlign from "@tiptap/extension-text-align";
 import { TableKit } from "@tiptap/extension-table";
 import Image from "@tiptap/extension-image";
 import { Color, FontFamily, TextStyle } from "@tiptap/extension-text-style";
+import { Placeholder } from "@tiptap/extensions";
 
 import { cn } from "@/lib/utils";
+import { SlashMenu } from "./slashMenu";
 
 // The editor always shows the full image; the small copy exists only so a
 // dashboard thumbnail does not have to download it. `rendered: false` keeps it
@@ -57,12 +59,36 @@ export const extensions = [
   // is no upload token, so their images are data URIs, and the extension
   // strips those on parse otherwise.
   ImageWithThumbnail.configure({ inline: true, allowBase64: true }),
+  SlashMenu,
+  Placeholder.configure({
+    // An empty document says what it is; an empty block says what to do with
+    // it. Showing the second on every blank line would put "Type / for
+    // commands" beside every paragraph the user is midway through writing.
+    placeholder: ({ node, editor }) =>
+      editor.isEmpty && node.type.name === "paragraph"
+        ? "Write something, or press / for commands"
+        : node.type.name === "heading"
+          ? "Heading"
+          : "Press / for commands",
+    showOnlyCurrent: true,
+  }),
 ];
 
+// A writing surface rather than a sheet of paper: the card, shadow and cream
+// backdrop stay, but the height follows the content instead of being pinned to
+// a page that never breaks.
+//
+// The width is marked important because `prose` sets its own `max-width: 65ch`.
+// Both land in the utilities layer, so without it the winner would depend on
+// Tailwind's internal sort order rather than on anything written here.
 export const props = {
   attributes: {
     class: cn(
-      "prose [&_ol]:list-decimal [&_ul]:list-disc w-[816.3px] max-w-[816.3px] min-h-[1056.36px] mx-auto bg-[var(--lp-card)] text-[var(--lp-ink)] rounded-md p-24 my-6 lp-doc-shadow focus-visible:outline-none",
+      "lp-editor prose [&_ol]:list-decimal [&_ul]:list-disc",
+      "w-full !max-w-[860px] min-h-[60vh] mx-auto",
+      "bg-[var(--lp-card)] text-[var(--lp-ink)] rounded-lg",
+      "px-6 py-10 sm:px-12 sm:py-14 md:px-20 my-6 lp-doc-shadow",
+      "focus-visible:outline-none",
     ),
   },
 };
