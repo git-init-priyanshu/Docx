@@ -14,7 +14,7 @@ Write, format, and collaborate on documents in real time — with an AI writing 
 <img alt="TypeScript" src="https://img.shields.io/badge/TypeScript-5-3178C6?logo=typescript&logoColor=white" />
 <img alt="Tiptap" src="https://img.shields.io/badge/Tiptap-3-2B2E3A" />
 <img alt="PostgreSQL" src="https://img.shields.io/badge/PostgreSQL-pgvector-4169E1?logo=postgresql&logoColor=white" />
-<img alt="Gemini" src="https://img.shields.io/badge/AI-Gemini%202.5%20Flash-8E75F0?logo=googlegemini&logoColor=white" />
+<img alt="OpenRouter" src="https://img.shields.io/badge/AI-OpenRouter-8E75F0?logo=openai&logoColor=white" />
 
 <br />
 </div>
@@ -101,7 +101,7 @@ Captures still to add (shot list: docs/media/CAPTURE.md):
 | Language         | TypeScript (Node 24, Yarn 4)                                      |
 | Editor           | [Tiptap 3](https://tiptap.dev/) (ProseMirror)                     |
 | Collaboration    | [Yjs](https://yjs.dev/) + [y-websocket](https://github.com/yjs/y-websocket) |
-| AI               | [Google Gemini 2.5 Flash](https://ai.google.dev/) + `gemini-embedding-001` |
+| AI               | [OpenRouter](https://openrouter.ai/) for generation + `gemini-embedding-001` for embeddings |
 | Retrieval        | Postgres [pgvector](https://github.com/pgvector/pgvector) + `tsvector`, fused with Reciprocal Rank Fusion |
 | Auth             | [NextAuth](https://next-auth.js.org/) (Google OAuth)              |
 | Database         | PostgreSQL + [Prisma](https://www.prisma.io/)                     |
@@ -119,7 +119,7 @@ Captures still to add (shot list: docs/media/CAPTURE.md):
 - **Yarn** 4 (`corepack enable`)
 - A **PostgreSQL** database where the **pgvector** extension can be created (Neon works out of the box)
 - A **Google OAuth** client (sign-in, and the Google Docs importer)
-- A **Gemini API key** (AI features)
+- An **OpenRouter API key** (text generation) and a **Gemini API key** (embeddings)
 - A **Vercel Blob** store (image uploads)
 - A running **y-websocket** server (real-time collaboration)
 
@@ -145,7 +145,16 @@ GOOGLE_SECRET="your-google-client-secret"
 NEXTAUTH_SECRET="a-random-secret"
 NEXTAUTH_URL="http://localhost:3000"
 
-# AI (writing assistant, embeddings, chat)
+# AI text generation (writing assistant, chat answers, reranking)
+OPENROUTER_API_KEY="sk-or-v1-..."
+
+# Optional model overrides — see lib/ai/models.ts for the defaults
+# OPENROUTER_WRITER_MODEL="qwen/qwen3.8-flash"
+# OPENROUTER_ANSWER_MODEL="deepseek/deepseek-v4-flash-0731"
+# OPENROUTER_RERANK_MODEL="qwen/qwen3.8-flash"
+# OPENROUTER_CONDENSE_MODEL="deepseek/deepseek-v4-flash-0731"
+
+# AI embeddings (OpenRouter has no embeddings endpoint, so these stay on Google)
 GEMINI_API_KEY="your-gemini-api-key"
 
 # Real-time collaboration
@@ -267,7 +276,7 @@ scripts/backfill-embeddings.ts
 
 - **Editor** — Tiptap 3 with `StarterKit`, `Collaboration`, `CollaborationCaret`, tables, images, placeholders, a custom slash-menu extension, and styling extensions. A Yjs document and `WebsocketProvider` are created **per document** (room `doc.${docId}`) so documents never sync into one another. Local undo/redo stays off — that is Yjs's job once collaboration is attached.
 - **Auto-save & versions** — edits are debounced (~1s) and persisted through the `UpdateDocData` server action, a version snapshot is taken at most once a minute, then the SWR cache is revalidated.
-- **Inline AI** — the `generateText` server action calls Gemini 2.5 Flash; results are inserted with paragraph structure preserved, from the <kbd>⌘K</kbd> palette, the bubble menu, or the right rail.
+- **Inline AI** — the `generateText` server action calls OpenRouter; results are inserted with paragraph structure preserved, from the <kbd>⌘K</kbd> palette, the bubble menu, or the right rail.
 - **Chat (RAG)** — documents are chunked on heading boundaries (~1600 chars, with the heading path carried into the embedding), embedded with `gemini-embedding-001` truncated to 768 dimensions, and stored in a `vector(768)` column beside a generated `tsvector`. A question is condensed against chat history, retrieved twice (cosine distance and `ts_rank_cd`), fused with Reciprocal Rank Fusion, reranked by a model, then answered from the top passages with citations. Retrieval is scoped to documents you own or collaborate on. The route streams NDJSON, so each stage — condense, retrieve, rerank, generate — is visible as it happens.
 - **Images** — the browser uploads straight to a private Blob store with a presigned token whose constraints are signed in, so bytes never cross the serverless request-body limit. Reads go through `/api/image/...`, which checks document access and redirects to a short-lived signed URL: an image is exactly as private as its document.
 - **Google Docs import** — the picker runs in the browser with the `drive.file` scope, the doc is converted to Tiptap, images are re-hosted into Blob storage before anything is saved, and an "as imported" version snapshot is written.
