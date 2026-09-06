@@ -1,10 +1,5 @@
 "use client";
 
-// Conversation state plus the NDJSON stream reader for /api/chat.
-//
-// Split from the component so the bar stays presentational: the parsing rules
-// for the wire format live next to nothing but themselves.
-
 import { useCallback, useEffect, useRef, useState } from "react";
 
 import { GetLatestChatThread } from "./actions";
@@ -90,7 +85,7 @@ export function useChat(enabled: boolean) {
       const decoder = new TextDecoder();
       let buffer = "";
 
-      for (;;) {
+      while (true) {
         const { done, value } = await reader.read();
         if (done) break;
 

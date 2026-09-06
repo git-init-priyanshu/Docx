@@ -1,14 +1,3 @@
-// Hybrid retrieval over the caller's documents.
-//
-// Two independent rankings are fused rather than blended by raw score: cosine
-// distance and ts_rank_cd are on incomparable scales, so any weighted sum is
-// arbitrary. Reciprocal Rank Fusion only reads each result's *position*, which
-// makes it scale-free and is why it holds up without per-corpus tuning.
-//
-// The keyword half exists for the queries embeddings are worst at — an exact
-// identifier, an error string, a person's name. The vector half exists for the
-// queries keywords are worst at — a question phrased nothing like the source.
-
 import { Prisma } from "@prisma/client";
 
 import prisma from "../../prisma/prismaClient.ts";
@@ -16,7 +5,7 @@ import { embedQuery, toVectorLiteral } from "./embed.ts";
 
 // Candidates pulled from each ranking before fusion.
 const PER_RANKING_LIMIT = 30;
-export const CANDIDATE_LIMIT = 30;
+export const RETRIEVAL_LIMIT = 30;
 
 // Standard RRF damping. Large enough that the top few results do not dominate,
 // small enough that rank still matters past the first page.
@@ -47,23 +36,24 @@ export async function retrieve(
   const documentIds = await accessibleDocumentIds(userId);
   if (documentIds.length === 0) return [];
 
-  const vector = toVectorLiteral(await embedQuery(query));
+  // Embed the query to match against embeddings of document chunks
+  const queryEmbeddingLiteral = toVectorLiteral(await embedQuery(query));
   const ids = Prisma.join(documentIds);
 
   return prisma.$queryRaw<RetrievedChunk[]>`
     WITH semantic AS (
       SELECT c.id,
-             ROW_NUMBER() OVER (ORDER BY c.embedding <=> ${vector}::vector) AS rank
-      FROM "DocumentChunk" c
+             ROW_NUMBER() OVER (ORDER BY c.embedding <=> ${queryEmbeddingLiteral}::vector) AS rank
+      FROM "DocumentChunk" AS c
       WHERE c."documentId" IN (${ids})
         AND c.embedding IS NOT NULL
-      ORDER BY c.embedding <=> ${vector}::vector
+      ORDER BY c.embedding <=> ${queryEmbeddingLiteral}::vector
       LIMIT ${PER_RANKING_LIMIT}
     ),
     keyword AS (
       SELECT c.id,
              ROW_NUMBER() OVER (ORDER BY ts_rank_cd(c.tsv, q) DESC) AS rank
-      FROM "DocumentChunk" c,
+      FROM "DocumentChunk" AS c,
            websearch_to_tsquery('english', ${query}) q
       WHERE c."documentId" IN (${ids})
         AND c.tsv @@ q
@@ -87,6 +77,6 @@ export async function retrieve(
     JOIN "DocumentChunk" c ON c.id = fused.id
     JOIN "Document" d ON d.id = c."documentId"
     ORDER BY fused.score DESC
-    LIMIT ${CANDIDATE_LIMIT}
+    LIMIT ${RETRIEVAL_LIMIT}
   `;
 }

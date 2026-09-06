@@ -1,9 +1,3 @@
-// Rolling-window rate limit for AI calls, backed by one row per call.
-//
-// A counter table rather than an in-memory limiter because the app runs on
-// serverless instances that do not share memory, and because the rows are
-// worth keeping: they are the usage record that later evaluation work reads.
-
 import prisma from "@/prisma/prismaClient";
 
 export const AI_CALLS_PER_HOUR = 30;

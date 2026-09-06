@@ -5,11 +5,6 @@ import Image from "next/image";
 
 import Google from "@/public/google_icon.svg";
 
-/**
- * OAuth provider button styled to match the new auth design. Only Google is
- * exposed today — additional providers can be added once they're configured
- * in `lib/auth.ts`.
- */
 export default function SocialButton({
   provider,
   children,

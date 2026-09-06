@@ -1,12 +1,5 @@
 "use client";
 
-// Floating ask bar: a pill at the bottom of the screen that grows into a
-// conversation once you ask something.
-//
-// Mounted on both the dashboard and the editor so the same conversation is
-// reachable from either, and collapsed by default so it costs the writing
-// surface a single line of chrome.
-
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { ArrowUp, RotateCcw, Sparkles, X } from "lucide-react";
