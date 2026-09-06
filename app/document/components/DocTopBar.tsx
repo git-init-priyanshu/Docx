@@ -29,6 +29,11 @@ export default function DocTopBar({ q, setQ }: DocTopBarProps) {
   const { resolvedTheme, setTheme } = useTheme();
   const session = useClientSession();
   const searchRef = useRef<HTMLDivElement>(null);
+  const latestQueryRef = useRef<string | undefined>(undefined);
+
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
+  const isDark = mounted && resolvedTheme === "dark";
 
   const [isFocused, setIsFocused] = useState(false);
   const [isSearching, setIsSearching] = useState(false);
@@ -40,8 +45,10 @@ export default function DocTopBar({ q, setQ }: DocTopBarProps) {
 
   const debounce = useDebounce(async (value: string) => {
     if (!value || !session?.id) return;
+    latestQueryRef.current = value;
     setIsSearching(true);
     const resp = await SearchDocAction(value);
+    if (latestQueryRef.current !== value) return;
     setSearchResponse(resp as any);
     setIsSearching(false);
   }, 500);
@@ -67,6 +74,7 @@ export default function DocTopBar({ q, setQ }: DocTopBarProps) {
           onChange={e => {
             setQ(e.target.value);
             if (!e.target.value) {
+              latestQueryRef.current = undefined;
               setSearchResponse(undefined);
               return;
             }
@@ -80,7 +88,7 @@ export default function DocTopBar({ q, setQ }: DocTopBarProps) {
         {q && (
           <button
             className="absolute right-2.5 top-1/2 -translate-y-1/2"
-            onClick={() => { setQ(""); setSearchResponse(undefined); }}
+            onClick={() => { setQ(""); latestQueryRef.current = undefined; setSearchResponse(undefined); }}
           >
             <X className="w-4 h-4 text-[var(--lp-muted)]" />
           </button>
@@ -124,11 +132,11 @@ export default function DocTopBar({ q, setQ }: DocTopBarProps) {
       {/* Right actions */}
       <div className="ml-auto flex items-center gap-2">
         <button
-          onClick={() => setTheme(resolvedTheme === "dark" ? "light" : "dark")}
+          onClick={() => setTheme(isDark ? "light" : "dark")}
           className="h-9 w-9 rounded-md border border-[var(--lp-border)] flex items-center justify-center transition hover:bg-[var(--lp-paper-2)]"
           aria-label="Toggle theme"
         >
-          {resolvedTheme === "dark" ? (
+          {isDark ? (
             <Sun className="w-4 h-4 text-[var(--lp-ink)]" />
           ) : (
             <Moon className="w-4 h-4 text-[var(--lp-ink)]" />
