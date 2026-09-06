@@ -41,7 +41,10 @@ const citationOf = (chunk: RetrievedChunk) => ({
 export async function POST(request: Request) {
   const session = await getServerSession();
   if (!session.id) {
-    return NextResponse.json({ error: "User is not logged in" }, { status: 401 });
+    return NextResponse.json(
+      { error: "User is not logged in" },
+      { status: 401 },
+    );
   }
   const userId = session.id;
 
@@ -66,8 +69,8 @@ export async function POST(request: Request) {
   const requestedThreadId =
     typeof body.threadId === "string" ? body.threadId : null;
 
-  // One usage row per user question, not per model call — the three calls
-  // behind a single answer are an implementation detail of this endpoint.
+  // Records this user's usage limit and reports whether they have
+  // gone over the hourly limit.
   const usage = await recordAiCall(userId, "chat");
   if (!usage.allowed) {
     return NextResponse.json(
@@ -88,7 +91,10 @@ export async function POST(request: Request) {
     : null;
 
   if (requestedThreadId && !thread) {
-    return NextResponse.json({ error: "Conversation not found" }, { status: 404 });
+    return NextResponse.json(
+      { error: "Conversation not found" },
+      { status: 404 },
+    );
   }
 
   const history: Turn[] = thread
@@ -116,13 +122,27 @@ export async function POST(request: Request) {
 
       try {
         send({ type: "status", value: "searching" });
-        const searchQuery = await condenseQuery(message, history);
+        // Retrieval sees the raw message with no memory of prior turns.
+        // This rewrites the message into a standalone question using recent
+        // history, so retrieval below has something real to search on.
+        const condensedQuery = await condenseQuery(message, history);
 
-        const candidates = await retrieve(userId, searchQuery);
+        // Casts a wide, cheap net: hybrid search (vector similarity + keyword
+        // match) over all of the user's document chunks, fused into one
+        // ranked list. Fast enough to run over the whole corpus, but the
+        // ranking itself is rough — refined by rerank below.
+        const retrievedChunks = await retrieve(userId, condensedQuery);
 
         send({ type: "status", value: "ranking" });
+        // Retrieval's ranking is cheap but rough, as it does not have any deep
+        // understanding of the actual question — it's just vector distance and
+        // keyword rank fused together over thousands of chunks. Rerank runs a
+        // slower model that reads the real query text against each of these
+        // few candidates directly, so the final order actually reflects relevance.
         const chunks =
-          candidates.length > 0 ? await rerank(searchQuery, candidates) : [];
+          retrievedChunks.length > 0
+            ? await rerank(condensedQuery, retrievedChunks)
+            : [];
 
         send({ type: "citations", value: chunks.map(citationOf) });
 
@@ -132,6 +152,11 @@ export async function POST(request: Request) {
           send({ type: "text", value: answer });
         } else {
           send({ type: "status", value: "answering" });
+          // Rerank returns ranked passages, not an answer — raw document text the
+          // user would still have to read and stitch together. This last model call
+          // reads those passages and writes the actual reply, grounded only in them
+          // and cited back to the passage each claim came from. Streamed token by
+          // token so the first words reach the client while the rest is generated.
           for await (const piece of streamAnswer(message, chunks, history)) {
             answer += piece;
             send({ type: "text", value: piece });

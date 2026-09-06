@@ -4,14 +4,6 @@ import prisma from "@/prisma/prismaClient";
 import getServerSession from "@/lib/customHooks/getServerSession";
 import { indexDocument } from "@/lib/rag/indexer";
 
-/**
- * Refreshes a document's retrieval index. Called by the editor right after a
- * version snapshot is written, and deliberately not awaited by the caller —
- * embedding takes seconds and must not hold the save indicator.
- *
- * Losing this call costs nothing permanent: `Document.indexedHash` still
- * disagrees with the content, so the next snapshot or a backfill run reindexes.
- */
 export const IndexDocument = async (docId: string) => {
   const session = await getServerSession();
   if (!session.id) return { success: false, error: "User is not logged in" };

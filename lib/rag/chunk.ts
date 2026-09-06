@@ -1,25 +1,13 @@
-// Splits a stored Tiptap document into retrieval units.
-//
-// Server-only: `node:crypto` cannot be bundled for the browser, and indexing
-// only ever runs from a server action, a route handler, or the backfill
-// script. Do not import this from a client component.
-//
-// Chunks never straddle a heading, so every hit can name the section it came
-// from, and the heading path travels with the text into the embedding — a
-// paragraph reading "we decided against it" is meaningless alone but precise
-// under "Q3 Plan > Vendor evaluation > Datadog".
-
 import { createHash } from "node:crypto";
 
-// Relative and extension-qualified so `node` can run this module directly for
-// the backfill script — the `@/` alias is a bundler-only convention.
 import {
   renderBlock,
   type TipTapDoc,
   type TipTapNode,
 } from "../tiptap/markdown.ts";
 
-// Gemini has no public tokenizer, so size is approximated at ~4 chars/token.
+// Token counts differ per model and no tokenizer is bundled, so size is
+// approximated at ~4 chars/token.
 // 1600 chars ≈ 400 tokens: large enough to hold a whole argument, small enough
 // that eight of them leave the answer model room to think.
 const TARGET_CHARS = 1600;

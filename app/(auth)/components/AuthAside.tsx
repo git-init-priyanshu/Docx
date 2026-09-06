@@ -1,10 +1,5 @@
-import { Sparkles, Check } from "lucide-react";
+import { Sparkles } from "lucide-react";
 
-/**
- * Right-side "peek inside" preview shown next to the sign-in form. Renders a
- * scaled mock of a DocX document so visitors get a sense of the editor before
- * they create an account.
- */
 export default function AuthAside() {
   return (
     <div className="relative w-full flex items-center justify-center p-12">

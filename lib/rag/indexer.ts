@@ -20,6 +20,7 @@ export type IndexResult = {
   total: number;
 };
 
+// Indexing = turning stored document into searchable corpus.
 export async function indexDocument(documentId: string): Promise<IndexResult> {
   const doc = await prisma.document.findUnique({
     where: { id: documentId },

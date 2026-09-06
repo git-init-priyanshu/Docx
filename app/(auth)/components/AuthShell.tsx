@@ -8,15 +8,6 @@ import { Sun, Moon } from "lucide-react";
 
 import logo from "@/public/logo.svg";
 
-/**
- * Full-bleed split layout for the new auth pages. Header (logo + theme toggle
- * + back link) and footer wrap the form on one side; an aside preview pane
- * fills the other side on lg+ screens.
- *
- * The `side` prop controls which side the form lives on so we can flip the
- * layout between sign-in (form-left) and sign-up (form-right) for visual
- * variety.
- */
 export default function AuthShell({
   children,
   aside,

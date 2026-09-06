@@ -2,24 +2,32 @@ const FEATURES = [
   {
     icon: "users",
     title: "Real-time collab",
-    body: "Cursors, comments, and edits sync over Y.js. Up to a few dozen people can edit the same page.",
+    body: "Live cursors and edits sync over Yjs, in a room scoped to the one document. Share a link and anyone holding it can join.",
   },
   {
     icon: "sparkle",
-    title: "AI helpers",
-    // TODO: re-enable "Bring your own OpenAI / Anthropic key." once BYO-key support ships.
-    body: "Highlight a paragraph, ask for a rewrite or a summary.",
+    title: "AI writing assistant",
+    body: "Improve, fix grammar, translate, change tone, expand or tighten. Press ⌘K, or select text and use the bubble menu.",
   },
-  // TODO: enable once version history ships.
-  // {
-  //   icon: "history",
-  //   title: "Version history",
-  //   body: "Every change is saved. Roll back, branch a copy, or compare two versions side-by-side.",
-  // },
+  {
+    icon: "message",
+    title: "Chat with your documents",
+    body: "Press ⌘J and ask across everything you can read. Answers are grounded in your own passages and cite them — and say so when nothing matches.",
+  },
+  {
+    icon: "history",
+    title: "Version history",
+    body: "Snapshots are captured as you write. Preview any version as a thumbnail and restore it in one click.",
+  },
+  {
+    icon: "import",
+    title: "Import & export",
+    body: "Pull a doc in from Google Drive with its images re-hosted, and take your work out again as Markdown or plain text.",
+  },
   {
     icon: "lock",
     title: "Self-hostable",
-    body: "Clone the repo, run `docker compose up`, and it's yours. MIT-licensed, no hidden tiers.",
+    body: "Clone the repo, point it at your own Postgres, and it's yours. Open source, no hidden tiers.",
   },
   // TODO: enable once outline view ships.
   // {
@@ -52,11 +60,25 @@ function FeatureIcon({ name }: { name: string }) {
         <circle cx="12" cy="12" r="2.2" />
       </>
     ),
+    message: (
+      <>
+        <rect x="3.5" y="4.5" width="17" height="12" rx="2.5" />
+        <path d="M8 16.5V20l4-3.5" />
+        <path d="M8 9h8M8 12.5h5" />
+      </>
+    ),
     history: (
       <>
         <circle cx="12" cy="12" r="9" />
         <path d="M12 7v5l3 2" />
         <path d="M3 8a9 9 0 0 1 3-4" />
+      </>
+    ),
+    import: (
+      <>
+        <path d="M12 3v10" />
+        <path d="M8.5 9.5L12 13l3.5-3.5" />
+        <path d="M4 15v3.5A1.5 1.5 0 0 0 5.5 20h13a1.5 1.5 0 0 0 1.5-1.5V15" />
       </>
     ),
     lock: (
@@ -89,37 +111,59 @@ function FeatureIcon({ name }: { name: string }) {
 
 export default function FeaturesSection() {
   return (
-    <section id="features" className="py-20" style={{ background: "var(--lp-paper)" }}>
+    <section
+      id="features"
+      className="py-20"
+      style={{ background: "var(--lp-paper)" }}
+    >
       <div className="mx-auto w-full max-w-[1080px] px-6 lg:px-8">
         <div className="max-w-[640px] mb-12">
-          <div className="font-mono text-[11px] uppercase tracking-wider mb-2" style={{ color: "var(--lp-muted)" }}>
+          <div
+            className="font-mono text-[11px] uppercase tracking-wider mb-2"
+            style={{ color: "var(--lp-muted)" }}
+          >
             Features
           </div>
           <h2
             className="text-[38px] sm:text-[46px] leading-[1.05] tracking-[-0.03em] font-semibold"
             style={{ color: "var(--lp-ink)" }}
           >
-            Everything you need to write,<br />collaborate, and create with AI.
+            Everything you need to write,
+            <br />
+            collaborate, and create with AI.
           </h2>
         </div>
 
         <div
           className="grid sm:grid-cols-2 lg:grid-cols-3 gap-px rounded-[10px] border overflow-hidden"
-          style={{ background: "var(--lp-border)", borderColor: "var(--lp-border)" }}
+          style={{
+            background: "var(--lp-border)",
+            borderColor: "var(--lp-border)",
+          }}
         >
           {FEATURES.map((f) => (
-            <div
-              key={f.title}
-              className="lp-feature-card p-6 group"
-            >
+            <div key={f.title} className="lp-feature-card p-6 group">
               <div
                 className="w-9 h-9 rounded-md border flex items-center justify-center mb-4 transition-transform group-hover:-rotate-3"
-                style={{ borderColor: "var(--lp-border)", color: "var(--lp-accent)" }}
+                style={{
+                  borderColor: "var(--lp-border)",
+                  color: "var(--lp-accent)",
+                }}
               >
                 <FeatureIcon name={f.icon} />
               </div>
-              <div className="font-medium text-[15px] mb-1" style={{ color: "var(--lp-ink)" }}>{f.title}</div>
-              <p className="text-[13px] leading-relaxed" style={{ color: "var(--lp-muted)" }}>{f.body}</p>
+              <div
+                className="font-medium text-[15px] mb-1"
+                style={{ color: "var(--lp-ink)" }}
+              >
+                {f.title}
+              </div>
+              <p
+                className="text-[13px] leading-relaxed"
+                style={{ color: "var(--lp-muted)" }}
+              >
+                {f.body}
+              </p>
             </div>
           ))}
         </div>

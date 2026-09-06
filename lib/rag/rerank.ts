@@ -1,62 +1,78 @@
-// Second-stage ranking: cuts the fused candidate set down to what actually
-// answers the question.
-//
-// Fusion ranks by lexical and semantic proximity, which is not the same as
-// relevance — a passage can score well for repeating the question's words while
-// answering something else. A model reading the passages catches that.
-//
-// Every failure path falls back to the incoming order. A reranker that throws
-// must degrade the answer, never prevent one.
-
-import { GoogleGenerativeAI } from "@google/generative-ai";
+import { chat, isConfigured } from "@/lib/ai/openrouter";
+import { RERANK_MODEL } from "@/lib/ai/models";
 
 import type { RetrievedChunk } from "./search.ts";
 
-export const RERANK_MODEL = "gemini-2.5-flash";
 export const ANSWER_CHUNK_LIMIT = 8;
 
 // Enough of each passage to judge relevance, short enough that thirty of them
 // stay a cheap prompt.
 const PREVIEW_CHARS = 700;
 
-const buildPrompt = (query: string, candidates: RetrievedChunk[]) =>
-  [
-    "You rank passages by how well they answer a question.",
-    "",
-    `Question: ${query}`,
-    "",
-    "Passages:",
-    ...candidates.map(
+const buildPrompt = (query: string, retrievedChunks: RetrievedChunk[]) => {
+  const passages = retrievedChunks
+    .map(
       (chunk, i) =>
         `[${i}] (${chunk.headingPath}) ${chunk.content.slice(0, PREVIEW_CHARS)}`,
-    ),
-    "",
-    `Reply with JSON only: an array of at most ${ANSWER_CHUNK_LIMIT} passage`,
-    "numbers, most useful first. Omit passages that do not help answer the",
-    "question, even if that leaves the array empty.",
-  ].join("\n");
+    )
+    .join("\n");
 
-// Returns null when the reply could not be understood, distinct from an empty
-// array — which is the model saying none of the passages are relevant, and must
-// be honoured rather than papered over with a fallback.
-function parseOrder(raw: string, candidateCount: number): number[] | null {
-  const match = raw.match(/\[[\s\S]*\]/);
-  if (!match) return null;
+  return `
+    You rank passages by how well they answer a question.
 
-  let parsed: unknown;
-  try {
-    parsed = JSON.parse(match[0]);
-  } catch {
-    return null;
+    Question: ${query}
+
+    Passages:
+    ${passages}
+
+    Reply with JSON only, in the form {"order": [3, 0, 7]}: at most
+    ${ANSWER_CHUNK_LIMIT} passage numbers, most useful first. Omit passages that
+    do not help answer the question, even if that leaves the array empty.
+  `;
+};
+
+// Pulls the list of passage numbers out of the reply, whether the model wrapped
+// it in the requested object, returned a bare array, or buried either in prose.
+function extractList(raw: string): unknown[] | null {
+  const candidates = [
+    raw.match(/\{[\s\S]*\}/)?.[0],
+    raw.match(/\[[\s\S]*\]/)?.[0],
+  ];
+
+  for (const candidate of candidates) {
+    if (!candidate) continue;
+    let parsed: unknown;
+    try {
+      parsed = JSON.parse(candidate);
+    } catch {
+      continue;
+    }
+    if (Array.isArray(parsed)) return parsed;
+
+    const order = (parsed as { order?: unknown })?.order;
+    if (Array.isArray(order)) return order;
   }
-  if (!Array.isArray(parsed)) return null;
+  return null;
+}
+
+// Safely parses the model's JSON reply into valid passage indices, dropping
+// junk, duplicates, and out-of-range values. Returns null when the reply
+// could not be understood, distinct from an empty array — which is the model
+// saying none of the passages are relevant, and must be honoured rather than
+// papered over with a fallback.
+function parseOrder(
+  raw: string,
+  retrievedChunksCount: number,
+): number[] | null {
+  const parsed = extractList(raw);
+  if (!parsed) return null;
 
   const seen = new Set<number>();
   const order: number[] = [];
   for (const value of parsed) {
     const index = typeof value === "number" ? value : Number(value);
     if (!Number.isInteger(index)) continue;
-    if (index < 0 || index >= candidateCount) continue;
+    if (index < 0 || index >= retrievedChunksCount) continue;
     if (seen.has(index)) continue;
     seen.add(index);
     order.push(index);
@@ -66,25 +82,25 @@ function parseOrder(raw: string, candidateCount: number): number[] | null {
 
 export async function rerank(
   query: string,
-  candidates: RetrievedChunk[],
+  retrievedChunks: RetrievedChunk[],
 ): Promise<RetrievedChunk[]> {
-  if (candidates.length <= 1) return candidates;
+  if (retrievedChunks.length <= 1) return retrievedChunks;
 
-  const key = process.env.GEMINI_API_KEY;
-  if (!key) return candidates.slice(0, ANSWER_CHUNK_LIMIT);
+  if (!isConfigured()) return retrievedChunks.slice(0, ANSWER_CHUNK_LIMIT);
 
   try {
-    const model = new GoogleGenerativeAI(key).getGenerativeModel({
+    const reply = await chat({
       model: RERANK_MODEL,
-      generationConfig: { responseMimeType: "application/json" },
+      prompt: buildPrompt(query, retrievedChunks),
+      json: true,
+      temperature: 0,
     });
-    const result = await model.generateContent(buildPrompt(query, candidates));
-    const order = parseOrder(result.response.text(), candidates.length);
-    if (order === null) return candidates.slice(0, ANSWER_CHUNK_LIMIT);
+    const order = parseOrder(reply, retrievedChunks.length);
+    if (order === null) return retrievedChunks.slice(0, ANSWER_CHUNK_LIMIT);
 
-    return order.slice(0, ANSWER_CHUNK_LIMIT).map((i) => candidates[i]);
+    return order.slice(0, ANSWER_CHUNK_LIMIT).map((i) => retrievedChunks[i]);
   } catch (e) {
     console.error("[rag] rerank failed, falling back to fused order:", e);
-    return candidates.slice(0, ANSWER_CHUNK_LIMIT);
+    return retrievedChunks.slice(0, ANSWER_CHUNK_LIMIT);
   }
 }

@@ -32,7 +32,8 @@ Required in `.env`:
 - `GOOGLE_ID` / `GOOGLE_SECRET` — NextAuth Google OAuth
 - `NEXTAUTH_SECRET` — NextAuth session secret
 - `NEXTAUTH_URL` — Base URL NextAuth uses for callbacks (e.g. `http://localhost:3000`)
-- `GEMINI_API_KEY` — Google Gemini AI (used for text generation in the editor)
+- `OPENROUTER_API_KEY` — OpenRouter, used for every text generation call (editor rewrites, RAG answers, reranking, query condensation). Per-task model ids live in `lib/ai/models.ts` and are overridable via `OPENROUTER_WRITER_MODEL`, `OPENROUTER_ANSWER_MODEL`, `OPENROUTER_RERANK_MODEL`, `OPENROUTER_CONDENSE_MODEL`
+- `GEMINI_API_KEY` — Google Gemini, used **only** for embeddings (`lib/rag/embed.ts`). OpenRouter has no embeddings endpoint
 - `NEXT_PUBLIC_WEBSOCKET_URL` — WebSocket server URL for Yjs real-time collaboration
 - `BACKEND_SERVER_URL` — Backend service for thumbnail upload queue
 - `BLOB_READ_WRITE_TOKEN` — Vercel Blob store, for editor image uploads
@@ -59,7 +60,7 @@ Unauthenticated users can create and edit documents locally. All guest data live
 - **Yjs + y-websocket** for real-time collaboration. `ydoc` and the `WebsocketProvider` are created **per document** inside the editor hook (keyed on `docId`) and destroyed on unmount / navigation. The room name is `doc.${docId}` so collaboration is scoped to each individual document — different documents never sync into one another.
 - Auto-save via a 1-second debounce: on change, calls `UpdateDocData` server action and then `invalidateDoc` to update the SWR cache.
 - `⌘K` opens `AskPalette` — a floating command palette for AI text operations.
-- Bubble menu appears on text selection with AI actions (improve writing, fix grammar, translate, summarize, etc.) via `generateText` server action → Gemini 1.5 Flash.
+- Bubble menu appears on text selection with AI actions (improve writing, fix grammar, translate, summarize, etc.) via `generateText` server action → OpenRouter (`WRITER_MODEL`).
 
 ### Data Fetching (SWR)
 - `lib/hooks/useDocs.ts` — fetch all documents for a user; export `invalidateDocs(userId?)` after mutations.

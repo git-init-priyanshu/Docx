@@ -1,6 +1,7 @@
 "use server";
 
-import { GoogleGenerativeAI } from "@google/generative-ai";
+import { chat, isConfigured } from "@/lib/ai/openrouter";
+import { WRITER_MODEL } from "@/lib/ai/models";
 
 import prisma from "@/prisma/prismaClient";
 import getServerSession from "@/lib/customHooks/getServerSession";
@@ -88,7 +89,7 @@ export const UpdateDocData = async (id: any, data: string) => {
   }
 };
 
-// Gemini frequently wraps responses in ``` fences or prefaces them with
+// Models frequently wrap responses in ``` fences or preface them with
 // "Sure, here is…". Strip those so the result can be inserted into the doc
 // without polluting the user's content.
 const cleanGeneratedText = (raw: string): string => {
@@ -105,7 +106,7 @@ const cleanGeneratedText = (raw: string): string => {
   return text.trim();
 };
 
-// Cap input to keep generations responsive and stay within Gemini's quota.
+// Cap input to keep generations responsive and to bound the cost of one call.
 const MAX_INPUT_CHARS = 20_000;
 
 export const generateText = async (
@@ -122,7 +123,7 @@ export const generateText = async (
         error: "User is not logged in",
       };
 
-    if (!process.env.GEMINI_API_KEY) {
+    if (!isConfigured()) {
       return { success: false, error: "AI is not configured on the server" };
     }
     const trimmed = (text ?? "").trim();
@@ -153,11 +154,8 @@ export const generateText = async (
     const note =
       "\n\nRespond with only the resulting text — no preamble, no markdown code fences, no surrounding quotes.";
 
-    const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-    const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
-
-    const result = await model.generateContent(prompt + note);
-    const cleaned = cleanGeneratedText(result.response.text());
+    const raw = await chat({ model: WRITER_MODEL, prompt: prompt + note });
+    const cleaned = cleanGeneratedText(raw);
 
     if (!cleaned) {
       return { success: false, error: "AI returned an empty response" };
