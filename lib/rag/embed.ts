@@ -1,32 +1,20 @@
-// Embedding calls for indexing and for queries.
-//
-// gemini-embedding-001 returns 3072 dimensions by default; Matryoshka
-// truncation to 768 keeps nearly all of the retrieval quality at a quarter of
-// the storage and index size, and 768 is what the `vector(768)` column and its
-// HNSW index are built for. text-embedding-004 is retired and returns 400.
-//
-// Documents and queries are embedded with different task types on purpose:
-// asymmetric embedding measurably beats using one type for both, because a
-// short question and a long passage do not live in the same part of the space.
-
 import {
   GoogleGenerativeAI,
   TaskType,
   type EmbedContentRequest,
 } from "@google/generative-ai";
 
-// The v1beta endpoint accepts `outputDimensionality`, but @google/generative-ai
-// 0.21 has not caught up in its types — it forwards the request body verbatim,
-// so the field works today. Declared here rather than cast at each call site.
 type SizedEmbedRequest = EmbedContentRequest & {
   outputDimensionality: number;
 };
 
+// gemini-embedding-001 returns 3072 dimensions by default; Matryoshka
+// truncation to 768 keeps nearly all of the retrieval quality at a quarter of
+// the storage and index size, and 768 is what the `vector(768)` column and its
+// HNSW index are built for.
 export const EMBEDDING_MODEL = "gemini-embedding-001";
 export const EMBEDDING_DIMENSIONS = 768;
 
-// The API caps a batch request; well under it, and small enough that one
-// failure re-does little work.
 const BATCH_SIZE = 50;
 
 function client() {
