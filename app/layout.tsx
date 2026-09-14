@@ -18,10 +18,31 @@ const jetbrainsMono = JetBrains_Mono({
   weight: ["400", "500"],
 });
 
+const title = "DocX: an open-source Google Docs alternative";
+const description =
+  "An open-source alternative to Google Docs, that lets you write and customize your docs collaboratively with others";
+
 export const metadata: Metadata = {
-  title: "DocX",
-  description:
-    "An open-source alternative to Google Docs, that lets you write and customize your docs collaboratively with others",
+  metadataBase: new URL(
+    process.env.APP_URL ??
+      (process.env.VERCEL_PROJECT_PRODUCTION_URL
+        ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
+        : "http://localhost:3000"),
+  ),
+  title: { default: "DocX", template: "%s · DocX" },
+  description,
+  openGraph: {
+    type: "website",
+    siteName: "DocX",
+    url: "/",
+    title,
+    description,
+  },
+  twitter: {
+    card: "summary_large_image",
+    title,
+    description,
+  },
 };
 
 export default function RootLayout({
