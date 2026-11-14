@@ -45,6 +45,7 @@ enum LinkAccess {
 enum DocumentSource {
   BLANK
   GOOGLE_DOCS
+  WIKIPEDIA
 }
 
 model Document {
@@ -60,6 +61,12 @@ model Document {
 
   linkAccess LinkAccess     @default(NONE)
   source     DocumentSource @default(BLANK)
+
+  // Readable by every visitor, signed in or not, and never editable through
+  // the app. Set only by the corpus import.
+  isPublic  Boolean @default(false)
+  // Where imported content came from, shown as attribution beside it.
+  sourceUrl String?
 
   // The top of `data`, kept so listing documents never has to read their
   // bodies. Written beside every write of `data`; see lib/documents/preview.ts.
@@ -121,16 +128,21 @@ model ChatMessage {
   @@index([threadId, createdAt])
 }
 
-/// One row per AI call. Backs the rolling-window rate limit, and doubles as
-/// the usage record later eval work reads from.
+/// One row per AI call, belonging to either a user or an anonymous visitor.
+/// Backs the rolling-window rate limit, and doubles as the usage record later
+/// eval work reads from.
 model AiUsage {
-  id        String   @id @default(uuid())
-  userId    String
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  action    String
-  createdAt DateTime @default(now())
+  id         String   @id @default(uuid())
+  userId     String?
+  user       User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  // Set instead of userId for anonymous calls: a salted hash of the caller's IP.
+  visitorKey String?
+  action     String
+  createdAt  DateTime @default(now())
 
   @@index([userId, createdAt])
+  @@index([visitorKey, createdAt])
+  @@index([createdAt])
 }
 
 model DocumentVersion {
