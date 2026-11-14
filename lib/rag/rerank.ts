@@ -1,20 +1,13 @@
-import { chat, isConfigured } from "@/lib/ai/openrouter";
-import { RERANK_MODEL } from "@/lib/ai/models";
+import { chat, isConfigured } from "../ai/openrouter.ts";
+import { RERANK_MODEL } from "../ai/models.ts";
 
 import type { RetrievedChunk } from "./search.ts";
 
 export const ANSWER_CHUNK_LIMIT = 8;
 
-// Enough of each passage to judge relevance, short enough that thirty of them
-// stay a cheap prompt.
-const PREVIEW_CHARS = 700;
-
 const buildPrompt = (query: string, retrievedChunks: RetrievedChunk[]) => {
   const passages = retrievedChunks
-    .map(
-      (chunk, i) =>
-        `[${i}] (${chunk.headingPath}) ${chunk.content.slice(0, PREVIEW_CHARS)}`,
-    )
+    .map((chunk, i) => `[${i}] (${chunk.headingPath}) ${chunk.content}`)
     .join("\n");
 
   return `
@@ -57,7 +50,7 @@ function extractList(raw: string): unknown[] | null {
 
 // Safely parses the model's JSON reply into valid passage indices, dropping
 // junk, duplicates, and out-of-range values. Returns null when the reply
-// could not be understood, distinct from an empty array — which is the model
+// could not be understood, distinct from an empty array, which is the model
 // saying none of the passages are relevant, and must be honoured rather than
 // papered over with a fallback.
 function parseOrder(
@@ -88,19 +81,17 @@ export async function rerank(
 
   if (!isConfigured()) return retrievedChunks.slice(0, ANSWER_CHUNK_LIMIT);
 
-  try {
-    const reply = await chat({
-      model: RERANK_MODEL,
-      prompt: buildPrompt(query, retrievedChunks),
-      json: true,
-      temperature: 0,
-    });
-    const order = parseOrder(reply, retrievedChunks.length);
-    if (order === null) return retrievedChunks.slice(0, ANSWER_CHUNK_LIMIT);
-
-    return order.slice(0, ANSWER_CHUNK_LIMIT).map((i) => retrievedChunks[i]);
-  } catch (e) {
-    console.error("[rag] rerank failed, falling back to fused order:", e);
-    return retrievedChunks.slice(0, ANSWER_CHUNK_LIMIT);
+  const reply = await chat({
+    model: RERANK_MODEL,
+    prompt: buildPrompt(query, retrievedChunks),
+    json: true,
+    temperature: 0,
+    reasoning: false,
+  });
+  const order = parseOrder(reply, retrievedChunks.length);
+  if (order === null) {
+    throw new Error("Reranker reply held no list of passage numbers");
   }
+
+  return order.slice(0, ANSWER_CHUNK_LIMIT).map((i) => retrievedChunks[i]);
 }

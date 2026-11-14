@@ -1,5 +1,5 @@
-import { streamChat } from "@/lib/ai/openrouter";
-import { ANSWER_MODEL } from "@/lib/ai/models";
+import { streamChat } from "../ai/openrouter.ts";
+import { ANSWER_MODEL } from "../ai/models.ts";
 
 import type { RetrievedChunk } from "./search.ts";
 import type { Turn } from "./query.ts";
@@ -63,5 +63,6 @@ export async function* streamAnswer(
   yield* streamChat({
     model: ANSWER_MODEL,
     prompt: buildAnswerPrompt(question, chunks, history),
+    reasoning: false,
   });
 }
