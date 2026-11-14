@@ -1,8 +1,11 @@
 import { uuidv4 as uuid } from "lib0/random.js";
 
-import Avatar from "@/public/profilepic_placeholder.png"
+import Avatar from "@/public/profilepic_placeholder.png";
 import type { Document, User } from ".prisma/client";
-import { MAX_VERSIONS, shouldSnapshot } from "@/app/writer/[id]/versions/policy";
+import {
+  MAX_VERSIONS,
+  shouldSnapshot,
+} from "@/app/writer/[id]/versions/policy";
 
 export const createGuestUser = () => {
   const user = {
@@ -16,19 +19,19 @@ export const createGuestUser = () => {
     verifyCode: null,
     verifyCodeExpiry: null,
     joinedAt: new Date(),
-  }
-  localStorage.setItem('user', JSON.stringify(user))
+  };
+  localStorage.setItem("user", JSON.stringify(user));
 
   return user;
-}
+};
 export const getGuestUser = () => {
-  let user: User = JSON.parse(localStorage.getItem('user') || '{}');
+  let user: User = JSON.parse(localStorage.getItem("user") || "{}");
   if (!user?.id) {
     user = createGuestUser();
   }
 
   return user;
-}
+};
 export const createGuestDocument = (initialData?: string) => {
   const user = getGuestUser();
 
@@ -47,18 +50,27 @@ export const createGuestDocument = (initialData?: string) => {
     // Importing from Google Docs needs a session, so a guest document is
     // always one someone started here.
     source: "BLANK",
+    isPublic: false,
+    sourceUrl: null,
     // Only stored documents need a preview, to keep a list of them off the
     // wire. A guest's documents are already on this machine.
-    preview: null
-  }
+    preview: null,
+  };
 
-  const allDocuments: Document[] = JSON.parse(localStorage.getItem('documents') || '[]');
-  localStorage.setItem('documents', JSON.stringify([...allDocuments, newDocument]))
+  const allDocuments: Document[] = JSON.parse(
+    localStorage.getItem("documents") || "[]",
+  );
+  localStorage.setItem(
+    "documents",
+    JSON.stringify([...allDocuments, newDocument]),
+  );
 
   return newDocument;
-}
+};
 export const getAllGuestDocuments = () => {
-  const documents: Document[] = JSON.parse(localStorage.getItem('documents') || '[]') as Document[];
+  const documents: Document[] = JSON.parse(
+    localStorage.getItem("documents") || "[]",
+  ) as Document[];
 
   const user = getGuestUser();
 
@@ -71,51 +83,71 @@ export const getAllGuestDocuments = () => {
       name: doc.name,
       updatedAt: doc.updatedAt,
       createdBy: { id: user.id, name: user.name, picture: user.picture },
-      users: [{
-        user: {
-          id: user.id,
-          name: user.name,
-          picture: user.picture
-        }
-      }]
-    }
-  })
+      users: [
+        {
+          user: {
+            id: user.id,
+            name: user.name,
+            picture: user.picture,
+          },
+        },
+      ],
+    };
+  });
   return data.reverse();
-}
+};
 export const getGuestDocumentDetails = (docId: string) => {
-  const allDocuments: Document[] = JSON.parse(localStorage.getItem('documents') || '[]');
+  const allDocuments: Document[] = JSON.parse(
+    localStorage.getItem("documents") || "[]",
+  );
 
-  let document = allDocuments.find(e => e.id === docId);
+  let document = allDocuments.find((e) => e.id === docId);
   if (!document) return;
 
   return document;
-}
-export const updateGuestDocument = (docId: string, docProp: string, updateValue: string) => {
+};
+export const updateGuestDocument = (
+  docId: string,
+  docProp: string,
+  updateValue: string,
+) => {
   const document = getGuestDocumentDetails(docId);
   if (!document) return;
 
-  const allDocuments: Document[] = JSON.parse(localStorage.getItem('documents') || '[]');
+  const allDocuments: Document[] = JSON.parse(
+    localStorage.getItem("documents") || "[]",
+  );
   const index = allDocuments.findIndex((e) => e.id === document.id);
 
-  if (docProp === 'thumbnail') {
-    allDocuments.splice(index, 1, { ...document, [docProp]: `data:image/png;base64,${updateValue}`, updatedAt: new Date() });
+  if (docProp === "thumbnail") {
+    allDocuments.splice(index, 1, {
+      ...document,
+      [docProp]: `data:image/png;base64,${updateValue}`,
+      updatedAt: new Date(),
+    });
   } else {
-    allDocuments.splice(index, 1, { ...document, [docProp]: updateValue, updatedAt: new Date() });
+    allDocuments.splice(index, 1, {
+      ...document,
+      [docProp]: updateValue,
+      updatedAt: new Date(),
+    });
   }
-  localStorage.setItem('documents', JSON.stringify(allDocuments));
-}
+  localStorage.setItem("documents", JSON.stringify(allDocuments));
+};
 export const deleteGuestDocument = (docId: string) => {
   const document = getGuestDocumentDetails(docId);
   if (!document) return;
 
-  const allDocuments: Document[] = JSON.parse(localStorage.getItem('documents') || '[]');
+  const allDocuments: Document[] = JSON.parse(
+    localStorage.getItem("documents") || "[]",
+  );
   const index = allDocuments.findIndex((e) => e.id === document.id);
 
   allDocuments.splice(index, 1);
-  localStorage.setItem('documents', JSON.stringify(allDocuments));
+  localStorage.setItem("documents", JSON.stringify(allDocuments));
 
   localStorage.removeItem(versionsKey(docId));
-}
+};
 
 type GuestVersion = { id: string; data: string; createdAt: string };
 
@@ -123,7 +155,7 @@ const versionsKey = (docId: string) => `versions:${docId}`;
 
 // Newest first, matching the ordering GetDocVersions returns for signed-in users.
 export const getGuestVersions = (docId: string): GuestVersion[] =>
-  JSON.parse(localStorage.getItem(versionsKey(docId)) || '[]');
+  JSON.parse(localStorage.getItem(versionsKey(docId)) || "[]");
 
 export const createGuestVersion = (docId: string, data: string) => {
   const versions = getGuestVersions(docId);
@@ -137,13 +169,13 @@ export const createGuestVersion = (docId: string, data: string) => {
   localStorage.setItem(versionsKey(docId), JSON.stringify(next));
 
   return true;
-}
+};
 
 export const restoreGuestVersion = (docId: string, versionId: string) => {
   const version = getGuestVersions(docId).find((e) => e.id === versionId);
   if (!version) return;
 
-  updateGuestDocument(docId, 'data', version.data);
+  updateGuestDocument(docId, "data", version.data);
 
   return version.data;
-}
+};

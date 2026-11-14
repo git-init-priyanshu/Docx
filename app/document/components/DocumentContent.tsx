@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, type ReactNode } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { LayoutGrid, List } from "lucide-react";
@@ -27,7 +28,11 @@ type Props = {
   quickStart: ReactNode;
 };
 
-export default function DocumentContent({ initialDocs, initialSession, quickStart }: Props) {
+export default function DocumentContent({
+  initialDocs,
+  initialSession,
+  quickStart,
+}: Props) {
   const router = useRouter();
   const clientSession = useClientSession();
 
@@ -48,7 +53,8 @@ export default function DocumentContent({ initialDocs, initialSession, quickStar
 
   // For authenticated users initialDocs is populated server-side → never show skeleton.
   // For guests, show skeleton while session resolves and localStorage docs load.
-  const isLoading = session === null || (session?.id === undefined && docsLoading);
+  const isLoading =
+    session === null || (session?.id === undefined && docsLoading);
 
   const createDocument = async (content?: string) => {
     if (session?.id) {
@@ -79,13 +85,13 @@ export default function DocumentContent({ initialDocs, initialSession, quickStar
 
   const isGuest = !userId;
   const filtered = docs
-    .filter(d => {
+    .filter((d) => {
       if (folder === "Drafts") return isGuest || d.createdBy.id === userId;
       if (folder === "Shared") return !isGuest && d.createdBy.id !== userId;
       if (folder === "Imported") return d.source === "GOOGLE_DOCS";
       return true;
     })
-    .filter(d => !q || d.name.toLowerCase().includes(q.toLowerCase()))
+    .filter((d) => !q || d.name.toLowerCase().includes(q.toLowerCase()))
     .sort((a, b) => {
       if (sort === "alpha") return a.name.localeCompare(b.name);
       return new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime();
@@ -93,7 +99,10 @@ export default function DocumentContent({ initialDocs, initialSession, quickStar
 
   const recent = docs
     .slice()
-    .sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime())
+    .sort(
+      (a, b) =>
+        new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime(),
+    )
     .slice(0, 4);
 
   const firstName = session?.name?.split(" ")[0] ?? "there";
@@ -101,14 +110,17 @@ export default function DocumentContent({ initialDocs, initialSession, quickStar
 
   return (
     <div className="h-screen w-screen flex overflow-hidden bg-[var(--lp-paper)] text-[var(--lp-ink)]">
-      <Sidebar folder={folder} setFolder={setFolder} onCreate={createDocument} />
+      <Sidebar
+        folder={folder}
+        setFolder={setFolder}
+        onCreate={createDocument}
+      />
 
       <main className="flex-1 flex flex-col min-w-0">
         <DocTopBar q={q} setQ={setQ} />
 
         <div className="flex-1 overflow-y-auto bg-[var(--lp-paper)]">
           <div className="max-w-[1180px] mx-auto px-6 md:px-8 py-8">
-
             {/* Page header */}
             <div className="mb-8">
               <div className="font-mono text-[10.5px] uppercase tracking-[0.18em] mb-2 text-[var(--lp-muted)]">
@@ -124,11 +136,19 @@ export default function DocumentContent({ initialDocs, initialSession, quickStar
               </p>
             </div>
 
+            <Link
+              href="/library"
+              className="mb-8 block rounded-lg border border-[var(--lp-border)] bg-[var(--lp-card)] px-4 py-3 text-[var(--lp-ink)]"
+            >
+              <span className="text-[14px] font-medium">Library</span>
+              <span className="block text-[12.5px] text-[var(--lp-muted)]">
+                Wikipedia articles anyone can read and ask about.
+              </span>
+            </Link>
+
             {/* Quick start — rendered server-side, shown here via prop */}
             {folder === "all" && !isLoading && (
-              <div className="mb-10">
-                {quickStart}
-              </div>
+              <div className="mb-10">{quickStart}</div>
             )}
 
             {/* Recent */}
@@ -170,7 +190,9 @@ export default function DocumentContent({ initialDocs, initialSession, quickStar
                 <div className="flex items-center gap-2">
                   <select
                     value={sort}
-                    onChange={e => setSort(e.target.value as "recent" | "alpha")}
+                    onChange={(e) =>
+                      setSort(e.target.value as "recent" | "alpha")
+                    }
                     className="h-8 px-2.5 rounded-md border border-[var(--lp-border)] bg-[var(--lp-card)] text-[var(--lp-ink)] text-[12px] outline-none cursor-pointer"
                   >
                     <option value="recent">Recently updated</option>
@@ -180,7 +202,9 @@ export default function DocumentContent({ initialDocs, initialSession, quickStar
                     <button
                       onClick={() => setView("grid")}
                       className={`h-8 w-8 flex items-center justify-center transition text-[var(--lp-ink)] ${
-                        view === "grid" ? "bg-[var(--lp-paper-2)]" : "bg-[var(--lp-card)]"
+                        view === "grid"
+                          ? "bg-[var(--lp-paper-2)]"
+                          : "bg-[var(--lp-card)]"
                       }`}
                       title="Grid view"
                     >
@@ -189,7 +213,9 @@ export default function DocumentContent({ initialDocs, initialSession, quickStar
                     <button
                       onClick={() => setView("list")}
                       className={`h-8 w-8 flex items-center justify-center transition text-[var(--lp-ink)] ${
-                        view === "list" ? "bg-[var(--lp-paper-2)]" : "bg-[var(--lp-card)]"
+                        view === "list"
+                          ? "bg-[var(--lp-paper-2)]"
+                          : "bg-[var(--lp-card)]"
                       }`}
                       title="List view"
                     >

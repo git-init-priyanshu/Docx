@@ -166,6 +166,12 @@ export default function HeroSection() {
               >
                 <GithubIcon /> View on GitHub
               </Link>
+              <Link
+                href="/library"
+                className="inline-flex items-center gap-2 h-10 px-5 rounded-md border border-[var(--lp-border)] bg-transparent font-medium text-[13.5px] text-[var(--lp-ink)] hover:bg-[var(--lp-paper-2)] transition-colors"
+              >
+                Ask 999 Wikipedia articles
+              </Link>
             </div>
 
             <div className="mt-8 flex items-center gap-5 text-[12px]" style={{ color: "var(--lp-muted)" }}>
@@ -177,6 +183,7 @@ export default function HeroSection() {
                 <span style={{ color: "var(--lp-leaf)" }}><CheckIcon /></span>
                 No account needed for the demo
               </span>
+              <span>Answers cite the passage they came from.</span>
             </div>
           </div>
 
