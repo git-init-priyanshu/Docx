@@ -1,29 +1,17 @@
-import {
-  GoogleGenerativeAI,
-  TaskType,
-  type EmbedContentRequest,
-} from "@google/generative-ai";
-
-type SizedEmbedRequest = EmbedContentRequest & {
-  outputDimensionality: number;
-};
+import { EMBEDDING_MODEL } from "../ai/models.ts";
+import { embed, OpenRouterError } from "../ai/openrouter.ts";
 
 // gemini-embedding-001 returns 3072 dimensions by default; Matryoshka
 // truncation to 768 keeps nearly all of the retrieval quality at a quarter of
 // the storage and index size, and 768 is what the `vector(768)` column and its
 // HNSW index are built for.
-export const EMBEDDING_MODEL = "gemini-embedding-001";
 export const EMBEDDING_DIMENSIONS = 768;
 
-const BATCH_SIZE = 50;
+// Stored hashes include this, so switching model or size re-embeds everything.
+export const EMBEDDING_VERSION = `${EMBEDDING_MODEL}@${EMBEDDING_DIMENSIONS}`;
 
-function client() {
-  const key = process.env.GEMINI_API_KEY;
-  if (!key) throw new Error("GEMINI_API_KEY is not set");
-  return new GoogleGenerativeAI(key).getGenerativeModel({
-    model: EMBEDDING_MODEL,
-  });
-}
+const BATCH_SIZE = 50;
+const MAX_ATTEMPTS = 5;
 
 // Truncated Matryoshka vectors are no longer unit length. Cosine distance does
 // not care, but normalising keeps the stored vectors well-behaved for any
@@ -40,35 +28,43 @@ function normalize(values: number[]): number[] {
 export const toVectorLiteral = (values: number[]) => `[${values.join(",")}]`;
 
 export async function embedPassages(texts: string[]): Promise<number[][]> {
-  if (texts.length === 0) return [];
-  const model = client();
   const out: number[][] = [];
 
   for (let i = 0; i < texts.length; i += BATCH_SIZE) {
-    const batch = texts.slice(i, i + BATCH_SIZE);
-    const response = await model.batchEmbedContents({
-      requests: batch.map(
-        (text): SizedEmbedRequest => ({
-          content: { role: "user", parts: [{ text }] },
-          taskType: TaskType.RETRIEVAL_DOCUMENT,
-          outputDimensionality: EMBEDDING_DIMENSIONS,
-        }),
-      ),
-    });
-    for (const embedding of response.embeddings) {
-      out.push(normalize(embedding.values));
+    const input = texts.slice(i, i + BATCH_SIZE);
+
+    for (let attempt = 1; ; attempt++) {
+      try {
+        const vectors = await embed({
+          model: EMBEDDING_MODEL,
+          input,
+          inputType: "search_document",
+          dimensions: EMBEDDING_DIMENSIONS,
+        });
+        out.push(...vectors.map(normalize));
+        break;
+      } catch (error) {
+        const retryable =
+          error instanceof OpenRouterError &&
+          (error.status === 429 || error.status >= 500);
+        if (!retryable || attempt === MAX_ATTEMPTS) throw error;
+        await new Promise((resolve) =>
+          setTimeout(resolve, 2000 * 2 ** (attempt - 1)),
+        );
+      }
     }
   }
 
   return out;
 }
 
+// No retry: this runs while a user waits.
 export async function embedQuery(text: string): Promise<number[]> {
-  const request: SizedEmbedRequest = {
-    content: { role: "user", parts: [{ text }] },
-    taskType: TaskType.RETRIEVAL_QUERY,
-    outputDimensionality: EMBEDDING_DIMENSIONS,
-  };
-  const response = await client().embedContent(request);
-  return normalize(response.embedding.values);
+  const [vector] = await embed({
+    model: EMBEDDING_MODEL,
+    input: [text],
+    inputType: "search_query",
+    dimensions: EMBEDDING_DIMENSIONS,
+  });
+  return normalize(vector);
 }

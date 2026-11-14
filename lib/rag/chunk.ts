@@ -1,5 +1,6 @@
 import { createHash } from "node:crypto";
 
+import { EMBEDDING_VERSION } from "./embed.ts";
 import {
   renderBlock,
   type TipTapDoc,
@@ -24,7 +25,8 @@ const sha256 = (input: string) =>
   createHash("sha256").update(input).digest("hex");
 
 /** Identity of a whole document, stored on `Document.indexedHash`. */
-export const hashDocument = (data: string) => sha256(data);
+export const hashDocument = (data: string) =>
+  sha256(`${EMBEDDING_VERSION}\n${data}`);
 
 /** Text actually sent to the embedding model for a chunk. */
 export const embeddingInput = (headingPath: string, content: string) =>
@@ -133,7 +135,9 @@ export function chunkDocument(documentName: string, data: string): Chunk[] {
       ordinal: chunks.length,
       headingPath: currentPath,
       content,
-      contentHash: sha256(embeddingInput(currentPath, content)),
+      contentHash: sha256(
+        `${EMBEDDING_VERSION}\n${embeddingInput(currentPath, content)}`,
+      ),
     });
   };
 

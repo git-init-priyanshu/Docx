@@ -13,6 +13,8 @@
 import prisma from "../prisma/prismaClient.ts";
 import { indexDocument } from "../lib/rag/indexer.ts";
 
+const CONCURRENCY = 4;
+
 const documents = await prisma.document.findMany({
   orderBy: { updatedAt: "desc" },
   select: { id: true, name: true },
@@ -24,22 +26,30 @@ let embedded = 0;
 let reused = 0;
 const failures: { name: string; reason: string }[] = [];
 
-for (const [i, doc] of documents.entries()) {
-  const label = `[${i + 1}/${documents.length}] ${doc.name}`;
-  try {
-    const result = await indexDocument(doc.id);
-    embedded += result.embedded;
-    reused += result.reused;
-    console.log(
-      `${label} — ${result.status}, ${result.total} chunks ` +
-        `(${result.embedded} embedded, ${result.reused} reused)`,
-    );
-  } catch (error) {
-    const reason = error instanceof Error ? error.message : String(error);
-    failures.push({ name: doc.name, reason });
-    console.error(`${label} — FAILED: ${reason}`);
-  }
-}
+let next = 0;
+
+await Promise.all(
+  Array.from({ length: CONCURRENCY }, async () => {
+    while (next < documents.length) {
+      const i = next++;
+      const doc = documents[i];
+      const label = `[${i + 1}/${documents.length}] ${doc.name}`;
+      try {
+        const result = await indexDocument(doc.id);
+        embedded += result.embedded;
+        reused += result.reused;
+        console.log(
+          `${label} — ${result.status}, ${result.total} chunks ` +
+            `(${result.embedded} embedded, ${result.reused} reused)`,
+        );
+      } catch (error) {
+        const reason = error instanceof Error ? error.message : String(error);
+        failures.push({ name: doc.name, reason });
+        console.error(`${label} — FAILED: ${reason}`);
+      }
+    }
+  }),
+);
 
 console.log(
   `\nDone. ${embedded} chunks embedded, ${reused} reused, ` +
