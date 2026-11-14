@@ -32,8 +32,7 @@ Required in `.env`:
 - `GOOGLE_ID` / `GOOGLE_SECRET` — NextAuth Google OAuth
 - `NEXTAUTH_SECRET` — NextAuth session secret
 - `NEXTAUTH_URL` — Base URL NextAuth uses for callbacks (e.g. `http://localhost:3000`)
-- `OPENROUTER_API_KEY` — OpenRouter, used for every text generation call (editor rewrites, RAG answers, reranking, query condensation). Per-task model ids live in `lib/ai/models.ts` and are overridable via `OPENROUTER_WRITER_MODEL`, `OPENROUTER_ANSWER_MODEL`, `OPENROUTER_RERANK_MODEL`, `OPENROUTER_CONDENSE_MODEL`
-- `GEMINI_API_KEY` — Google Gemini, used **only** for embeddings (`lib/rag/embed.ts`). OpenRouter has no embeddings endpoint
+- `OPENROUTER_API_KEY` — OpenRouter, used for every model call (editor rewrites, RAG answers, reranking, query condensation, embeddings). Per-task model ids live in `lib/ai/models.ts` and are overridable via `OPENROUTER_WRITER_MODEL`, `OPENROUTER_ANSWER_MODEL`, `OPENROUTER_RERANK_MODEL`, `OPENROUTER_CONDENSE_MODEL`, `OPENROUTER_EMBEDDING_MODEL`
 - `NEXT_PUBLIC_WEBSOCKET_URL` — WebSocket server URL for Yjs real-time collaboration
 - `BACKEND_SERVER_URL` — Backend service for thumbnail upload queue
 - `BLOB_READ_WRITE_TOKEN` — Vercel Blob store, for editor image uploads
@@ -46,6 +45,8 @@ Required in `.env`:
 - `/login` — Single Google-OAuth login page (`app/(auth)/login/`)
 - `/document` — Dashboard: lists all user documents
 - `/writer/[id]` — Rich-text editor for a single document
+- `/library` — Public list of `isPublic` documents, with title search and pagination
+- `/library/[id]` — Read-only server-rendered article with source attribution
 
 ### Authentication
 Google OAuth via NextAuth is the only auth path. The session lives in the `next-auth.session-token` cookie. There is no email/password flow, OTP verification, or password reset.
@@ -54,6 +55,9 @@ Google OAuth via NextAuth is the only auth path. The session lives in the `next-
 
 ### Guest Mode
 Unauthenticated users can create and edit documents locally. All guest data lives in `localStorage` (user profile + document list). `lib/guestServices.ts` handles all CRUD. The document page and editor both branch on `session?.id` to decide whether to hit the DB or `localStorage`.
+
+### Public Library
+Documents with `Document.isPublic` are readable and searchable by everyone, including visitors with no account. They are created only by `evals/corpus/importCorpus.ts` (Wikipedia Vital Articles Level 3, owned by a system user that cannot sign in). They are never opened in the editor, because the Yjs room is unauthenticated. Chat retrieval reads public documents plus the caller's own (`lib/rag/search.ts`), and the whole chat pipeline lives in `lib/rag/pipeline.ts` so the route and evals run the same code. Anonymous chat is rate limited per hashed IP in `lib/aiUsage.ts` (`recordVisitorCall`) and stores no thread.
 
 ### Editor (`app/writer/[id]/`)
 - **Tiptap** with `StarterKit`, `Collaboration`, `CollaborationCursor`, `Color`, `Highlight`, `Underline`, `TextAlign`, `FontFamily`, `TextStyle`.
@@ -86,7 +90,16 @@ Always use Tailwind CSS for styling wherever possible, including for `--lp-*` to
 All data mutations use Next.js server actions (`"use server"`). They all return `{ success: boolean, data?: T, error?: string }`. Session is retrieved via `getServerSession` (`lib/customHooks/getServerSession.ts`) which decodes whichever auth cookie is present.
 
 ### Database Schema
-Three models: `User`, `Document`, `UserOnDocument` (join table). A document can have multiple collaborators via `UserOnDocument`. The `createdBy` relation tracks the owner. Document `data` is stored as a JSON string (Tiptap document format).
+Core models: `User`, `Document`, `UserOnDocument` (join table). Around them: `DocumentChunk` (RAG chunks and embeddings), `ChatThread` and `ChatMessage`, `DocumentVersion`, `AiUsage`. A document can have multiple collaborators via `UserOnDocument`. The `createdBy` relation tracks the owner. Document `data` is stored as a JSON string (Tiptap document format). `Document.isPublic` marks library documents and `sourceUrl` holds their attribution link. `AiUsage` rows belong to either a user or a `visitorKey`.
+
+### Evals (`evals/`)
+`node --env-file=.env evals/run.ts <label> [dev|test|all]` runs `answerQuestion` over `evals/questions.jsonl` and writes `evals/results/<label>.json` after every question. Running a label again keeps the scored questions and retries the errored ones.
+
+- A pipeline change is a real code change run under a new label on `dev`, kept only if the numbers improve. No experiment flags.
+- `rerank` throws on failure. `answerQuestion` catches it, falls back to the fused order and reports `reranked: false`, which the chat route ignores and the runner records as an error so a transient failure is never scored.
+- The reranker reads whole chunks: with a 700-character preview it dropped every passage whose answer sat past the cut.
+- Rerank, condense and answer calls pass `reasoning: false`: hidden reasoning added about 13 s per question with no accuracy gain.
+- OpenRouter requests abort after 60 s (`REQUEST_TIMEOUT_MS`), covering the whole reply including a stream.
 
 ### Templates
 `lib/templates.ts` exports `TEMPLATES: Template[]` — pre-built Tiptap JSON document starters (Blank, Meeting Notes, Project Brief, RFC). Used in the QuickStart component on the document dashboard.
