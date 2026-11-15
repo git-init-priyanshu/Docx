@@ -158,6 +158,11 @@ On the 249 dev questions, one change at a time:
 - The "Before" run lost 6 questions to a network drop and is scored on the other 341.
 - Latency was measured from a laptop. 1.9 s of every reply is the query embedding call.
 
+### Checks on the setup
+
+- **Old and new embeddings are interchangeable.** The same text embedded through OpenRouter matched the stored Gemini vector at cosine 1.0000.
+- **Personal documents still get semantic hits next to the library.** About 48,800 library chunks share the vector index with 48 personal chunks. Using the first 160 characters of the 22 longer personal chunks as the question, the index returned the right document in the top 30 every time (22 of 22), the same as an exact scan with the index turned off. The questions are copied from the source text, so this shows the index is not hiding personal chunks, not how well paraphrased questions would do. No change to the index settings was needed.
+
 ### Run it
 
 ```bash
