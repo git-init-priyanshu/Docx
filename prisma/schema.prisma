@@ -63,7 +63,7 @@ model Document {
   source     DocumentSource @default(BLANK)
 
   // Readable by every visitor, signed in or not, and never editable through
-  // the app. Set only by the corpus import.
+  // the app. Set only when the library corpus is imported.
   isPublic  Boolean @default(false)
   // Where imported content came from, shown as attribution beside it.
   sourceUrl String?

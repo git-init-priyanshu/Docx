@@ -39,4 +39,3 @@ next-env.d.ts
 .claude
 .env*
 .gstack/
-evals/corpus/.cache/

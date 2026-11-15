@@ -141,7 +141,7 @@ On the 249 dev questions, one change at a time:
 
 ### How it is measured
 
-- **Corpus**: [Wikipedia Vital Articles, Level 3](https://en.wikipedia.org/wiki/Wikipedia:Vital_articles/Level_3), each article pinned to a revision in `evals/corpus/manifest.json`. Text is from Wikipedia under [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/).
+- **Corpus**: [Wikipedia Vital Articles, Level 3](https://en.wikipedia.org/wiki/Wikipedia:Vital_articles/Level_3), 999 articles imported on 2026-11-14. Text is from Wikipedia under [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/).
 - **Answerable questions (297)**: `qwen/qwen3.8-flash` writes a question, a reference answer and a verbatim evidence quote from one sampled chunk of 297 different articles. The source passage is the chunk of that article containing the quote.
 - **Unanswerable questions (50)**: half ask for a detail no encyclopedia records, half ask about people and places that do not exist. The right reply is the fixed refusal.
 - **Correct and supported**: a judge model compares each answer with the reference answer, and separately checks every claim against the passages the answer model was given.
@@ -166,11 +166,10 @@ On the 249 dev questions, one change at a time:
 ### Run it
 
 ```bash
-node evals/corpus/downloadHtml.ts                    # fetch the pinned revisions (about 1 GB, cached)
-node --env-file=.env evals/corpus/importCorpus.ts    # write them as public documents
-node --env-file=.env scripts/backfill-embeddings.ts  # chunk and embed
 node --env-file=.env evals/run.ts my-change dev      # or test, or all
 ```
+
+The questions point at the imported articles, so the run needs them in the database.
 
 Each run writes `evals/results/<label>.json` with every question, answer, verdict and timing. Running a label again retries only the questions that errored. The table above is `baseline.json` and `final.json`.
 
@@ -349,7 +348,6 @@ lib/
 ├── guestServices.ts     # localStorage CRUD for guest mode
 └── templates.ts         # Pre-built Tiptap document starters
 evals/
-├── corpus/              # Wikipedia manifest, download, Tiptap conversion, import
 ├── questions.jsonl      # 347 questions with reference answers and evidence quotes
 ├── run.ts               # Runs the chat pipeline over the questions and scores it
 └── results/             # One JSON file per labelled run
