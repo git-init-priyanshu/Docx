@@ -171,7 +171,7 @@ node --env-file=.env evals/run.ts my-change dev      # or test, or all
 
 The questions point at the imported articles, so the run needs them in the database.
 
-Each run writes `evals/results/<label>.json` with every question, answer, verdict and timing. Running a label again retries only the questions that errored. The table above is `baseline.json` and `final.json`.
+Each run writes `evals/results/<label>.json` with every question, answer, verdict and timing. Running a label again retries only the questions that errored. The raw files behind the tables above are not kept in the repo.
 
 ---
 
