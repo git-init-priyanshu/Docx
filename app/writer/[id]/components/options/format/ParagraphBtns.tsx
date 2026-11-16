@@ -1,6 +1,8 @@
+import type { Editor } from "@tiptap/react";
+
 import { paragraphBtns } from "./textEditorOptions";
 
-export default function ParagraphBtns({ editor }: any) {
+export default function ParagraphBtns({ editor }: { editor: Editor | null }) {
   return (
     <div className="flex cursor-pointer border rounded w-fit col-span-6 sm:col-span-4">
       {paragraphBtns.map(({ align, Icon }, i) => {

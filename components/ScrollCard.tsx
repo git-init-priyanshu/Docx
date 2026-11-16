@@ -3,7 +3,7 @@ import React, { useRef } from "react";
 import { useScroll, useTransform, motion, MotionValue } from "framer-motion";
 
 export const ScrollCard = ({ children }: { children: React.ReactNode }) => {
-  const containerRef = useRef<any>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({
     target: containerRef,
   });
@@ -47,7 +47,13 @@ export const ScrollCard = ({ children }: { children: React.ReactNode }) => {
   );
 };
 
-export const Header = ({ translate, titleComponent }: any) => {
+export const Header = ({
+  translate,
+  titleComponent,
+}: {
+  translate: MotionValue<number>;
+  titleComponent: React.ReactNode;
+}) => {
   return (
     <motion.div
       style={{

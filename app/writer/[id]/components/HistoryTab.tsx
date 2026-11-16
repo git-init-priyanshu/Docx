@@ -14,7 +14,7 @@ import {
   type DocVersion,
 } from "@/lib/hooks/useVersions";
 import { restoreGuestVersion } from "@/lib/guestServices";
-import { RestoreDocVersion } from "../versions/actions";
+import { RestoreDocVersion } from "@/app/writer/[id]/versions/actions";
 
 type HistoryTabProps = {
   editor: Editor | null;

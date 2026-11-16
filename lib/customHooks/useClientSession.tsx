@@ -19,7 +19,7 @@ export default function useClientSession(): ReturnType | null {
       };
     }
 
-    const user = session.user as any;
+    const user = session.user;
     return {
       id: user?.id,
       name: user?.name,

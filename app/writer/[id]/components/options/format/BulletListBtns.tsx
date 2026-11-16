@@ -1,8 +1,9 @@
+import type { Editor } from "@tiptap/react";
 import { List } from "lucide-react";
 
 import { BulletBtns } from "./textEditorOptions";
 
-export default function BulletListBtns({ editor }: any) {
+export default function BulletListBtns({ editor }: { editor: Editor | null }) {
   return (
     <div className="flex cursor-pointer border rounded w-fit col-span-6 sm:col-span-4">
       {BulletBtns.map(({ Icon, key }, i) => {

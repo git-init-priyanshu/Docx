@@ -13,7 +13,7 @@ import {
 } from "@/lib/googleDocs/picker";
 import { fetchGoogleDocument } from "@/lib/googleDocs/fetchDocument";
 import { toTiptap, type DroppedContent } from "@/lib/googleDocs/toTiptap";
-import { ImportDocument } from "../import/actions";
+import { ImportDocument } from "@/app/document/import/actions";
 import { IndexDocument } from "@/app/writer/[id]/rag/actions";
 
 const plural = (count: number, noun: string) =>

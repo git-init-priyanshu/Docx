@@ -2,8 +2,9 @@
 
 import { randomUUID } from "node:crypto";
 
-import { CreateNewDocument } from "../components/Header/actions";
+import { CreateNewDocument } from "@/app/document/components/Header/actions";
 import { CreateDocVersion } from "@/app/writer/[id]/versions/actions";
+import getServerSession from "@/lib/customHooks/getServerSession";
 import { rehostImages } from "@/lib/googleDocs/rehostImages";
 import type { TiptapNode } from "@/lib/googleDocs/toTiptap";
 
@@ -20,6 +21,10 @@ import type { TiptapNode } from "@/lib/googleDocs/toTiptap";
  * guaranteed to survive the response on a serverless host.
  */
 export const ImportDocument = async (name: string, data: string) => {
+  const session = await getServerSession();
+  if (!session.id)
+    return { success: false as const, error: "User is not logged in" };
+
   let doc: TiptapNode;
   try {
     doc = JSON.parse(data) as TiptapNode;

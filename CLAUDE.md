@@ -23,7 +23,20 @@ yarn db:generate  # Regenerate Prisma client
 yarn db:run       # migrate + generate (run after schema changes)
 ```
 
-There are no automated tests in this project.
+```bash
+yarn lint:check   # ESLint, zero warnings allowed
+yarn typecheck    # tsc --noEmit
+yarn test         # Tests for the custom lint rules
+```
+
+The pre-commit hook (`.githooks/pre-commit`) runs all three and blocks the commit on failure. CI runs the same checks. Every lint error carries a fix-it message: follow it instead of disabling the rule.
+
+Lint rules worth knowing:
+- Every exported function in a `"use server"` file must call `getServerSession()` (`eslint-rules/`). Server actions are public endpoints.
+- Import with `@/`, not `../`. Same-folder `./` is fine.
+- No `any`. No `console.log` (use `console.error` in catch blocks).
+
+There are no tests for app code yet.
 
 ## Environment Variables
 

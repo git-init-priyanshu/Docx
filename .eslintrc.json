@@ -1,3 +1,59 @@
 {
-  "extends": "next/core-web-vitals"
+  "extends": "next/core-web-vitals",
+  "rules": {
+    "docx/require-session-in-server-action": "error",
+    "no-console": [
+      "error",
+      {
+        "allow": [
+          "error",
+          "warn"
+        ]
+      }
+    ],
+    "no-shadow": "error",
+    "no-restricted-imports": [
+      "error",
+      {
+        "patterns": [
+          {
+            "group": [
+              "../*"
+            ],
+            "message": "Import with the '@/' alias instead of climbing with '../'. Same-folder './' imports are fine."
+          }
+        ]
+      }
+    ],
+    "no-restricted-syntax": [
+      "error",
+      {
+        "selector": "TSAnyKeyword",
+        "message": "Replace 'any' with the real type. For unknown input use 'unknown' and narrow it. For a Tiptap editor use 'Editor | null' from '@tiptap/react'."
+      }
+    ]
+  },
+  "overrides": [
+    {
+      "files": [
+        "scripts/**",
+        "lib/rag/**",
+        "**/__tests__/**"
+      ],
+      "rules": {
+        "no-restricted-imports": "off"
+      }
+    },
+    {
+      "files": [
+        "scripts/**"
+      ],
+      "rules": {
+        "no-console": "off"
+      }
+    }
+  ],
+  "plugins": [
+    "docx"
+  ]
 }

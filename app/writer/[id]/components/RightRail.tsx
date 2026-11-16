@@ -6,8 +6,8 @@ import { toast } from "sonner";
 import type { Editor } from "@tiptap/react";
 
 import useClientSession from "@/lib/customHooks/useClientSession";
-import { generateText } from "../actions";
-import { insertGeneratedText } from "../editor/insertGeneratedText";
+import { generateText } from "@/app/writer/[id]/actions";
+import { insertGeneratedText } from "@/app/writer/[id]/editor/insertGeneratedText";
 import { generateTextOptions } from "./BubbleMenuComp/generateTextConfig";
 import HistoryTab from "./HistoryTab";
 

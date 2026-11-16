@@ -29,10 +29,10 @@ export default function FormatBar({ editor, onRewrite }: FormatBarProps) {
   const headingValue = setDefaultStyleValue(editor);
 
   const formatBtns = [
-    { label: "B", func: "toggleBold", active: editor?.isActive("bold"), className: "font-bold" },
-    { label: "I", func: "toggleItalic", active: editor?.isActive("italic"), className: "italic" },
-    { label: "U", func: "toggleUnderline", active: editor?.isActive("underline"), className: "underline decoration-1" },
-    { label: "S", func: "toggleStrike", active: editor?.isActive("strike"), className: "line-through" },
+    { label: "B", func: "toggleBold" as const, active: editor?.isActive("bold"), className: "font-bold" },
+    { label: "I", func: "toggleItalic" as const, active: editor?.isActive("italic"), className: "italic" },
+    { label: "U", func: "toggleUnderline" as const, active: editor?.isActive("underline"), className: "underline decoration-1" },
+    { label: "S", func: "toggleStrike" as const, active: editor?.isActive("strike"), className: "line-through" },
   ];
 
   const wordCount = editor?.getText().split(/\s+/).filter(Boolean).length ?? 0;
@@ -74,7 +74,7 @@ export default function FormatBar({ editor, onRewrite }: FormatBarProps) {
       {formatBtns.map(({ label, func, active, className }) => (
         <button
           key={label}
-          onClick={() => (editor?.chain().focus() as any)?.[func]?.().run()}
+          onClick={() => editor?.chain().focus()[func]().run()}
           className={`h-8 w-8 rounded-md text-[13px] ${className} transition-colors shrink-0 ${
             active
               ? "bg-[color-mix(in_oklab,var(--lp-accent)_18%,transparent)] text-[var(--lp-accent)]"

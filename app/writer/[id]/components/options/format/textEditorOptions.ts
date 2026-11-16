@@ -16,7 +16,7 @@ export const formattingBtns = [
   { Icon: Italic, name: "italic", func: "toggleItalic" },
   { Icon: Underline, name: "underline", func: "toggleUnderline" },
   { Icon: Strikethrough, name: "strike", func: "toggleStrike" },
-];
+] as const;
 export const paragraphBtns = [
   { Icon: AlignLeft, align: "left" },
   { Icon: AlignCenter, align: "center" },
