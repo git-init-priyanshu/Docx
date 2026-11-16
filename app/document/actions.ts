@@ -52,7 +52,7 @@ export const GetAllDocs = async () => {
 
     return { success: true, data: documents };
   } catch (e) {
-    console.log(e);
+    console.error(e);
     return { success: false, error: "Internal server error" };
   }
 };

@@ -39,11 +39,11 @@ export default function ColorHighlight({
     editor.chain().focus().toggleHighlight({ color: hex }).run();
   };
 
-  const handleDocumentClick = (e: any) => {
+  const handleDocumentClick = (e: MouseEvent) => {
     if (
       (colorPopoverRef.current &&
-        !colorPopoverRef.current.contains(e.target)) ||
-      (bgPopoverRef.current && !bgPopoverRef.current.contains(e.target))
+        !colorPopoverRef.current.contains(e.target as Node)) ||
+      (bgPopoverRef.current && !bgPopoverRef.current.contains(e.target as Node))
     ) {
       setIsColorPopoverOpen(false);
       setIsBgPopoverOpen(false);

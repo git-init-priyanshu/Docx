@@ -42,7 +42,7 @@ export default function DocTopBar({ q, setQ }: DocTopBarProps) {
     if (!value || !session?.id) return;
     setIsSearching(true);
     const resp = await SearchDocAction(value);
-    setSearchResponse(resp as any);
+    setSearchResponse(resp);
     setIsSearching(false);
   }, 500);
 

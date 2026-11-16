@@ -1,3 +1,5 @@
+import type { Editor } from "@tiptap/react";
+
 import {
   Select,
   SelectContent,
@@ -9,7 +11,7 @@ import {
 import { setDefaultFontFamily, onFontFamilyChange } from "./functions";
 import { fontFamily } from "./textEditorOptions";
 
-export default function Font({ editor }: any) {
+export default function Font({ editor }: { editor: Editor | null }) {
   return (
     <Select
       defaultValue={setDefaultFontFamily(editor)}

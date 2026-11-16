@@ -12,7 +12,7 @@ import {
   prompts,
 } from "./components/BubbleMenuComp/generateTextConfig";
 
-export const GetDocDetails = async (id: any) => {
+export const GetDocDetails = async (id: string) => {
   try {
     const session = await getServerSession();
     if (!session.id)
@@ -36,12 +36,12 @@ export const GetDocDetails = async (id: any) => {
 
     return { success: true, data: access.document };
   } catch (e) {
-    console.log(e);
+    console.error(e);
     return { success: false, error: "Internal server error" };
   }
 };
 
-export const UpdateDocData = async (id: any, data: string) => {
+export const UpdateDocData = async (id: string, data: string) => {
   const session = await getServerSession();
   if (!session.id)
     return {
@@ -84,7 +84,7 @@ export const UpdateDocData = async (id: any, data: string) => {
 
     return { success: true, data: "Saved" };
   } catch (e) {
-    console.log(e);
+    console.error(e);
     return { success: false, error: "Internal server error" };
   }
 };
@@ -162,7 +162,7 @@ export const generateText = async (
     }
     return { success: true, data: cleaned };
   } catch (e) {
-    console.log(e);
+    console.error(e);
     return { success: false, error: "Internal server error" };
   }
 };

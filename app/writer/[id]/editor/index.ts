@@ -25,9 +25,9 @@ import { resolveImageSrc } from "@/lib/images/upload";
 
 import { extensions, props } from "./editorConfig";
 import { ImageUpload } from "./imageUpload";
-import { UpdateDocData } from "../actions";
-import { CreateDocVersion } from "../versions/actions";
-import { IndexDocument } from "../rag/actions";
+import { UpdateDocData } from "@/app/writer/[id]/actions";
+import { CreateDocVersion } from "@/app/writer/[id]/versions/actions";
+import { IndexDocument } from "@/app/writer/[id]/rag/actions";
 
 type EditorPropType = {
   setIsSaving: React.Dispatch<React.SetStateAction<boolean>>;
@@ -198,8 +198,8 @@ export const Editor = ({ setIsSaving }: EditorPropType) => {
       // content is written into the shared Y.Doc, so every client that mounts
       // would apply its own copy. Content comes from the room, or from the
       // one-time seed below when the room is empty.
-      onUpdate({ editor }) {
-        debounce(editor);
+      onUpdate({ editor: updatedEditor }) {
+        debounce(updatedEditor);
       },
     },
     [docId, collab],

@@ -1,6 +1,6 @@
-import AuthShell from "../components/AuthShell";
-import AuthAside from "../components/AuthAside";
-import SocialButton from "../components/SocialButton";
+import AuthShell from "@/app/(auth)/components/AuthShell";
+import AuthAside from "@/app/(auth)/components/AuthAside";
+import SocialButton from "@/app/(auth)/components/SocialButton";
 
 export default function Login() {
   return (

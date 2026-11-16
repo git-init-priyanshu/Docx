@@ -12,6 +12,8 @@ import {
   setDefaultFontFamily,
   onFontFamilyChange,
 } from "./options/format/functions";
+import type { Editor } from "@tiptap/react";
+
 import {
   formattingBtns,
   paragraphBtns,
@@ -20,7 +22,7 @@ import {
 import ColorHighlight from "./options/format/ColorHighlight";
 
 type DrawerRespPropType = {
-  editor: any;
+  editor: Editor | null;
   isOpen: boolean;
 };
 export default function OptionsResp({
@@ -92,7 +94,6 @@ export default function OptionsResp({
                       <Icon
                         key={name}
                         size={35}
-                        // @ts-ignore
                         onClick={() => editor?.chain().focus()[func]().run()}
                         className={`${
                           editor?.isActive(name)

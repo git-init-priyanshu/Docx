@@ -1,3 +1,5 @@
+import type { Editor } from "@tiptap/react";
+
 import {
   Select,
   SelectContent,
@@ -8,7 +10,7 @@ import {
 
 import { setDefaultStyleValue, onFontStyleChange } from "./functions";
 
-export default function Heading({ editor }: any) {
+export default function Heading({ editor }: { editor: Editor | null }) {
   return (
     <Select
       value={setDefaultStyleValue(editor)}

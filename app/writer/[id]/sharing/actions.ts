@@ -62,7 +62,7 @@ export const GetSharing = async (docId: string) => {
     };
     return { success: true, data: state };
   } catch (e) {
-    console.log(e);
+    console.error(e);
     return { success: false, error: "Internal server error" };
   }
 };
@@ -85,7 +85,7 @@ export const SetLinkAccess = async (docId: string, linkAccess: LinkAccess) => {
 
     return { success: true, data: { linkAccess } };
   } catch (e) {
-    console.log(e);
+    console.error(e);
     return { success: false, error: "Internal server error" };
   }
 };
@@ -132,7 +132,7 @@ export const SearchUsers = async (docId: string, query: string) => {
       data: matches.map((user) => ({ ...user, isOwner: false })),
     };
   } catch (e) {
-    console.log(e);
+    console.error(e);
     return { success: false, error: "Internal server error" };
   }
 };
@@ -171,7 +171,7 @@ export const AddCollaborator = async (docId: string, email: string) => {
       data: { ...user, isOwner: false } satisfies SharedUser,
     };
   } catch (e) {
-    console.log(e);
+    console.error(e);
     return { success: false, error: "Internal server error" };
   }
 };
@@ -197,7 +197,7 @@ export const RemoveCollaborator = async (docId: string, userId: string) => {
 
     return { success: true, data: { userId } };
   } catch (e) {
-    console.log(e);
+    console.error(e);
     return { success: false, error: "Internal server error" };
   }
 };

@@ -2,7 +2,7 @@
 
 import { randomUUID } from "node:crypto";
 
-import { CreateNewDocument } from "../components/Header/actions";
+import { CreateNewDocument } from "@/app/document/components/Header/actions";
 import { CreateDocVersion } from "@/app/writer/[id]/versions/actions";
 import getServerSession from "@/lib/customHooks/getServerSession";
 import { rehostImages } from "@/lib/googleDocs/rehostImages";

@@ -7,9 +7,9 @@ import { toast } from "sonner";
 
 import AskAI from "./AskAI";
 import GeneratedText from "./GeneratedText";
-import ColorHighlight from "../options/format/ColorHighlight";
-import FormattingBtns from "../options/format/FormattingBtns";
-import { generateText } from "../../actions";
+import ColorHighlight from "@/app/writer/[id]/components/options/format/ColorHighlight";
+import FormattingBtns from "@/app/writer/[id]/components/options/format/FormattingBtns";
+import { generateText } from "@/app/writer/[id]/actions";
 import { generateTextOptions } from "./generateTextConfig";
 
 type BubbleMenuPropType = {

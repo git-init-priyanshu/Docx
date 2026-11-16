@@ -47,7 +47,7 @@ export const DuplicateDocument = async (docId: string) => {
   }
 };
 
-export const DeleteDocument = async (docId: any) => {
+export const DeleteDocument = async (docId: string) => {
   try {
     const session = await getServerSession();
     if (!session.id)
@@ -92,12 +92,12 @@ export const DeleteDocument = async (docId: any) => {
 
     return { success: true, data: "Removed from your documents" };
   } catch (e) {
-    console.log(e);
+    console.error(e);
     return { success: false, error: "Internal server error" };
   }
 };
 
-export const RenameDocument = async (docId: any, newName: string) => {
+export const RenameDocument = async (docId: string, newName: string) => {
   try {
     const session = await getServerSession();
     if (!session.id)
@@ -138,7 +138,7 @@ export const RenameDocument = async (docId: any, newName: string) => {
 
     return { success: true, data: "Document successfully renamed" };
   } catch (e) {
-    console.log(e);
+    console.error(e);
     return { success: false, error: "Internal server error" };
   }
 };
