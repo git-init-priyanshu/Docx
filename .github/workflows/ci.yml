@@ -1,0 +1,42 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+# The token can only read code. Nothing here needs to write or touch secrets.
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      # Pinned to commit SHAs: a moved tag cannot change what runs here.
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version-file: .nvmrc
+
+      - run: corepack enable
+
+      # --mode=skip-build keeps dependency install scripts from running in CI.
+      - run: yarn install --immutable --mode=skip-build
+
+      # The typecheck needs the generated Prisma client.
+      - run: node_modules/.bin/prisma generate
+
+      - run: yarn run lint:check
+
+      - run: yarn run typecheck
+
+      - run: yarn run test

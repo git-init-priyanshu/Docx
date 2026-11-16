@@ -1,0 +1,7 @@
+#!/bin/sh
+# Runs only repo-pinned binaries: never npx or a global install.
+set -e
+
+yarn run lint:check
+yarn run typecheck
+yarn run test
