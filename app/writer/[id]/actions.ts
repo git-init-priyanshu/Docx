@@ -2,6 +2,8 @@
 
 import { chat, isConfigured } from "@/lib/ai/openrouter";
 import { WRITER_MODEL } from "@/lib/ai/models";
+import { propagateAttributes, startObservation } from "@langfuse/tracing";
+import { flushLangfuse, langfuse, withObservation } from "@/lib/ai/langfuse";
 
 import prisma from "@/prisma/prismaClient";
 import getServerSession from "@/lib/customHooks/getServerSession";
@@ -154,8 +156,29 @@ export const generateText = async (
     const note =
       "\n\nRespond with only the resulting text — no preamble, no markdown code fences, no surrounding quotes.";
 
-    const raw = await chat({ model: WRITER_MODEL, prompt: prompt + note });
+    const writerObs = langfuse
+      ? startObservation("writer", { input: { option } })
+      : null;
+    const userId = session.id;
+    let raw: string;
+    try {
+      raw = writerObs
+        ? await withObservation(writerObs, () =>
+            propagateAttributes({ userId, tags: ["writer"] }, () =>
+              chat({
+                model: WRITER_MODEL,
+                prompt: prompt + note,
+                name: "writer",
+              }),
+            ),
+          )
+        : await chat({ model: WRITER_MODEL, prompt: prompt + note });
+    } catch (e) {
+      writerObs?.update({ level: "ERROR", statusMessage: String(e) }).end();
+      throw e;
+    }
     const cleaned = cleanGeneratedText(raw);
+    writerObs?.update({ output: cleaned }).end();
 
     if (!cleaned) {
       return { success: false, error: "AI returned an empty response" };
@@ -164,5 +187,7 @@ export const generateText = async (
   } catch (e) {
     console.log(e);
     return { success: false, error: "Internal server error" };
+  } finally {
+    await flushLangfuse();
   }
 };

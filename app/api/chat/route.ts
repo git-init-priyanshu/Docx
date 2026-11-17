@@ -27,6 +27,7 @@ import {
   recordVisitorCall,
   AI_CALLS_PER_HOUR,
 } from "@/lib/aiUsage";
+import { flushLangfuse } from "@/lib/ai/langfuse";
 import { answerQuestion } from "@/lib/rag/pipeline";
 import type { RetrievedChunk } from "@/lib/rag/search";
 import type { Turn } from "@/lib/rag/query";
@@ -213,6 +214,8 @@ export async function POST(request: Request) {
         console.error("[chat] request failed:", e);
         send({ type: "error", value: "Something went wrong answering that." });
       } finally {
+        // Next 14 has no after(), so flush before the function can freeze.
+        await flushLangfuse();
         controller.close();
       }
     },
