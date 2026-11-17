@@ -171,7 +171,7 @@ node --env-file=.env evals/run.ts my-change dev      # or test, or all
 
 The questions point at the imported articles, so the run needs them in the database.
 
-Each run writes `evals/results/<label>.json` with every question, answer, verdict and timing. Running a label again retries only the questions that errored. The raw files behind the tables above are not kept in the repo.
+Each run writes `evals/results/<label>.json` with every question, answer, verdict and timing. Running a label again retries only the questions that errored. With the Langfuse keys set, each run also appears as a dataset run (experiment) named after the label, with scores per question. `evals/uploadDataset.ts` uploads the questions as the `docx-rag-questions` dataset first. The raw files behind the tables above are not kept in the repo.
 
 ---
 
@@ -237,6 +237,11 @@ OPENROUTER_API_KEY="sk-or-v1-..."
 # OPENROUTER_CONDENSE_MODEL="deepseek/deepseek-v4-flash-0731"
 # OPENROUTER_EMBEDDING_MODEL="google/gemini-embedding-001"
 
+# Optional Langfuse tracing (off when the keys are unset)
+# LANGFUSE_PUBLIC_KEY="pk-lf-..."
+# LANGFUSE_SECRET_KEY="sk-lf-..."
+# LANGFUSE_BASE_URL="https://cloud.langfuse.com"
+
 # Real-time collaboration
 NEXT_PUBLIC_WEBSOCKET_URL="ws://localhost:1234"
 
@@ -248,6 +253,8 @@ NEXT_PUBLIC_GOOGLE_CLIENT_ID="your-google-client-id"
 NEXT_PUBLIC_GOOGLE_PICKER_KEY="your-google-api-key"
 NEXT_PUBLIC_GOOGLE_PROJECT_NUMBER="your-gcp-project-number"
 ```
+
+With the Langfuse keys set, traces go over OpenTelemetry (Langfuse JS/TS SDK v6) through `LangfuseSpanProcessor`. Each chat turn is a `rag-turn` observation with a span per pipeline step, and every model call (chat, embeddings, streamed answers) is recorded as a generation inside it. Writer actions are traced as `writer`. Without the keys nothing is sent.
 
 The importer needs the **Google Picker API** and **Google Docs API** enabled on the same GCP project as the OAuth client. It only ever requests the `drive.file` scope — access to the exact files a user hands over through the picker.
 

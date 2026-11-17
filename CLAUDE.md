@@ -33,6 +33,7 @@ Required in `.env`:
 - `NEXTAUTH_SECRET` — NextAuth session secret
 - `NEXTAUTH_URL` — Base URL NextAuth uses for callbacks (e.g. `http://localhost:3000`)
 - `OPENROUTER_API_KEY` — OpenRouter, used for every model call (editor rewrites, RAG answers, reranking, query condensation, embeddings). Per-task model ids live in `lib/ai/models.ts` and are overridable via `OPENROUTER_WRITER_MODEL`, `OPENROUTER_ANSWER_MODEL`, `OPENROUTER_RERANK_MODEL`, `OPENROUTER_CONDENSE_MODEL`, `OPENROUTER_EMBEDDING_MODEL`
+- `LANGFUSE_PUBLIC_KEY` / `LANGFUSE_SECRET_KEY` / `LANGFUSE_BASE_URL` — optional Langfuse tracing (JS/TS SDK v6, OpenTelemetry). Unset keys disable it (`langfuse` is `null` in `lib/ai/langfuse.ts`)
 - `NEXT_PUBLIC_WEBSOCKET_URL` — WebSocket server URL for Yjs real-time collaboration
 - `BACKEND_SERVER_URL` — Backend service for thumbnail upload queue
 - `BLOB_READ_WRITE_TOKEN` — Vercel Blob store, for editor image uploads
@@ -92,8 +93,11 @@ All data mutations use Next.js server actions (`"use server"`). They all return 
 ### Database Schema
 Core models: `User`, `Document`, `UserOnDocument` (join table). Around them: `DocumentChunk` (RAG chunks and embeddings), `ChatThread` and `ChatMessage`, `DocumentVersion`, `AiUsage`. A document can have multiple collaborators via `UserOnDocument`. The `createdBy` relation tracks the owner. Document `data` is stored as a JSON string (Tiptap document format). `Document.isPublic` marks library documents and `sourceUrl` holds their attribution link. `AiUsage` rows belong to either a user or a `visitorKey`.
 
+### Observability
+`lib/ai/langfuse.ts` holds the optional `LangfuseClient` (datasets, scores) and registers a `LangfuseSpanProcessor` on a global `NodeTracerProvider`. Traces go over OpenTelemetry, there is no legacy SDK or ingestion API. `withObservation` makes an observation the active span. `answerQuestion` opens a `rag-turn` observation with one span per step, and `chat`, `embed` and `streamChat` in `lib/ai/openrouter.ts` record a generation only when a span is active. Server entry points (`app/api/chat/route.ts`, writer `generateText`) call `flushLangfuse()` in `finally` because Next 14 has no `after()`. `evals/uploadDataset.ts` uploads the eval questions as the `docx-rag-questions` Langfuse dataset.
+
 ### Evals (`evals/`)
-`node --env-file=.env evals/run.ts <label> [dev|test|all]` runs `answerQuestion` over `evals/questions.jsonl` and writes `evals/results/<label>.json` after every question. Running a label again keeps the scored questions and retries the errored ones.
+`node --env-file=.env evals/run.ts <label> [dev|test|all]` runs `answerQuestion` over `evals/questions.jsonl` and writes `evals/results/<label>.json` after every question. Running a label again keeps the scored questions and retries the errored ones. With Langfuse keys set, each run is a dataset run (experiment) named after the label, with scores per question.
 
 - A pipeline change is a real code change run under a new label on `dev`, kept only if the numbers improve. No experiment flags.
 - `rerank` throws on failure. `answerQuestion` catches it, falls back to the fused order and reports `reranked: false`, which the chat route ignores and the runner records as an error so a transient failure is never scored.
