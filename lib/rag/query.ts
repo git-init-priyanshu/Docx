@@ -1,5 +1,5 @@
-import { chat, isConfigured } from "@/lib/ai/openrouter";
-import { CONDENSE_MODEL } from "@/lib/ai/models";
+import { chat, isConfigured } from "../ai/openrouter.ts";
+import { CONDENSE_MODEL } from "../ai/models.ts";
 
 export type Turn = { role: "user" | "assistant"; content: string };
 
@@ -33,7 +33,12 @@ export async function condenseQuery(
 
   try {
     const rewritten = (
-      await chat({ model: CONDENSE_MODEL, prompt, temperature: 0 })
+      await chat({
+        model: CONDENSE_MODEL,
+        prompt,
+        temperature: 0,
+        reasoning: false,
+      })
     ).trim();
     return rewritten || question;
   } catch (e) {

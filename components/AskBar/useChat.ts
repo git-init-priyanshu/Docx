@@ -9,21 +9,28 @@ type StreamEvent =
   | { type: "status"; value: string }
   | { type: "citations"; value: Citation[] }
   | { type: "text"; value: string }
-  | { type: "done"; threadId: string }
+  | { type: "done"; threadId?: string }
   | { type: "error"; value: string };
+
+const HISTORY_TURNS = 8;
 
 const isStatus = (value: string): value is Exclude<ChatStatus, "idle"> =>
   value === "searching" || value === "ranking" || value === "answering";
 
-export function useChat(enabled: boolean) {
+export function useChat(isSignedIn: boolean) {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [status, setStatus] = useState<ChatStatus>("idle");
   const [error, setError] = useState<string | null>(null);
   const threadIdRef = useRef<string | null>(null);
   const abortRef = useRef<AbortController | null>(null);
+  const messagesRef = useRef(messages);
 
   useEffect(() => {
-    if (!enabled) return;
+    messagesRef.current = messages;
+  }, [messages]);
+
+  useEffect(() => {
+    if (!isSignedIn) return;
     let cancelled = false;
 
     GetLatestChatThread().then((result) => {
@@ -35,111 +42,121 @@ export function useChat(enabled: boolean) {
     return () => {
       cancelled = true;
     };
-  }, [enabled]);
+  }, [isSignedIn]);
 
   useEffect(() => () => abortRef.current?.abort(), []);
 
-  const send = useCallback(async (question: string) => {
-    const trimmed = question.trim();
-    if (!trimmed) return;
+  const send = useCallback(
+    async (question: string) => {
+      const trimmed = question.trim();
+      if (!trimmed) return;
 
-    abortRef.current?.abort();
-    const controller = new AbortController();
-    abortRef.current = controller;
+      // Guests have no stored thread, so the server needs their recent turns.
+      const priorTurns = messagesRef.current
+        .filter((message) => message.content)
+        .slice(-HISTORY_TURNS)
+        .map(({ role, content }) => ({ role, content }));
 
-    setError(null);
-    setStatus("searching");
-    setMessages((prev) => [
-      ...prev,
-      { role: "user", content: trimmed },
-      { role: "assistant", content: "" },
-    ]);
+      abortRef.current?.abort();
+      const controller = new AbortController();
+      abortRef.current = controller;
 
-    // Mutates the trailing assistant message in place — it is the one this
-    // request owns, and rebuilding the whole list per token would re-render
-    // every prior message.
-    const updateAnswer = (fn: (message: ChatMessage) => ChatMessage) =>
-      setMessages((prev) => {
-        const next = [...prev];
-        next[next.length - 1] = fn(next[next.length - 1]);
-        return next;
-      });
+      setError(null);
+      setStatus("searching");
+      setMessages((prev) => [
+        ...prev,
+        { role: "user", content: trimmed },
+        { role: "assistant", content: "" },
+      ]);
 
-    try {
-      const response = await fetch("/api/chat", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          message: trimmed,
-          threadId: threadIdRef.current,
-        }),
-        signal: controller.signal,
-      });
+      // Mutates the trailing assistant message in place — it is the one this
+      // request owns, and rebuilding the whole list per token would re-render
+      // every prior message.
+      const updateAnswer = (fn: (message: ChatMessage) => ChatMessage) =>
+        setMessages((prev) => {
+          const next = [...prev];
+          next[next.length - 1] = fn(next[next.length - 1]);
+          return next;
+        });
 
-      if (!response.ok || !response.body) {
-        const body = await response.json().catch(() => null);
-        throw new Error(body?.error ?? "Could not reach the assistant");
-      }
+      try {
+        const response = await fetch("/api/chat", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            message: trimmed,
+            threadId: threadIdRef.current,
+            history: isSignedIn ? undefined : priorTurns,
+          }),
+          signal: controller.signal,
+        });
 
-      const reader = response.body.getReader();
-      const decoder = new TextDecoder();
-      let buffer = "";
+        if (!response.ok || !response.body) {
+          const body = await response.json().catch(() => null);
+          throw new Error(body?.error ?? "Could not reach the assistant");
+        }
 
-      while (true) {
-        const { done, value } = await reader.read();
-        if (done) break;
+        const reader = response.body.getReader();
+        const decoder = new TextDecoder();
+        let buffer = "";
 
-        buffer += decoder.decode(value, { stream: true });
-        const lines = buffer.split("\n");
-        // A chunk boundary can land mid-line; hold the remainder back.
-        buffer = lines.pop() ?? "";
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
 
-        for (const line of lines) {
-          if (!line.trim()) continue;
+          buffer += decoder.decode(value, { stream: true });
+          const lines = buffer.split("\n");
+          // A chunk boundary can land mid-line; hold the remainder back.
+          buffer = lines.pop() ?? "";
 
-          let event: StreamEvent;
-          try {
-            event = JSON.parse(line) as StreamEvent;
-          } catch {
-            continue;
-          }
+          for (const line of lines) {
+            if (!line.trim()) continue;
 
-          switch (event.type) {
-            case "status":
-              if (isStatus(event.value)) setStatus(event.value);
-              break;
-            case "citations":
-              updateAnswer((message) => ({
-                ...message,
-                citations: event.value,
-              }));
-              break;
-            case "text":
-              updateAnswer((message) => ({
-                ...message,
-                content: message.content + event.value,
-              }));
-              break;
-            case "done":
-              threadIdRef.current = event.threadId;
-              break;
-            case "error":
-              setError(event.value);
-              break;
+            let event: StreamEvent;
+            try {
+              event = JSON.parse(line) as StreamEvent;
+            } catch {
+              continue;
+            }
+
+            switch (event.type) {
+              case "status":
+                if (isStatus(event.value)) setStatus(event.value);
+                break;
+              case "citations":
+                updateAnswer((message) => ({
+                  ...message,
+                  citations: event.value,
+                }));
+                break;
+              case "text":
+                updateAnswer((message) => ({
+                  ...message,
+                  content: message.content + event.value,
+                }));
+                break;
+              case "done":
+                threadIdRef.current = event.threadId ?? null;
+                break;
+              case "error":
+                setError(event.value);
+                break;
+            }
           }
         }
+      } catch (e) {
+        if (e instanceof DOMException && e.name === "AbortError") return;
+        setError(e instanceof Error ? e.message : "Something went wrong");
+        // Drop the empty answer bubble so a failure does not leave a blank turn.
+        setMessages((prev) =>
+          prev[prev.length - 1]?.content === "" ? prev.slice(0, -1) : prev,
+        );
+      } finally {
+        setStatus("idle");
       }
-    } catch (e) {
-      if (e instanceof DOMException && e.name === "AbortError") return;
-      setError(e instanceof Error ? e.message : "Something went wrong");
-      // Drop the empty answer bubble so a failure does not leave a blank turn.
-      setMessages((prev) =>
-        prev[prev.length - 1]?.content === "" ? prev.slice(0, -1) : prev,
-      );
-    } finally {
-      setStatus("idle");
-    }
-  }, []);
+    },
+    [isSignedIn],
+  );
 
   const reset = useCallback(() => {
     abortRef.current?.abort();

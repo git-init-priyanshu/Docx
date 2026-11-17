@@ -15,37 +15,37 @@ export type RetrievedChunk = {
   id: string;
   documentId: string;
   documentName: string;
+  isPublic: boolean;
   headingPath: string;
   content: string;
   score: number;
 };
 
-/** Documents the user may read: those they own or collaborate on. */
-export async function accessibleDocumentIds(userId: string): Promise<string[]> {
-  const rows = await prisma.userOnDocument.findMany({
-    where: { userId },
-    select: { documentId: true },
-  });
-  return rows.map((row) => row.documentId);
-}
-
+/**
+ * Hybrid search over every chunk the caller may read: public documents plus
+ * documents they are a member of. A null userId searches public documents only.
+ */
 export async function retrieve(
-  userId: string,
+  userId: string | null,
   query: string,
 ): Promise<RetrievedChunk[]> {
-  const documentIds = await accessibleDocumentIds(userId);
-  if (documentIds.length === 0) return [];
-
   // Embed the query to match against embeddings of document chunks
   const queryEmbeddingLiteral = toVectorLiteral(await embedQuery(query));
-  const ids = Prisma.join(documentIds);
+
+  const readable = Prisma.sql`(
+    d."isPublic" OR EXISTS (
+      SELECT 1 FROM "UserOnDocument" m
+      WHERE m."documentId" = d.id AND m."userId" = ${userId}
+    )
+  )`;
 
   return prisma.$queryRaw<RetrievedChunk[]>`
     WITH semantic AS (
       SELECT c.id,
              ROW_NUMBER() OVER (ORDER BY c.embedding <=> ${queryEmbeddingLiteral}::vector) AS rank
       FROM "DocumentChunk" AS c
-      WHERE c."documentId" IN (${ids})
+      JOIN "Document" d ON d.id = c."documentId"
+      WHERE ${readable}
         AND c.embedding IS NOT NULL
       ORDER BY c.embedding <=> ${queryEmbeddingLiteral}::vector
       LIMIT ${PER_RANKING_LIMIT}
@@ -53,9 +53,10 @@ export async function retrieve(
     keyword AS (
       SELECT c.id,
              ROW_NUMBER() OVER (ORDER BY ts_rank_cd(c.tsv, q) DESC) AS rank
-      FROM "DocumentChunk" AS c,
+      FROM "DocumentChunk" AS c
+      JOIN "Document" d ON d.id = c."documentId",
            websearch_to_tsquery('english', ${query}) q
-      WHERE c."documentId" IN (${ids})
+      WHERE ${readable}
         AND c.tsv @@ q
       ORDER BY ts_rank_cd(c.tsv, q) DESC
       LIMIT ${PER_RANKING_LIMIT}
@@ -70,6 +71,7 @@ export async function retrieve(
     SELECT c.id,
            c."documentId"  AS "documentId",
            d.name          AS "documentName",
+           d."isPublic"    AS "isPublic",
            c."headingPath" AS "headingPath",
            c.content,
            fused.score::float8 AS score
