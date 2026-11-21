@@ -99,7 +99,7 @@ const pending = selected.filter((q) => !scoredIds.has(q.id));
 let next = 0;
 let done = 0;
 
-function summarize(records: QuestionRecord[]) {
+function summarize(runRecords: QuestionRecord[]) {
   const share = (
     items: QuestionRecord[],
     test: (r: QuestionRecord) => boolean,
@@ -114,7 +114,7 @@ function summarize(records: QuestionRecord[]) {
     return Math.round(sorted[Math.ceil((p / 100) * sorted.length) - 1]);
   };
 
-  const scored = records.filter((r) => !r.error);
+  const scored = runRecords.filter((r) => !r.error);
   const answerable = scored.filter((r) => r.answerable);
   const unanswerable = scored.filter((r) => !r.answerable);
   const judged = answerable.filter((r) => r.verdict);
@@ -124,10 +124,12 @@ function summarize(records: QuestionRecord[]) {
       (sum, r) => sum + (r.passageRank ? 1 / r.passageRank : 0),
       0,
     ) / answerable.length;
-  const retrieveTimes = records.flatMap((r) => r.timings?.retrieveMs ?? []);
-  const rerankTimes = records.flatMap((r) => r.timings?.rerankMs ?? []);
-  const firstTokenTimes = records.flatMap((r) => r.timings?.firstTokenMs ?? []);
-  const totalTimes = records.flatMap((r) => r.timings?.totalMs ?? []);
+  const retrieveTimes = runRecords.flatMap((r) => r.timings?.retrieveMs ?? []);
+  const rerankTimes = runRecords.flatMap((r) => r.timings?.rerankMs ?? []);
+  const firstTokenTimes = runRecords.flatMap(
+    (r) => r.timings?.firstTokenMs ?? [],
+  );
+  const totalTimes = runRecords.flatMap((r) => r.timings?.totalMs ?? []);
 
   return {
     answerable: {
@@ -152,7 +154,7 @@ function summarize(records: QuestionRecord[]) {
       totalP50: percentile(totalTimes, 50),
       totalP95: percentile(totalTimes, 95),
     },
-    errors: records.length - scored.length,
+    errors: runRecords.length - scored.length,
   };
 }
 
