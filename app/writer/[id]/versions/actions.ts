@@ -2,7 +2,7 @@
 
 import prisma from "@/prisma/prismaClient";
 import getServerSession from "@/lib/customHooks/getServerSession";
-import { UpdateDocData } from "../actions";
+import { UpdateDocData } from "@/app/writer/[id]/actions";
 import { MAX_VERSIONS, shouldSnapshot } from "./policy";
 
 export const CreateDocVersion = async (docId: string, data: string) => {
@@ -39,7 +39,7 @@ export const CreateDocVersion = async (docId: string, data: string) => {
 
     return { success: true, data: "Saved" };
   } catch (e) {
-    console.log(e);
+    console.error(e);
     return { success: false, error: "Internal server error" };
   }
 };
@@ -62,7 +62,7 @@ export const GetDocVersions = async (docId: string) => {
 
     return { success: true, data: versions };
   } catch (e) {
-    console.log(e);
+    console.error(e);
     return { success: false, error: "Internal server error" };
   }
 };
@@ -87,7 +87,7 @@ export const RestoreDocVersion = async (docId: string, versionId: string) => {
 
     return { success: true, data: version.data };
   } catch (e) {
-    console.log(e);
+    console.error(e);
     return { success: false, error: "Internal server error" };
   }
 };

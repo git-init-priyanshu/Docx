@@ -1,7 +1,7 @@
 import type { Editor } from "@tiptap/react";
 import { Check, Sparkles, Undo2, X } from "lucide-react";
 
-import { insertGeneratedText } from "../../editor/insertGeneratedText";
+import { insertGeneratedText } from "@/app/writer/[id]/editor/insertGeneratedText";
 
 type GeneratedTextPropType = {
   editor: Editor | null;

@@ -36,7 +36,7 @@ import { invalidateDocs } from "@/lib/hooks/useDocs";
 
 import { GetSharing } from "@/app/writer/[id]/sharing/actions";
 
-import { DeleteDocument, DuplicateDocument, RenameDocument } from "../actions";
+import { DeleteDocument, DuplicateDocument, RenameDocument } from "@/app/document/components/Card/actions";
 
 type CardOptionsPropType = {
   docId: string;
@@ -122,7 +122,7 @@ export default function CardOptions({
       );
       toast.success("Link copied — anyone with it can edit");
     } catch (e) {
-      console.log(e);
+      console.error(e);
       toast.error("Couldn't copy link");
     }
   };
@@ -148,7 +148,7 @@ export default function CardOptions({
       }
       toast.success("Document duplicated");
     } catch (e) {
-      console.log(e);
+      console.error(e);
       toast.error("Couldn't duplicate document");
     }
   };

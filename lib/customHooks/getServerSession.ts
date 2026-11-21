@@ -1,11 +1,11 @@
 import { getServerSession as nextAuthSession } from "next-auth";
 
-import { authOptions } from "../auth";
+import { authOptions } from "@/lib/auth";
 import type { ReturnType } from "./ReturnType";
 
 export default async function getServerSession(): Promise<ReturnType> {
   const session = await nextAuthSession(authOptions);
-  const user = session?.user as any;
+  const user = session?.user;
 
   return {
     id: user?.id,

@@ -5,8 +5,8 @@ import { Check, Sparkles, Undo2, X } from "lucide-react";
 import { toast } from "sonner";
 import type { Editor } from "@tiptap/react";
 
-import { generateText } from "../actions";
-import { insertGeneratedText } from "../editor/insertGeneratedText";
+import { generateText } from "@/app/writer/[id]/actions";
+import { insertGeneratedText } from "@/app/writer/[id]/editor/insertGeneratedText";
 import { generateTextOptions, LANGUAGES } from "./BubbleMenuComp/generateTextConfig";
 
 type Suggestion = { label: string; option: generateTextOptions };

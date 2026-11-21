@@ -1,5 +1,5 @@
 import { NextAuthOptions } from "next-auth";
-import GoogleProvider from "next-auth/providers/google";
+import GoogleProvider, { type GoogleProfile } from "next-auth/providers/google";
 
 import prisma from "@/prisma/prismaClient";
 
@@ -29,8 +29,9 @@ export const authOptions: NextAuthOptions = {
   ],
   secret: process.env.NEXTAUTH_SECRET,
   callbacks: {
-    async signIn({ account, profile }: any) {
+    async signIn({ account, profile }) {
       if (account?.provider === "google") {
+        if (!profile) return false;
         const {
           email,
           email_verified,
@@ -38,7 +39,7 @@ export const authOptions: NextAuthOptions = {
           name,
           given_name,
           family_name,
-        } = profile;
+        } = profile as GoogleProfile;
 
         if (!email_verified) return false;
 
@@ -73,7 +74,7 @@ export const authOptions: NextAuthOptions = {
       }
       return true;
     },
-    jwt: async ({ token }: any) => {
+    jwt: async ({ token }) => {
       if (token.id || !token.email) return token;
 
       const cached = userIdByEmail.get(token.email);
@@ -96,7 +97,7 @@ export const authOptions: NextAuthOptions = {
       }
       return token;
     },
-    session: ({ session, token }: any) => {
+    session: ({ session, token }) => {
       if (session.user && token?.id) {
         session.user.id = token.id;
       }

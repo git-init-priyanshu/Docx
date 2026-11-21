@@ -6,7 +6,7 @@ import FormattingBtns from "./FormattingBtns";
 import ColorHighlight from "./ColorHighlight";
 import ParagraphBtns from "./ParagraphBtns";
 import BulletListBtns from "./BulletListBtns";
-import GoBack from "../GoBack";
+import GoBack from "@/app/writer/[id]/components/options/GoBack";
 
 export default function FormatOptions({ editor }: { editor: Editor | null }) {
   return (

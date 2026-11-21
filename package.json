@@ -3,6 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "packageManager": "yarn@4.14.1",
+  "workspaces": [
+    "eslint-rules"
+  ],
   "engines": {
     "node": ">=24"
   },
@@ -11,7 +14,10 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "lint:check": "eslint .",
+    "lint:check": "eslint . --ext .ts,.tsx --max-warnings 0",
+    "typecheck": "tsc --noEmit",
+    "test": "node --test \"**/__tests__/*.test.*\"",
+    "postinstall": "git config core.hooksPath .githooks",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "db:migrate": "npx prisma migrate",
@@ -99,6 +105,7 @@
     "@types/react-dom": "^18",
     "eslint": "^8.57.0",
     "eslint-config-next": "14.2.4",
+    "eslint-plugin-docx": "*",
     "eslint-plugin-react": "^7.35.2",
     "eslint-plugin-react-hooks": "^4.6.2",
     "postcss": "^8",

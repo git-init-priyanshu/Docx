@@ -1,5 +1,5 @@
 import { Editor } from "@tiptap/react";
-import GoBack from "../GoBack";
+import GoBack from "@/app/writer/[id]/components/options/GoBack";
 
 type InsterOptionsPropTypes = {
   editor: Editor | null;

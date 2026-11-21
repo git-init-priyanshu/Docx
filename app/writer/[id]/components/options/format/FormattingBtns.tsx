@@ -19,11 +19,7 @@ export default function FormattingBtns({
         return (
           <button
             key={name}
-            onClick={() =>
-              (editor?.chain().focus() as Record<string, any> | undefined)
-                ?.[func]?.()
-                .run()
-            }
+            onClick={() => editor?.chain().focus()[func]().run()}
             aria-pressed={isActive}
             className={`${
               isActive

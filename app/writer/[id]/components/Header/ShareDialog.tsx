@@ -21,7 +21,7 @@ import {
   SearchUsers,
   SetLinkAccess,
   type SharedUser,
-} from "../../sharing/actions";
+} from "@/app/writer/[id]/sharing/actions";
 
 type ShareDialogProps = {
   docId: string;

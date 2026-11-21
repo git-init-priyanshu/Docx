@@ -1,3 +1,5 @@
+// Base no-shadow reports every TS enum as shadowing itself.
+// eslint-disable-next-line no-shadow
 export enum generateTextOptions {
   IMPROVE_WRITING = "improve_writing",
   FIX_SPELLINGS_AND_GRAMMAR = "fix_spellings_&_grammar",
