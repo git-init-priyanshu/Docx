@@ -3,7 +3,7 @@ import { redirect } from "next/navigation";
 import getServerSession from "@/lib/customHooks/getServerSession";
 import Navbar from "@/components/Navbar";
 import HeroSection from "./components/HeroSection";
-import LiveDemoSection from "./components/LiveDemoSection";
+import FeatureShowcaseSection from "./components/FeatureShowcaseSection";
 import FeaturesSection from "./components/FeaturesSection";
 import HowItWorksSection from "./components/HowItWorksSection";
 import CTASection from "./components/CTASection";
@@ -18,7 +18,7 @@ export default async function LandingPage() {
       <Navbar />
       <main>
         <HeroSection />
-        <LiveDemoSection />
+        <FeatureShowcaseSection />
         <FeaturesSection />
         <HowItWorksSection />
         <CTASection />

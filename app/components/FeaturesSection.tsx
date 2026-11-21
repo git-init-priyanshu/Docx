@@ -1,148 +1,47 @@
-const FEATURES = [
+import { Library, Server, SunMoon, UserRound } from "lucide-react";
+
+const EXTRAS = [
   {
-    icon: "users",
-    title: "Real-time collab",
-    body: "Live cursors and edits sync over Yjs, in a room scoped to the one document. Share a link and anyone holding it can join.",
+    Icon: Library,
+    title: "Public library",
+    body: "999 Wikipedia articles anyone can search, read and ask questions about. No account needed.",
   },
   {
-    icon: "sparkle",
-    title: "AI writing assistant",
-    body: "Improve, fix grammar, translate, change tone, expand or tighten. Press ⌘K, or select text and use the bubble menu.",
+    Icon: UserRound,
+    title: "Guest mode",
+    body: "Start writing instantly. Documents and versions stay in your browser until you sign in.",
   },
   {
-    icon: "message",
-    title: "Chat with your documents",
-    body: "Press ⌘J and ask across everything you can read. Answers are grounded in your own passages and cite them — and say so when nothing matches.",
-  },
-  {
-    icon: "history",
-    title: "Version history",
-    body: "Snapshots are captured as you write. Preview any version as a thumbnail and restore it in one click.",
-  },
-  {
-    icon: "import",
-    title: "Import & export",
-    body: "Pull a doc in from Google Drive with its images re-hosted, and take your work out again as Markdown or plain text.",
-  },
-  {
-    icon: "lock",
+    Icon: Server,
     title: "Self-hostable",
     body: "Clone the repo, point it at your own Postgres, and it's yours. Open source, no hidden tiers.",
   },
-  // TODO: enable once outline view ships.
-  // {
-  //   icon: "layers",
-  //   title: "Outline view",
-  //   body: "Drag headings to reorder sections. The document follows along — no copy-paste between blocks.",
-  // },
-  // TODO: enable once the public API ships.
-  // {
-  //   icon: "plug",
-  //   title: "Open API",
-  //   body: "REST endpoints for documents, comments, and exports. Webhook on every save.",
-  // },
+  {
+    Icon: SunMoon,
+    title: "Light and dark",
+    body: "A warm paper theme and a dark one, built on one set of design tokens.",
+  },
 ];
-
-function FeatureIcon({ name }: { name: string }) {
-  const common = "fill-none stroke-current";
-  const icons: Record<string, React.ReactNode> = {
-    users: (
-      <>
-        <circle cx="9" cy="9" r="3.2" />
-        <path d="M2.5 19c.6-3 3.4-4.6 6.5-4.6s5.9 1.6 6.5 4.6" />
-        <circle cx="17" cy="9" r="2.6" />
-        <path d="M16 14.6c2.4.2 4.4 1.5 5 3.4" />
-      </>
-    ),
-    sparkle: (
-      <>
-        <path d="M12 3v3M12 18v3M3 12h3M18 12h3M5.5 5.5l2 2M16.5 16.5l2 2M5.5 18.5l2-2M16.5 7.5l2-2" />
-        <circle cx="12" cy="12" r="2.2" />
-      </>
-    ),
-    message: (
-      <>
-        <rect x="3.5" y="4.5" width="17" height="12" rx="2.5" />
-        <path d="M8 16.5V20l4-3.5" />
-        <path d="M8 9h8M8 12.5h5" />
-      </>
-    ),
-    history: (
-      <>
-        <circle cx="12" cy="12" r="9" />
-        <path d="M12 7v5l3 2" />
-        <path d="M3 8a9 9 0 0 1 3-4" />
-      </>
-    ),
-    import: (
-      <>
-        <path d="M12 3v10" />
-        <path d="M8.5 9.5L12 13l3.5-3.5" />
-        <path d="M4 15v3.5A1.5 1.5 0 0 0 5.5 20h13a1.5 1.5 0 0 0 1.5-1.5V15" />
-      </>
-    ),
-    lock: (
-      <>
-        <rect x="4" y="11" width="16" height="10" rx="2" />
-        <path d="M8 11V7a4 4 0 0 1 8 0v4" />
-      </>
-    ),
-    layers: (
-      <>
-        <path d="M12 3l9 5-9 5-9-5 9-5z" />
-        <path d="M3 13l9 5 9-5" />
-      </>
-    ),
-    plug: <path d="M9 7V3M15 7V3M7 7h10v4a5 5 0 0 1-10 0V7zM12 16v5" />,
-  };
-
-  return (
-    <svg
-      viewBox="0 0 24 24"
-      className={`w-4 h-4 ${common}`}
-      strokeWidth={1.6}
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      {icons[name]}
-    </svg>
-  );
-}
 
 export default function FeaturesSection() {
   return (
-    <section
-      id="features"
-      className="py-20"
-      style={{ background: "var(--lp-paper)" }}
-    >
-      <div className="mx-auto w-full max-w-[1080px] px-6 lg:px-8">
-        <div className="max-w-[640px] mb-12">
-          <div
-            className="font-mono text-[11px] uppercase tracking-wider mb-2"
-            style={{ color: "var(--lp-muted)" }}
-          >
-            Features
-          </div>
-          <h2
-            className="text-[38px] sm:text-[46px] leading-[1.05] tracking-[-0.03em] font-semibold"
-            style={{ color: "var(--lp-ink)" }}
-          >
-            Everything you need to write,
-            <br />
-            collaborate, and create with AI.
-          </h2>
-        </div>
-
+    <section className="pb-20" style={{ background: "var(--lp-paper)" }}>
+      <div className="mx-auto w-full max-w-[1180px] px-6 lg:px-8">
         <div
-          className="grid sm:grid-cols-2 lg:grid-cols-3 gap-px rounded-[10px] border overflow-hidden"
+          className="font-mono text-[11px] uppercase tracking-wider mb-4"
+          style={{ color: "var(--lp-muted)" }}
+        >
+          And also
+        </div>
+        <div
+          className="grid sm:grid-cols-2 lg:grid-cols-4 gap-px rounded-[10px] border overflow-hidden"
           style={{
             background: "var(--lp-border)",
             borderColor: "var(--lp-border)",
           }}
         >
-          {FEATURES.map((f) => (
-            <div key={f.title} className="lp-feature-card p-6 group">
+          {EXTRAS.map(({ Icon, title, body }) => (
+            <div key={title} className="lp-feature-card p-6 group">
               <div
                 className="w-9 h-9 rounded-md border flex items-center justify-center mb-4 transition-transform group-hover:-rotate-3"
                 style={{
@@ -150,19 +49,19 @@ export default function FeaturesSection() {
                   color: "var(--lp-accent)",
                 }}
               >
-                <FeatureIcon name={f.icon} />
+                <Icon className="w-4 h-4" strokeWidth={1.6} />
               </div>
               <div
                 className="font-medium text-[15px] mb-1"
                 style={{ color: "var(--lp-ink)" }}
               >
-                {f.title}
+                {title}
               </div>
               <p
                 className="text-[13px] leading-relaxed"
                 style={{ color: "var(--lp-muted)" }}
               >
-                {f.body}
+                {body}
               </p>
             </div>
           ))}
