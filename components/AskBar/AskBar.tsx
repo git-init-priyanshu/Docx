@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import Link from "next/link";
 import { ArrowUp, RotateCcw, Sparkles, X } from "lucide-react";
 
 import useClientSession from "@/lib/customHooks/useClientSession";
@@ -58,7 +57,7 @@ export default function AskBar() {
           <div className="mb-2 overflow-hidden rounded-2xl border border-[var(--lp-border)] bg-[var(--lp-card)] shadow-lg">
             <div className="flex items-center justify-between border-b border-[var(--lp-border)] px-4 py-2">
               <span className="text-xs font-medium text-[var(--lp-muted)]">
-                Answers come only from your documents
+                Answers come only from the documents they cite
               </span>
               <div className="flex items-center gap-1">
                 <button
@@ -117,45 +116,35 @@ export default function AskBar() {
         <div className="flex items-center gap-2 rounded-full border border-[var(--lp-border)] bg-[var(--lp-card)] px-4 py-2 shadow-lg">
           <Sparkles className="h-4 w-4 shrink-0 text-[var(--lp-accent-ink)]" />
 
-          {isSignedIn ? (
-            <>
-              <input
-                ref={inputRef}
-                value={input}
-                onChange={(e) => setInput(e.target.value)}
-                onFocus={() => setExpanded(true)}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter") submit();
-                }}
-                placeholder="Ask about your documents"
-                className="min-w-0 flex-1 bg-transparent text-sm text-[var(--lp-ink)] outline-none placeholder:text-[var(--lp-muted)]"
-              />
-              {input.trim() ? (
-                <button
-                  type="button"
-                  onClick={submit}
-                  disabled={busy}
-                  title="Ask"
-                  className="rounded-full bg-[var(--lp-accent)] p-1.5 text-[var(--lp-accent-ink)] transition-opacity disabled:opacity-50"
-                >
-                  <ArrowUp className="h-3.5 w-3.5" />
-                </button>
-              ) : (
-                <kbd className="hidden shrink-0 rounded border border-[var(--lp-border)] px-1.5 py-0.5 text-[10px] text-[var(--lp-muted)] sm:block">
-                  ⌘J
-                </kbd>
-              )}
-            </>
+          <input
+            ref={inputRef}
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            onFocus={() => setExpanded(true)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") submit();
+            }}
+            placeholder={
+              isSignedIn
+                ? "Ask your documents or the library"
+                : "Ask the Wikipedia library"
+            }
+            className="min-w-0 flex-1 bg-transparent text-sm text-[var(--lp-ink)] outline-none placeholder:text-[var(--lp-muted)]"
+          />
+          {input.trim() ? (
+            <button
+              type="button"
+              onClick={submit}
+              disabled={busy}
+              title="Ask"
+              className="rounded-full bg-[var(--lp-accent)] p-1.5 text-[var(--lp-accent-ink)] transition-opacity disabled:opacity-50"
+            >
+              <ArrowUp className="h-3.5 w-3.5" />
+            </button>
           ) : (
-            <p className="flex-1 text-sm text-[var(--lp-muted)]">
-              <Link
-                href="/login"
-                className="font-medium text-[var(--lp-accent-ink)] underline-offset-2 hover:underline"
-              >
-                Sign in
-              </Link>{" "}
-              to ask questions about your documents
-            </p>
+            <kbd className="hidden shrink-0 rounded border border-[var(--lp-border)] px-1.5 py-0.5 text-[10px] text-[var(--lp-muted)] sm:block">
+              ⌘J
+            </kbd>
           )}
         </div>
       </div>

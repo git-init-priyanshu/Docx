@@ -3,6 +3,7 @@
 import { useRouter } from "next/navigation";
 import { FileText } from "lucide-react";
 
+import { sectionAnchor } from "@/lib/sectionAnchor";
 import { sectionOf, type Citation } from "./types";
 
 type CitationsProps = { citations: Citation[] };
@@ -23,7 +24,9 @@ export default function Citations({ citations }: CitationsProps) {
             title={citation.headingPath}
             onClick={() =>
               router.push(
-                `/writer/${citation.documentId}?section=${encodeURIComponent(section)}`,
+                citation.isPublic
+                  ? `/library/${citation.documentId}#${sectionAnchor(section)}`
+                  : `/writer/${citation.documentId}?section=${encodeURIComponent(section)}`,
               )
             }
             className="inline-flex max-w-full items-center gap-1.5 rounded-full border border-[var(--lp-border)] bg-[var(--lp-paper-2)] px-2.5 py-1 text-xs text-[var(--lp-muted)] transition-colors hover:border-[var(--lp-accent)] hover:text-[var(--lp-ink)]"

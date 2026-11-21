@@ -3,6 +3,7 @@ export type Citation = {
   documentId: string;
   documentName: string;
   headingPath: string;
+  isPublic: boolean;
 };
 
 export type ChatRole = "user" | "assistant";
@@ -17,7 +18,7 @@ export type ChatMessage = {
 export type ChatStatus = "idle" | "searching" | "ranking" | "answering";
 
 export const STATUS_LABEL: Record<Exclude<ChatStatus, "idle">, string> = {
-  searching: "Searching your documents",
+  searching: "Searching documents",
   ranking: "Ranking what it found",
   answering: "Writing an answer",
 };

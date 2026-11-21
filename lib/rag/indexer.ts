@@ -13,6 +13,8 @@ import prisma from "../../prisma/prismaClient.ts";
 import { chunkDocument, embeddingInput, hashDocument } from "./chunk.ts";
 import { embedPassages, toVectorLiteral } from "./embed.ts";
 
+const INSERT_BATCH = 100;
+
 export type IndexResult = {
   status: "indexed" | "unchanged" | "missing";
   embedded: number;
@@ -51,26 +53,28 @@ export async function indexDocument(documentId: string): Promise<IndexResult> {
     stale.map((chunk) => embeddingInput(chunk.headingPath, chunk.content)),
   );
 
-  const writes: Prisma.PrismaPromise<unknown>[] = stale.map((chunk, i) =>
-    prisma.$executeRaw`
+  // Multi-row inserts: each statement is a round trip to the database.
+  const writes: Prisma.PrismaPromise<unknown>[] = [];
+  for (let start = 0; start < stale.length; start += INSERT_BATCH) {
+    const rows = stale
+      .slice(start, start + INSERT_BATCH)
+      .map(
+        (chunk, j) =>
+          Prisma.sql`(gen_random_uuid()::text, ${documentId}, ${chunk.ordinal}, ${chunk.headingPath}, ${chunk.content}, ${chunk.contentHash}, ${toVectorLiteral(vectors[start + j])}::vector)`,
+      );
+    writes.push(
+      prisma.$executeRaw`
       INSERT INTO "DocumentChunk" (
         id, "documentId", ordinal, "headingPath", content, "contentHash", embedding
-      ) VALUES (
-        gen_random_uuid()::text,
-        ${documentId},
-        ${chunk.ordinal},
-        ${chunk.headingPath},
-        ${chunk.content},
-        ${chunk.contentHash},
-        ${toVectorLiteral(vectors[i])}::vector
-      )
+      ) VALUES ${Prisma.join(rows)}
       ON CONFLICT ("documentId", ordinal) DO UPDATE SET
         "headingPath" = EXCLUDED."headingPath",
         content       = EXCLUDED.content,
         "contentHash" = EXCLUDED."contentHash",
         embedding     = EXCLUDED.embedding
     `,
-  );
+    );
+  }
 
   // The document may have shrunk; ordinals past the new end no longer exist.
   writes.push(

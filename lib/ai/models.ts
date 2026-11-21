@@ -17,14 +17,20 @@
 //   tokens than any other call, so output price dominates: the cheapest capable
 //   model wins here, not the best one.
 //
+//   The three RAG calls (ANSWER, RERANK, CONDENSE) run with reasoning
+//   disabled: each works from text it is handed, and hidden reasoning added
+//   seconds per call.
+//
 // - RERANK returns a JSON array of passage numbers, so it needs a model with
 //   reliable schema-shaped output. Same model as WRITER for that reason.
 //
 // - CONDENSE blocks retrieval on every chat turn — nothing else can start until
 //   it returns — so it is chosen for latency on what is a one-sentence rewrite.
 //
-// Embeddings are deliberately absent: OpenRouter exposes no embeddings
-// endpoint, so lib/rag/embed.ts still calls Google directly.
+// - EMBEDDING turns passages and questions into vectors. Stored vectors are
+//   only comparable to vectors from the same model, so changing it re-embeds
+//   every document on its next index (the stored hashes cover the model). The
+//   output must stay at the 768 dimensions the `vector(768)` column holds.
 
 const model = (variable: string, fallback: string) =>
   process.env[variable]?.trim() || fallback;
@@ -47,4 +53,9 @@ export const RERANK_MODEL = model(
 export const CONDENSE_MODEL = model(
   "OPENROUTER_CONDENSE_MODEL",
   "deepseek/deepseek-v4-flash-0731",
+);
+
+export const EMBEDDING_MODEL = model(
+  "OPENROUTER_EMBEDDING_MODEL",
+  "google/gemini-embedding-001",
 );

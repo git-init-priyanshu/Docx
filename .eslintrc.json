@@ -37,6 +37,7 @@
     {
       "files": [
         "scripts/**",
+        "evals/**",
         "lib/rag/**",
         "**/__tests__/**"
       ],
@@ -46,7 +47,8 @@
     },
     {
       "files": [
-        "scripts/**"
+        "scripts/**",
+        "evals/**"
       ],
       "rules": {
         "no-console": "off"
